@@ -83,6 +83,7 @@ No se pudo confirmar cómo obtiene Copero sus propios datos de clubes (su sitio 
 - Proyecto de Supabase provisionado vía MCP (`coperort`, `sa-east-1`, plan gratuito) y cliente wireado en `src/lib/supabaseClient.ts`. Sin tablas todavía (eso es Fase 6).
 - Git inicializado, `.gitignore` ampliado para cubrir `.env*` explícitamente además de `*.local`.
 - `npm run test` y `npx tsc -b --noEmit` corren limpios, sin errores ni warnings.
+- Verificado en navegador (`npm run dev`, puerto 5173): las 6 rutas placeholder cargan sin errores de consola, Tailwind aplica estilos correctamente (confirmado con `getComputedStyle`), título de la página corregido a "Coperort" (venía del template como "scaffold_tmp"). Config de preview guardada en `.claude/launch.json` (`coperort-dev`) para levantar el server de dev en futuras sesiones.
 
 ## Pendiente (TODO)
 
