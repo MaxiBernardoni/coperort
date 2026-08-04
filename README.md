@@ -1,32 +1,28 @@
-# React + TypeScript + Vite
+# Coperort
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Simulador de carrera de futbolista para navegador — creás un jugador, tomás decisiones temporada a temporada, definís finales de torneo con minijuegos interactivos y competís en un ranking global.
 
-Currently, two official plugins are available:
+Proyecto personal / de portfolio, inspirado en dos juegos virales argentinos investigados a fondo antes de empezar a construir: **[Copero: Convertite en Leyenda](https://www.copero.com.ar/juegos/simulador-carrera)** (creación de jugador rica, progresión narrativa) y **[El Ídolo](https://www.potrerofutbol.ar/el-idolo)** (minijuegos en las finales, rival fijo, ranking global). La idea acá es combinar y mejorar ambos.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+> **¿Sos una IA / Claude Code retomando este proyecto?** Leé [`CLAUDE.md`](./CLAUDE.md) primero — tiene todo el contexto de arquitectura, decisiones de producto, progreso por fase y qué falta, pensado específicamente para vos.
 
-## React Compiler
+## Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+React 19 + TypeScript + Vite · Tailwind CSS v4 · Zustand · React Router · Zod · Vitest · Supabase (Postgres, sin auth)
 
-## Expanding the Oxlint configuration
+## Estado actual
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+- ✅ **Fase 0** — Scaffold del proyecto, routing base, Supabase provisionado.
+- ✅ **Fase 1** — Motor de simulación de carrera (puro, sin React), determinístico por seed. 11 tests en Vitest.
+- ⬜ Fase 2 en adelante — ver [`CLAUDE.md`](./CLAUDE.md#pendiente-todo) para el detalle completo del roadmap.
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## Desarrollo
+
+```bash
+npm install
+cp .env.example .env.local   # completar con las credenciales de tu proyecto Supabase
+npm run dev                  # levanta el server de dev en http://localhost:5173
+npm run test                 # corre la suite de Vitest
+npm run lint                 # oxlint
+npm run build                # type-check + build de producción
 ```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.

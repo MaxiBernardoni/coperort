@@ -22,7 +22,7 @@ Este proyecto combina y mejora ambos: prioriza (1) minijuegos interactivos para 
 
 ## Stack
 
-- React 18 + TypeScript + Vite
+- React 19 + TypeScript + Vite
 - Tailwind CSS v4 (vía `@tailwindcss/vite`, sin `tailwind.config.js` — todo el theming vive en CSS con `@import "tailwindcss"` en `src/index.css`)
 - Zustand (estado de carrera, wrapper fino sobre un reducer puro)
 - React Router v7 (`BrowserRouter`)
@@ -72,7 +72,7 @@ src/
 App.tsx             # router con las 6 rutas de arriba, todas placeholder
 ```
 
-Las carpetas vacías tienen un `.gitkeep` para que git las trackee hasta que tengan contenido real.
+Las carpetas que todavía no tienen contenido real (`minigames/*`, `store/`, `features/rival/`, `hooks/`, `lib/api/`) tienen un `.gitkeep` para que git las trackee hasta la fase que las llene.
 
 ## Supabase
 
@@ -103,7 +103,7 @@ El plan (`generic-sprouting-panda.md`) esbozaba el motor a alto nivel; al implem
 ### Fase 0 — Scaffold (2026-08-04)
 - Proyecto Vite + React 19 + TypeScript scaffoldeado (`npm create vite@latest -- --template react-ts`), limpiado del boilerplate default (`App.css`, assets de ejemplo, landing page default).
 - Tailwind v4 configurado vía plugin de Vite (sin config file separado).
-- Vitest configurado (`environment: jsdom`, alias `@/`, setup de Testing Library) — verificado con un test de humo en `src/engine/__tests__/sanity.test.ts`.
+- Vitest configurado (`environment: jsdom`, alias `@/`, setup de Testing Library) — verificado con un test de humo (después reemplazado por la cobertura real de la Fase 1).
 - Estructura completa de carpetas creada según la arquitectura del plan.
 - React Router armado en `App.tsx` con 6 rutas placeholder (una por pantalla del plan, sin lógica todavía).
 - Proyecto de Supabase provisionado vía MCP (`coperort`, `sa-east-1`, plan gratuito) y cliente wireado en `src/lib/supabaseClient.ts`. Sin tablas todavía (eso es Fase 6).
