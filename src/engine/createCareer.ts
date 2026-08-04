@@ -43,7 +43,10 @@ export function createCareer(input: CharacterCreationInput, seed?: number): Care
     season: 1,
     year,
     phase: 'ACTIVE',
+    pendingEventId: null,
+    loan: null,
     stats: { matches: 0, goals: 0, assists: 0, peakRating: overallRating, peakMarketValue: marketValue },
+    titles: [],
     eventLog: [],
   }
 }

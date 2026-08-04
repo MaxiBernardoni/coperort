@@ -20,3 +20,9 @@ export const SAMPLE_CLUBS: Club[] = [
   { id: 'barcelona', name: 'FC Barcelona', country: 'España', tier: 1, reputation: 96 },
   { id: 'manchester-city', name: 'Manchester City', country: 'Inglaterra', tier: 1, reputation: 95 },
 ]
+
+export function getClubById(id: string): Club {
+  const club = SAMPLE_CLUBS.find((candidate) => candidate.id === id)
+  if (!club) throw new Error(`Club desconocido: ${id}`)
+  return club
+}

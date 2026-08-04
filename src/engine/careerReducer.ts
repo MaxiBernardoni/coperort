@@ -1,11 +1,38 @@
+import { applyLoanReturn, applyLoanStart, applyTransfer, selectClubForMove } from './clubTransition'
 import { createCareer } from './createCareer'
 import { selectEvent } from './eventSelector'
+import { resolveLeagueWinner } from './leagueEngine'
 import { createRng } from './rng'
 import { simulateSeasonPerformance } from './seasonPerformance'
 import { ATTRIBUTE_KEYS, attributeGrowthDelta, clamp, deriveOverallRating, marketValueForRating } from './statMath'
+import { SAMPLE_CLUBS } from '@/content/clubs'
+import { getEventById } from '@/content/events'
+import type { Rng } from './rng'
 import type { PlayerAttributes } from '@/types/player'
-import type { CareerAction, CareerPhase, CareerState } from '@/types/career'
+import type { CareerAction, CareerPhase, CareerState, Title } from '@/types/career'
 import type { EventChoice, StatEffect } from '@/types/event'
+
+function applyClubTransition(
+  state: CareerState,
+  choice: EventChoice,
+  newYear: number,
+  rng: Rng,
+): Pick<CareerState, 'currentClub' | 'clubHistory' | 'loan'> {
+  const unchanged = { currentClub: state.currentClub, clubHistory: state.clubHistory, loan: state.loan }
+
+  if (state.loan && newYear >= state.loan.returnYear) {
+    return applyLoanReturn(state, newYear)
+  }
+  if (choice.transfer) {
+    const club = selectClubForMove(state.currentClub, SAMPLE_CLUBS, choice.transfer, rng, (c) => c.reputation)
+    return club ? applyTransfer(state, club, newYear) : unchanged
+  }
+  if (choice.loan) {
+    const club = selectClubForMove(state.currentClub, SAMPLE_CLUBS, choice.loan, rng, (c) => 100 - c.reputation)
+    return club ? applyLoanStart(state, club, newYear, choice.loan.durationSeasons ?? 1) : unchanged
+  }
+  return unchanged
+}
 
 function applyAttributeEffects(attributes: PlayerAttributes, effects: StatEffect[]): PlayerAttributes {
   const next = { ...attributes }
@@ -24,12 +51,29 @@ function marketValueMultiplierFromEffects(effects: StatEffect[]): number {
     .reduce((multiplier, effect) => multiplier * effect.value, 1)
 }
 
-function advanceSeason(state: CareerState): CareerState {
+/** Elige el evento de la temporada y lo deja pendiente de que la UI resuelva una elección. */
+function beginSeason(state: CareerState): CareerState {
   const rng = createRng(state.rngState)
-
   const event = selectEvent(state, rng)
-  const choice: EventChoice = rng.pick(event.choices)
+
+  return {
+    ...state,
+    rngState: rng.getState(),
+    phase: 'EVENT_PENDING',
+    pendingEventId: event.id,
+  }
+}
+
+/** Aplica la elección del usuario para el evento pendiente y cierra la temporada. */
+function resolveEvent(state: CareerState, choiceId: string): CareerState {
+  if (!state.pendingEventId) throw new Error('No hay ningún evento pendiente para resolver')
+  const event = getEventById(state.pendingEventId)
+  const choice = event.choices.find((candidate) => candidate.id === choiceId)
+  if (!choice) throw new Error(`Elección desconocida "${choiceId}" para el evento "${event.id}"`)
+
+  const rng = createRng(state.rngState)
   const newAge = state.player.age + 1
+  const newYear = state.year + 1
 
   let attributes = applyAttributeEffects(state.player.attributes, choice.effects)
   for (const key of ATTRIBUTE_KEYS) {
@@ -40,20 +84,45 @@ function advanceSeason(state: CareerState): CareerState {
   const baselineMarketValue = marketValueForRating(overallRating, newAge)
   const marketValue = Math.round(baselineMarketValue * marketValueMultiplierFromEffects(choice.effects))
 
+  const clubTransition = applyClubTransition(state, choice, newYear, rng)
+
   const performance = simulateSeasonPerformance(
     { ...state.player, attributes, age: newAge, overallRating, marketValue },
     rng,
+    { matchesMultiplier: choice.injury ? 1 - choice.injury.matchesReductionPct : undefined },
   )
+
+  const leagueWinner = resolveLeagueWinner(
+    SAMPLE_CLUBS,
+    { country: clubTransition.currentClub.country, tier: clubTransition.currentClub.tier },
+    rng,
+  )
+  const wonLeague = leagueWinner.id === clubTransition.currentClub.id
+  const titles: Title[] = wonLeague
+    ? [
+        ...state.titles,
+        {
+          type: 'league',
+          season: state.season,
+          year: newYear,
+          clubId: clubTransition.currentClub.id,
+          country: clubTransition.currentClub.country,
+          tier: clubTransition.currentClub.tier,
+        },
+      ]
+    : state.titles
 
   const phase: CareerPhase = newAge >= state.retirementAge ? 'RETIRED' : 'ACTIVE'
 
   return {
     ...state,
+    ...clubTransition,
     rngState: rng.getState(),
     player: { ...state.player, attributes, age: newAge, overallRating, marketValue },
     season: state.season + 1,
-    year: state.year + 1,
+    year: newYear,
     phase,
+    pendingEventId: null,
     stats: {
       matches: state.stats.matches + performance.matches,
       goals: state.stats.goals + performance.goals,
@@ -61,6 +130,7 @@ function advanceSeason(state: CareerState): CareerState {
       peakRating: Math.max(state.stats.peakRating, overallRating),
       peakMarketValue: Math.max(state.stats.peakMarketValue, marketValue),
     },
+    titles,
     eventLog: [...state.eventLog, { season: state.season, eventId: event.id, choiceId: choice.id }],
   }
 }
@@ -71,7 +141,11 @@ export function careerReducer(state: CareerState | null, action: CareerAction): 
       return createCareer(action.input, action.seed)
     case 'ADVANCE_SEASON':
       if (!state) throw new Error('No hay una carrera en curso: despachá CREATE_CAREER primero')
-      if (state.phase === 'RETIRED') return state
-      return advanceSeason(state)
+      if (state.phase !== 'ACTIVE') return state
+      return beginSeason(state)
+    case 'RESOLVE_EVENT':
+      if (!state) throw new Error('No hay una carrera en curso: despachá CREATE_CAREER primero')
+      if (state.phase !== 'EVENT_PENDING') throw new Error('No hay ningún evento pendiente para resolver')
+      return resolveEvent(state, action.choiceId)
   }
 }
