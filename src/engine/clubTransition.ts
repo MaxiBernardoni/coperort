@@ -46,6 +46,30 @@ export function selectClubForMove(
   return rng.pickWeighted(others, weight)
 }
 
+/**
+ * Elige hasta `count` clubes distintos de debut, ponderados por reputación (mientras más
+ * baja, más peso). Filtra por `reputation < 40`; si el pool filtrado tiene menos candidatos
+ * que `count`, relaja al pool completo — arregla el riesgo de `pickWeighted` sobre un array
+ * vacío ya anotado en CLAUDE.md para el viejo `createCareer.ts`.
+ */
+export function selectDebutClubOffers(clubs: readonly Club[], rng: Rng, count = 3): Club[] {
+  const lowReputationPool = clubs.filter((club) => club.reputation < 40)
+  const pool = lowReputationPool.length > 0 ? lowReputationPool : clubs
+  if (pool.length === 0) return []
+
+  const working = [...pool]
+  const offers: Club[] = []
+  const offerCount = Math.min(count, working.length)
+
+  for (let i = 0; i < offerCount; i++) {
+    const picked = rng.pickWeighted(working, (club) => 100 - club.reputation)
+    offers.push(picked)
+    working.splice(working.indexOf(picked), 1)
+  }
+
+  return offers
+}
+
 export function applyTransfer(
   state: CareerState,
   club: Club,
@@ -64,7 +88,8 @@ export function applyLoanStart(
   year: number,
   durationSeasons: number,
 ): Pick<CareerState, 'currentClub' | 'clubHistory' | 'loan'> {
-  const loan: LoanState = { parentClubId: state.currentClub.id, returnYear: year + durationSeasons }
+  // no-null: solo se llama desde resolveEvent, alcanzable únicamente después de SELECT_CLUB
+  const loan: LoanState = { parentClubId: state.currentClub!.id, returnYear: year + durationSeasons }
   return {
     currentClub: club,
     clubHistory: closeCurrentStintAndOpen(state.clubHistory, club.id, year),

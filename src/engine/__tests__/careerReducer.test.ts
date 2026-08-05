@@ -14,9 +14,15 @@ const testInput: CharacterCreationInput = {
 
 const MAX_SEASONS = 40
 
-/** Simula a la UI: avanza la temporada y siempre elige la primera opción del evento pendiente. */
+/** Crea la carrera y elige la primera oferta de club, dejándola en ACTIVE. */
+function createCareerAndSelectClub(seed: number, input: CharacterCreationInput = testInput): CareerState {
+  const created = careerReducer(null, { type: 'CREATE_CAREER', input, seed })
+  return careerReducer(created, { type: 'SELECT_CLUB', clubId: created.clubOffers[0].id })
+}
+
+/** Simula a la UI: elige club, avanza la temporada y siempre elige la primera opción del evento pendiente. */
 function runFullCareer(seed: number, input: CharacterCreationInput = testInput): CareerState {
-  let state = careerReducer(null, { type: 'CREATE_CAREER', input, seed })
+  let state = createCareerAndSelectClub(seed, input)
   let iterations = 0
   while (state.phase !== 'RETIRED') {
     state = careerReducer(state, { type: 'ADVANCE_SEASON' })
@@ -50,7 +56,7 @@ describe('careerReducer', () => {
   })
 
   it('keeps the overall rating within the valid 1-99 range every season', () => {
-    let state = careerReducer(null, { type: 'CREATE_CAREER', input: testInput, seed: 999 })
+    let state = createCareerAndSelectClub(999)
     expect(state.player.overallRating).toBeGreaterThanOrEqual(1)
     expect(state.player.overallRating).toBeLessThanOrEqual(99)
 
@@ -100,8 +106,51 @@ describe('careerReducer', () => {
     expect(again).toBe(retired)
   })
 
+  it('CREATE_CAREER leaves the career in CLUB_PENDING with distinct weighted offers', () => {
+    const created = careerReducer(null, { type: 'CREATE_CAREER', input: testInput, seed: 3 })
+
+    expect(created.phase).toBe('CLUB_PENDING')
+    expect(created.currentClub).toBeNull()
+    expect(created.clubHistory).toHaveLength(0)
+    expect(created.clubOffers.length).toBeGreaterThan(0)
+    expect(created.clubOffers.length).toBeLessThanOrEqual(3)
+    const ids = created.clubOffers.map((club) => club.id)
+    expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('ADVANCE_SEASON is a no-op while a club offer is pending', () => {
+    const created = careerReducer(null, { type: 'CREATE_CAREER', input: testInput, seed: 3 })
+    const again = careerReducer(created, { type: 'ADVANCE_SEASON' })
+    expect(again).toBe(created)
+  })
+
+  it('SELECT_CLUB with a valid offer id activates the career', () => {
+    const created = careerReducer(null, { type: 'CREATE_CAREER', input: testInput, seed: 3 })
+    const offerId = created.clubOffers[0].id
+    const selected = careerReducer(created, { type: 'SELECT_CLUB', clubId: offerId })
+
+    expect(selected.phase).toBe('ACTIVE')
+    expect(selected.currentClub?.id).toBe(offerId)
+    expect(selected.clubHistory).toEqual([{ clubId: offerId, fromYear: created.year, toYear: null }])
+    expect(selected.clubOffers).toHaveLength(0)
+  })
+
+  it('throws when SELECT_CLUB is dispatched with an unknown clubId', () => {
+    const created = careerReducer(null, { type: 'CREATE_CAREER', input: testInput, seed: 3 })
+    expect(() => careerReducer(created, { type: 'SELECT_CLUB', clubId: 'not-a-real-club' })).toThrow()
+  })
+
+  it('throws when SELECT_CLUB is dispatched outside of CLUB_PENDING', () => {
+    const active = createCareerAndSelectClub(3)
+    expect(() => careerReducer(active, { type: 'SELECT_CLUB', clubId: active.currentClub!.id })).toThrow()
+  })
+
+  it('throws if SELECT_CLUB is dispatched before CREATE_CAREER', () => {
+    expect(() => careerReducer(null, { type: 'SELECT_CLUB', clubId: 'x' })).toThrow()
+  })
+
   it('ADVANCE_SEASON moves to EVENT_PENDING with a resolvable pendingEventId, without touching the player yet', () => {
-    const created = careerReducer(null, { type: 'CREATE_CAREER', input: testInput, seed: 7 })
+    const created = createCareerAndSelectClub(7)
     const pending = careerReducer(created, { type: 'ADVANCE_SEASON' })
 
     expect(pending.phase).toBe('EVENT_PENDING')
@@ -112,14 +161,14 @@ describe('careerReducer', () => {
   })
 
   it('ADVANCE_SEASON is a no-op while an event is already pending', () => {
-    const created = careerReducer(null, { type: 'CREATE_CAREER', input: testInput, seed: 7 })
+    const created = createCareerAndSelectClub(7)
     const pending = careerReducer(created, { type: 'ADVANCE_SEASON' })
     const again = careerReducer(pending, { type: 'ADVANCE_SEASON' })
     expect(again).toBe(pending)
   })
 
   it('RESOLVE_EVENT applies the chosen effects, advances age/season and clears pendingEventId', () => {
-    const created = careerReducer(null, { type: 'CREATE_CAREER', input: testInput, seed: 7 })
+    const created = createCareerAndSelectClub(7)
     const pending = careerReducer(created, { type: 'ADVANCE_SEASON' })
     const event = getEventById(pending.pendingEventId!)
     const resolved = careerReducer(pending, { type: 'RESOLVE_EVENT', choiceId: event.choices[0].id })
@@ -130,13 +179,37 @@ describe('careerReducer', () => {
     expect(resolved.eventLog.at(-1)).toEqual({ season: created.season, eventId: event.id, choiceId: event.choices[0].id })
   })
 
+  it('RESOLVE_EVENT appends exactly one seasonHistory entry matching that season\'s stats', () => {
+    const created = createCareerAndSelectClub(7)
+    const pending = careerReducer(created, { type: 'ADVANCE_SEASON' })
+    const event = getEventById(pending.pendingEventId!)
+    const resolved = careerReducer(pending, { type: 'RESOLVE_EVENT', choiceId: event.choices[0].id })
+
+    expect(resolved.seasonHistory).toHaveLength(1)
+    const entry = resolved.seasonHistory[0]
+    expect(entry.age).toBe(resolved.player.age)
+    expect(entry.overallRating).toBe(resolved.player.overallRating)
+    expect(entry.matches).toBe(resolved.stats.matches)
+    expect(entry.goals).toBe(resolved.stats.goals)
+    expect(entry.assists).toBe(resolved.stats.assists)
+  })
+
+  it('seasonHistory tracks every resolved season and cross-checks against cumulative stats', () => {
+    const state = runFullCareer(555)
+
+    expect(state.seasonHistory).toHaveLength(state.eventLog.length)
+    expect(state.seasonHistory.at(-1)?.age).toBe(state.retirementAge)
+    const totalMatches = state.seasonHistory.reduce((sum, entry) => sum + entry.matches, 0)
+    expect(totalMatches).toBe(state.stats.matches)
+  })
+
   it('throws when RESOLVE_EVENT is dispatched with no event pending', () => {
-    const created = careerReducer(null, { type: 'CREATE_CAREER', input: testInput, seed: 7 })
+    const created = createCareerAndSelectClub(7)
     expect(() => careerReducer(created, { type: 'RESOLVE_EVENT', choiceId: 'anything' })).toThrow()
   })
 
   it('throws when RESOLVE_EVENT is dispatched with an unknown choiceId', () => {
-    const created = careerReducer(null, { type: 'CREATE_CAREER', input: testInput, seed: 7 })
+    const created = createCareerAndSelectClub(7)
     const pending = careerReducer(created, { type: 'ADVANCE_SEASON' })
     expect(() => careerReducer(pending, { type: 'RESOLVE_EVENT', choiceId: 'not-a-real-choice' })).toThrow()
   })

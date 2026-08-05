@@ -8,6 +8,7 @@ export function useCareerEngine() {
   return {
     career,
     createCareer: (input: CharacterCreationInput, seed?: number) => dispatch({ type: 'CREATE_CAREER', input, seed }),
+    selectClub: (clubId: string) => dispatch({ type: 'SELECT_CLUB', clubId }),
     advanceSeason: () => dispatch({ type: 'ADVANCE_SEASON' }),
     resolveEvent: (choiceId: string) => dispatch({ type: 'RESOLVE_EVENT', choiceId }),
   }

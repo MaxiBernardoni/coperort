@@ -1,14 +1,19 @@
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { JerseyPreview } from './components/JerseyPreview'
+import { PositionPitch } from './components/PositionPitch'
+import { CountryPicker } from '@/components/ui/CountryPicker'
+import { SegmentedControl } from '@/components/ui/SegmentedControl'
+import { COUNTRIES } from '@/content/countries'
+import { TACTICAL_POSITIONS } from '@/content/tacticalPositions'
 import { useCareerEngine } from '@/hooks/useCareerEngine'
 import { FOOT_LABELS, POSITION_LABELS } from '@/lib/labels'
-import type { Foot, Position } from '@/types/player'
+import type { Foot } from '@/types/player'
 
-const POSITIONS = Object.keys(POSITION_LABELS) as Position[]
-const FEET = Object.keys(FOOT_LABELS) as Foot[]
-
-const inputClass =
-  'rounded-md border border-neutral-300 bg-white px-3 py-2 text-neutral-900 dark:border-neutral-700 dark:bg-neutral-900 dark:text-white'
+const FEET: { value: Foot; label: string }[] = [
+  { value: 'left', label: FOOT_LABELS.left },
+  { value: 'right', label: FOOT_LABELS.right },
+]
 
 export function CharacterCreationPage() {
   const navigate = useNavigate()
@@ -16,16 +21,18 @@ export function CharacterCreationPage() {
 
   const [firstName, setFirstName] = useState('')
   const [surname, setSurname] = useState('')
-  const [nationality, setNationality] = useState('')
+  const [countryId, setCountryId] = useState('ar')
+  const [countrySearch, setCountrySearch] = useState('')
   const [jerseyNumber, setJerseyNumber] = useState(10)
   const [dominantFoot, setDominantFoot] = useState<Foot>('right')
-  const [position, setPosition] = useState<Position>('FWD')
+  const [tacticalId, setTacticalId] = useState('DC')
   const [error, setError] = useState<string | null>(null)
 
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault()
+  const country = COUNTRIES.find((candidate) => candidate.id === countryId)
+  const tacticalPosition = TACTICAL_POSITIONS.find((position) => position.id === tacticalId) ?? TACTICAL_POSITIONS[0]
 
-    if (!firstName.trim() || !surname.trim() || !nationality.trim()) {
+  function handleSubmit() {
+    if (!firstName.trim() || !surname.trim() || !country) {
       setError('Completá nombre, apellido y nacionalidad.')
       return
     }
@@ -37,84 +44,95 @@ export function CharacterCreationPage() {
     createCareer({
       firstName: firstName.trim(),
       surname: surname.trim(),
-      nationality: nationality.trim(),
+      nationality: country.name,
       jerseyNumber,
       dominantFoot,
-      position,
+      position: tacticalPosition.base,
     })
     navigate('/hub')
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8">
-      <div className="w-full max-w-md">
-        <h1 className="mb-1 text-center text-3xl font-semibold">Creación de jugador</h1>
-        <p className="mb-6 text-center text-neutral-500">Vas a debutar a los 17 años. Elegí bien.</p>
+    <main className="mx-auto max-w-[1240px] px-6 py-10">
+      <h1 className="m-0 mb-1 text-center font-display text-[32px] font-bold text-text">Creación de jugador</h1>
+      <p className="m-0 mb-8 text-center text-sm text-text-secondary">Vas a debutar a los 17 años. Elegí bien.</p>
 
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-4 rounded-xl border border-neutral-200 p-6 dark:border-neutral-800"
-        >
-          <div className="grid grid-cols-2 gap-4">
-            <label className="flex flex-col gap-1 text-sm">
-              Nombre
-              <input className={inputClass} value={firstName} onChange={(e) => setFirstName(e.target.value)} maxLength={30} />
-            </label>
-            <label className="flex flex-col gap-1 text-sm">
-              Apellido
-              <input className={inputClass} value={surname} onChange={(e) => setSurname(e.target.value)} maxLength={30} />
-            </label>
-          </div>
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[1fr_1.3fr_1fr]">
+        <section className="flex flex-col items-center gap-5">
+          <h2 className="m-0 text-[15px] font-semibold text-text">Identidad</h2>
+          <JerseyPreview countryId={countryId} surname={surname || 'Apellido'} jerseyNumber={jerseyNumber} />
 
-          <label className="flex flex-col gap-1 text-sm">
-            Nacionalidad
-            <input className={inputClass} value={nationality} onChange={(e) => setNationality(e.target.value)} maxLength={40} />
-          </label>
-
-          <div className="grid grid-cols-2 gap-4">
-            <label className="flex flex-col gap-1 text-sm">
-              Posición
-              <select className={inputClass} value={position} onChange={(e) => setPosition(e.target.value as Position)}>
-                {POSITIONS.map((value) => (
-                  <option key={value} value={value}>
-                    {POSITION_LABELS[value]}
-                  </option>
-                ))}
-              </select>
+          <div className="flex w-full max-w-[280px] gap-3">
+            <label className="flex-1 rounded-xl bg-surface-alt px-3.5 py-2.5">
+              <span className="mb-1 block text-[10px] font-bold tracking-[1.2px] text-text-label">APELLIDO</span>
+              <input
+                value={surname}
+                onChange={(e) => setSurname(e.target.value)}
+                placeholder="Apellido"
+                maxLength={30}
+                className="w-full border-none bg-transparent p-0 font-display text-xl font-bold text-text outline-none"
+              />
             </label>
-            <label className="flex flex-col gap-1 text-sm">
-              Pierna hábil
-              <select className={inputClass} value={dominantFoot} onChange={(e) => setDominantFoot(e.target.value as Foot)}>
-                {FEET.map((value) => (
-                  <option key={value} value={value}>
-                    {FOOT_LABELS[value]}
-                  </option>
-                ))}
-              </select>
+            <label className="flex-1 rounded-xl bg-surface-alt px-3.5 py-2.5">
+              <span className="mb-1 block text-[10px] font-bold tracking-[1.2px] text-text-label">NÚMERO</span>
+              <input
+                type="number"
+                min={1}
+                max={99}
+                value={jerseyNumber}
+                onChange={(e) => setJerseyNumber(Number(e.target.value))}
+                className="w-full border-none bg-transparent p-0 font-display text-xl font-bold text-text outline-none"
+              />
             </label>
           </div>
 
-          <label className="flex flex-col gap-1 text-sm">
-            Número de camiseta
+          <div className="w-full max-w-[280px]">
+            <p className="m-0 mb-1.5 text-[10px] font-bold tracking-[1.2px] text-text-label">PIERNA HÁBIL</p>
+            <SegmentedControl options={FEET} value={dominantFoot} onChange={(v) => setDominantFoot(v as Foot)} />
+          </div>
+
+          <label className="flex w-full max-w-[280px] flex-col gap-1">
+            <span className="text-[10px] font-bold tracking-[1.2px] text-text-label">NOMBRE</span>
             <input
-              type="number"
-              min={1}
-              max={99}
-              className={inputClass}
-              value={jerseyNumber}
-              onChange={(e) => setJerseyNumber(Number(e.target.value))}
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="Nombre"
+              maxLength={30}
+              className="rounded-[10px] border-none bg-surface-alt px-3 py-2.5 text-sm text-text outline-none"
             />
           </label>
+        </section>
 
-          {error && <p className="text-sm text-red-500">{error}</p>}
+        <section className="flex flex-col gap-3.5">
+          <h2 className="m-0 text-center text-[15px] font-semibold text-text">Nacionalidad</h2>
+          <CountryPicker
+            countries={COUNTRIES}
+            search={countrySearch}
+            onSearchChange={setCountrySearch}
+            selectedId={countryId}
+            onSelect={setCountryId}
+          />
+        </section>
 
-          <button
-            type="submit"
-            className="mt-2 rounded-md bg-neutral-900 px-4 py-2 font-medium text-white transition hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-          >
-            Empezar carrera
-          </button>
-        </form>
+        <section className="flex flex-col items-center gap-3.5">
+          <h2 className="m-0 text-[15px] font-semibold text-text">Posición</h2>
+          <PositionPitch selectedId={tacticalId} onSelect={setTacticalId} />
+          <p className="m-0 text-center text-xs text-text-secondary">
+            Posición base: <strong className="text-text">{POSITION_LABELS[tacticalPosition.base]}</strong>
+          </p>
+        </section>
+      </div>
+
+      {error && <p className="mt-4 text-center text-sm text-position">{error}</p>}
+
+      <div className="mt-9 flex justify-center">
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="cursor-pointer rounded-card border-none bg-accent px-12 py-3.5 text-base font-bold text-[#141414] hover:bg-accent-hover"
+        >
+          Empezar carrera
+        </button>
       </div>
     </main>
   )

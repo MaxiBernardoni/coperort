@@ -1,3 +1,4 @@
+import { selectDebutClubOffers } from './clubTransition'
 import { createRng } from './rng'
 import { deriveOverallRating, generateBaseAttributes, marketValueForRating } from './statMath'
 import { SAMPLE_CLUBS } from '@/content/clubs'
@@ -14,8 +15,7 @@ export function createCareer(input: CharacterCreationInput, seed?: number): Care
   const marketValue = marketValueForRating(overallRating, DEBUT_AGE)
   const retirementAge = rng.randInt(34, 38)
 
-  const debutClubPool = SAMPLE_CLUBS.filter((club) => club.reputation < 40)
-  const debutClub = rng.pickWeighted(debutClubPool, (club) => 100 - club.reputation)
+  const clubOffers = selectDebutClubOffers(SAMPLE_CLUBS, rng, 3)
 
   const year = new Date().getFullYear()
 
@@ -37,16 +37,18 @@ export function createCareer(input: CharacterCreationInput, seed?: number): Care
       overallRating,
       marketValue,
     },
-    currentClub: debutClub,
-    clubHistory: [{ clubId: debutClub.id, fromYear: year, toYear: null }],
+    currentClub: null,
+    clubOffers,
+    clubHistory: [],
     retirementAge,
     season: 1,
     year,
-    phase: 'ACTIVE',
+    phase: 'CLUB_PENDING',
     pendingEventId: null,
     loan: null,
     stats: { matches: 0, goals: 0, assists: 0, peakRating: overallRating, peakMarketValue: marketValue },
     titles: [],
     eventLog: [],
+    seasonHistory: [],
   }
 }

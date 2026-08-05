@@ -8,6 +8,13 @@ export const POSITION_LABELS: Record<Position, string> = {
   FWD: 'Delantero',
 }
 
+export const POSITION_SHORT_LABELS: Record<Position, string> = {
+  GK: 'POR',
+  DEF: 'DEF',
+  MID: 'MED',
+  FWD: 'DEL',
+}
+
 export const FOOT_LABELS: Record<Foot, string> = {
   right: 'Derecho',
   left: 'Izquierdo',

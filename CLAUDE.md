@@ -19,7 +19,7 @@ Este proyecto combina y mejora ambos: prioriza (1) minijuegos interactivos para 
 - **Sin anti-cheat por ahora.** El puntaje se guarda tal cual lo manda el cliente, con únicamente guardrails básicos (`check` constraints de rango en la DB). Decisión explícita del usuario para no sobre-invertir en esto en una v1 de portfolio; se puede endurecer después (ver plan, sección de riesgos, para el diseño de validación por replay si algún día hace falta).
 - **Motor de simulación puro, sin dependencias de React/DOM/Supabase** (`src/engine/**`). Esto es lo que permite testear el motor con Vitest de forma aislada y es la base técnica que haría posible un anti-cheat por replay más adelante sin reescribir nada — aunque hoy no se está construyendo esa parte.
 - **Minijuegos pluggables vía registry** (`src/minigames/registry.ts`) — agregar un minijuego nuevo no debería requerir tocar el motor ni el resto de las pantallas.
-- **El diseño visual (paleta, tipografía, sistema de componentes) no se decide ad-hoc en el código.** Todo lo que sea diseño va primero como prompt a `docs/design-brief.md`, pensado para pasarle a una sesión de Claude dedicada a diseño ("Claude design"), y de ahí se implementa. Las pantallas construidas hasta ahora tienen estilo mínimo/genérico a propósito — son funcionales, no son la pasada de diseño final. Ver `docs/design-brief.md`.
+- **El diseño visual (paleta, tipografía, sistema de componentes) no se decide ad-hoc en el código.** Todo lo que sea diseño va primero como prompt a `docs/design-brief.md`, pensado para pasarle a una sesión de Claude dedicada a diseño ("Claude design"), y de ahí se implementa. **Ya se corrió esa sesión y se integró el resultado** (ver "Integración de diseño" en Progreso) — las 4 pantallas reales tienen ahora el sistema visual definitivo (dark-only, paleta negro/naranja/rosa/verde, Inter + Barlow Condensed). El handoff original (bundle HTML/CSS/JS de Claude Design) vive fuera del repo, en `Downloads\Diseño de cuatro pantallas interactivas-handoff\`, no en `docs/` — se usó una sola vez como especificación pixel-a-pixel y no hace falta para trabajar en el código de acá en adelante.
 
 ## Stack
 
@@ -33,6 +33,8 @@ Este proyecto combina y mejora ambos: prioriza (1) minijuegos interactivos para 
 
 Alias de import: `@/` apunta a `src/` (configurado en `vite.config.ts` y `tsconfig.app.json`).
 
+Fuentes: Google Fonts `Inter` (400-800) + `Barlow Condensed` (600-800), cargadas vía `<link>` en `index.html` (no `@import` en CSS, por performance). Tema dark-only — no hay versión clara, `color-scheme: dark` en `src/index.css`.
+
 ## Estructura de carpetas (real, no solo planeada)
 
 ```
@@ -41,42 +43,51 @@ src/
     player.ts    # Position, Foot, PlayerIdentity, PlayerAttributes, PlayerState
     club.ts      # Club
     event.ts     # StatEffect, EventChoice (+ transfer/loan/injury opcionales), ClubMoveCriteria, LoanEffect, InjuryEffect, SeasonEvent
-    career.ts    # CharacterCreationInput, CareerState (pendingEventId, loan, titles), LoanState, Title, CareerAction (CREATE_CAREER | ADVANCE_SEASON | RESOLVE_EVENT)
+    career.ts    # CharacterCreationInput, CareerState (currentClub nullable, clubOffers, pendingEventId, loan, titles, seasonHistory), SeasonHistoryEntry, LoanState, Title, CareerAction (CREATE_CAREER | SELECT_CLUB | ADVANCE_SEASON | RESOLVE_EVENT)
   content/
     clubs.ts     # SAMPLE_CLUBS: ~13 clubes hardcodeados a mano (NO es content/clubs.json todavía — eso es Fase 3b); getClubById(id)
+    countries.ts # COUNTRIES: ~195 países (ISO, nombres en español), sin colores — getCountryByName/getCountryById (integración de diseño)
+    tacticalPositions.ts # TACTICAL_POSITIONS: 12 posiciones tácticas de la cancha interactiva de creación, mapeadas a Position (cosmético, integración de diseño)
     events/      # SAMPLE_EVENTS armado desde 8 archivos por categoría + index.ts; getEventById(id). Reemplaza al viejo events.ts (Fase 3a, EN PROGRESO — ver Pendiente)
       index.ts, training.ts, diet.ts, injury.ts, transfer.ts, loan.ts, media.ts, personal.ts, scandal.ts
   engine/        # TS puro, sin imports de React/DOM/Supabase — confirmado, cero dependencias externas de UI
     rng.ts               # createRng(seed) — PRNG mulberry32, expone next/randInt/pick/pickWeighted/getState
     statMath.ts           # generateBaseAttributes, attributeGrowthDelta, deriveOverallRating, marketValueForRating, clamp, ATTRIBUTE_KEYS
-    createCareer.ts        # createCareer(input, seed?) -> CareerState inicial (edad 17, phase ACTIVE, pendingEventId null, loan null, titles [])
+    createCareer.ts        # createCareer(input, seed?) -> CareerState inicial (edad 17, phase CLUB_PENDING, currentClub null, clubOffers, pendingEventId null, loan null, titles [], seasonHistory [])
     eventSelector.ts        # selectEvent(state, rng) — filtra por minAge/maxAge y por loan-lock (sin transfer/loan mientras `state.loan` esté activo), pickWeighted por `weight`
     seasonPerformance.ts     # simulateSeasonPerformance(player, rng, options?) -> {matches, goals, assists}; `options.matchesMultiplier` reduce partidos por lesión
-    clubTransition.ts        # selectClubForMove (con relajación en 3 pasos), applyTransfer, applyLoanStart, applyLoanReturn (Fase 3a, nuevo)
+    clubTransition.ts        # selectClubForMove (con relajación en 3 pasos), selectDebutClubOffers (integración de diseño — hasta N clubes distintos ponderados, con la misma relajación), applyTransfer, applyLoanStart, applyLoanReturn (Fase 3a)
     leagueEngine.ts           # resolveLeagueWinner(clubs, {country,tier}, rng) — título de liga automático, ponderado por reputación (Fase 3a, nuevo)
-    careerReducer.ts          # careerReducer(state, action) — único punto de entrada al motor; beginSeason() + resolveEvent() internos; resolveEvent ahora también aplica transfer/loan/retorno de préstamo, lesión y título de liga
+    careerReducer.ts          # careerReducer(state, action) — único punto de entrada al motor; beginSeason() + resolveEvent() + selectClub() internos; resolveEvent aplica transfer/loan/retorno de préstamo, lesión, título de liga y push a seasonHistory
     __tests__/
       rng.test.ts              # determinismo, resumibilidad desde un estado capturado, rango [0,1)
-      careerReducer.test.ts     # carrera completa hasta RETIRED, determinismo end-to-end, invariantes de stats, flujo EVENT_PENDING/RESOLVE_EVENT. TODAVÍA NO cubre transfer/loan/injury/titles (Fase 3a sin terminar, ver Pendiente)
+      careerReducer.test.ts     # 25 tests: carrera completa hasta RETIRED, determinismo end-to-end, invariantes de stats, flujo CLUB_PENDING/SELECT_CLUB, flujo EVENT_PENDING/RESOLVE_EVENT, seasonHistory. TODAVÍA NO cubre transfer/loan/injury/titles (Fase 3a sin terminar, ver Pendiente)
   minigames/        # subcarpetas penaltyShootout/, freeKick/, dribbleChallenge/, shared/ creadas, vacías (Fase 4-5)
   store/
     careerStore.ts    # useCareerStore (Zustand) — { career, dispatch } fino sobre careerReducer, sin lógica propia
+  components/        # capa de UI compartida entre pantallas (integración de diseño, no existía antes)
+    icons/            # SVGs inline sin librería: SearchIcon, CheckIcon, InfoCircleIcon, StatCircleIcon, TrophyIcon, UpChevronIcon, DownChevronIcon
+    ui/               # LabelValue, StatTile, AttributeBar, SegmentedControl, Button, RatingBadge, FlagChip (+ColorRoundel), PlayerIdentityHeader, StatTilesRow, EmptyState, ClubCrestBadge, ClubOfferPicker, SeasonTimelineTable, EventChoiceCard, CountryPicker
   features/
-    characterCreation/CharacterCreationPage.tsx   # real: formulario de creación, ruta "/"
-    careerHub/CareerHubPage.tsx                   # real: estado de la carrera en curso + botón "Avanzar temporada", ruta "/hub"
-    seasonEvent/SeasonEventPage.tsx               # real: texto del evento pendiente + elección del usuario, ruta "/event"
-    minigamePlayer/MinigamePlayerPage.tsx         # placeholder, ruta "/minigame"
-    careerSummary/CareerSummaryPage.tsx           # liviano: stats finales al retirarse, ruta "/summary" (build completo es Fase 6)
-    leaderboard/LeaderboardPage.tsx               # placeholder, ruta "/leaderboard"
+    characterCreation/CharacterCreationPage.tsx   # real, con el diseño integrado: 3 columnas (camiseta+identidad, buscador de país, cancha táctica), ruta "/"
+    characterCreation/components/                 # JerseyPreview, PositionPitch — de uso único en esta pantalla, no van en components/ui
+    careerHub/CareerHubPage.tsx                   # real, con el diseño integrado: rama por career.phase (CLUB_PENDING → ClubOfferPicker; ACTIVE → botón "Avanzar temporada"), timeline de temporadas real, ruta "/hub"
+    seasonEvent/SeasonEventPage.tsx               # real, con el diseño integrado: EventChoiceCard por elección (efecto cualitativo Sube/Baja/Sin cambios, no porcentajes), ruta "/event"
+    minigamePlayer/MinigamePlayerPage.tsx         # placeholder con tema dark aplicado (paso liviano), ruta "/minigame"
+    careerSummary/CareerSummaryPage.tsx           # con el diseño integrado, ruta "/summary" (build completo con ranking es Fase 6)
+    leaderboard/LeaderboardPage.tsx               # placeholder con tema dark aplicado (paso liviano), ruta "/leaderboard"
     rival/                                        # vacío — no es una ruta propia, se embebe en careerHub más adelante
   lib/
     supabaseClient.ts   # cliente de Supabase real, usa VITE_SUPABASE_URL + VITE_SUPABASE_PUBLISHABLE_KEY
-    labels.ts            # POSITION_LABELS, FOOT_LABELS, ATTRIBUTE_LABELS, EVENT_CATEGORY_LABELS, formatCurrency — strings en español compartidos entre pantallas
+    labels.ts            # POSITION_LABELS, POSITION_SHORT_LABELS, FOOT_LABELS, ATTRIBUTE_LABELS, EVENT_CATEGORY_LABELS, formatCurrency — strings en español compartidos entre pantallas
+    colorHash.ts          # hashColorPair(seed) — par de colores HSL determinístico (escudos de club, banderas, camisetas — sin curar color a mano por item)
+    clubVisuals.ts         # clubInitials(name) — iniciales para el escudo placeholder
+    eventEffects.ts         # summarizeChoiceEffect(choice) -> {direction, label} — resume el efecto neto de una elección sin revelar números exactos
     api/                # vacío — leaderboard.ts, rivals.ts van acá en Fase 6
   hooks/
-    useCareerEngine.ts    # wrapper del store: { career, createCareer, advanceSeason, resolveEvent }
+    useCareerEngine.ts    # wrapper del store: { career, createCareer, selectClub, advanceSeason, resolveEvent }
   test/setup.ts     # setup de Testing Library (jest-dom) para Vitest
-App.tsx             # router con las 6 rutas de arriba (3 reales, 3 placeholder)
+App.tsx             # router con las 6 rutas de arriba (4 con el diseño integrado, 2 placeholder con tema dark)
 ```
 
 Las carpetas que todavía no tienen contenido real (`minigames/*`, `features/rival/`, `lib/api/`) tienen un `.gitkeep` para que git las trackee hasta la fase que las llene.
@@ -141,6 +152,26 @@ El plan (`generic-sprouting-panda.md`) esbozaba el motor a alto nivel; al implem
 - Verificado a mano en navegador (`npm run dev`): flujo completo creación → hub → evento → hub con stats actualizadas, validación de formulario, y las guardas de ruta (navegación directa a `/event` sin carrera activa redirige a `/`, dado que todavía no hay persistencia — esperado, no es un bug).
 - `npm run test`, `npx tsc -b --noEmit` y `npm run lint` (oxlint) corren limpios.
 
+### Integración de diseño (Claude Design) — hecha antes de retomar Fase 3a (2026-08-05)
+
+El usuario corrió una sesión de Claude Design (claude.ai/design) con el prompt de `docs/design-brief.md` y entregó un handoff bundle (HTML/CSS/JS, `coperort.dc.html`, fuera del repo en `Downloads\Diseño de cuatro pantallas interactivas-handoff\`) con la especificación pixel-a-pixel de las 4 pantallas reales. Por decisión explícita del usuario esto se implementó **antes** de retomar Fase 3a (que sigue sin terminar, ver abajo, sin cambios de esta pasada). Plan de implementación completo en `C:\Users\49432830\.claude\plans\linked-brewing-starlight.md`.
+
+El handoff era un prototipo, no código a portar literalmente — se recreó pixel a pixel en React + Tailwind v4 real. Tres puntos donde el mockup implicaba más que un repintado se resolvieron como cambios de producto/motor reales (decisión explícita del usuario, no interpretación libre):
+
+1. **Selector de club de debut real.** `createCareer.ts` ya no auto-asigna club — la carrera arranca en `phase: 'CLUB_PENDING'` con `currentClub: null` y `clubOffers` (hasta 3 clubes distintos, ponderados por reputación vía `selectDebutClubOffers` en `clubTransition.ts`, con relajación al pool completo si hay menos de 3 candidatos con reputación <40 — esto además arregla el riesgo de `pickWeighted` sobre array vacío que estaba anotado más abajo para el viejo `createCareer.ts`). Nueva acción `SELECT_CLUB(clubId)` en el reducer asigna el club elegido y pasa a `ACTIVE`.
+2. **Timeline de carrera con datos reales**, no mockeados. `CareerState.seasonHistory: SeasonHistoryEntry[]` (edad, club, rating, PJ/GLS/AST de esa temporada), poblado por `resolveEvent()` en cada `RESOLVE_EVENT`. `SeasonTimelineTable` (Hub y Evento) lo renderiza fila por edad desde 17 hasta `retirementAge`, con guiones en las que todavía no se jugaron.
+3. **Selector de nacionalidad** pasó de texto libre a una grilla buscable de `content/countries.ts` (~195 países ISO, nombres en español) con banderas-placeholder de 2 colores derivadas en runtime (`hashColorPair`, no curadas a mano). El mockup solo traía 21 países hardcodeados — se amplió a cobertura completa por decisión del usuario.
+
+Dos desviaciones deliberadas respecto al pixel-parity del mockup, porque este inventaba datos que el motor real no tiene: las píldoras de efecto de cada elección de evento muestran un solo indicador cualitativo ("Sube"/"Baja"/"Sin cambios", derivado del signo neto de `choice.effects` vía `lib/eventEffects.ts#summarizeChoiceEffect`) en vez de las dos píldoras con porcentajes fabricados del mockup — no hay modelo de probabilidad real en el motor determinístico. Y la píldora de posición en Hub/Evento usa el código corto de la `Position` real (`POR`/`DEF`/`MED`/`DEL`, `lib/labels.ts#POSITION_SHORT_LABELS`), no el código táctico de 12 vías — ese grid (`content/tacticalPositions.ts`) es solo el mecanismo de UX de la pantalla de creación para elegir la `Position` real, nunca se persiste.
+
+Se construyó además la primera capa de componentes de UI compartidos (`src/components/icons/`, `src/components/ui/`, ver estructura de carpetas arriba) — antes de esto cada pantalla inlineaba sus propias clases de Tailwind sin abstracción (`StatTile`/`AttributeBar` vivían duplicados dentro de `CareerHubPage.tsx`).
+
+**8 tests nuevos en `careerReducer.test.ts` (25 en total, todos pasando)** cubriendo `CLUB_PENDING`/`SELECT_CLUB` (ofertas distintas, no-op de `ADVANCE_SEASON` en esta fase, selección válida, los tres casos de error) y `seasonHistory` (una entrada por temporada resuelta que coincide con `stats`, invariante `seasonHistory.length === eventLog.length` en una carrera completa, cross-check de partidos acumulados). El helper `runFullCareer` de los tests end-to-end existentes ahora despacha `SELECT_CLUB` con la primera oferta antes de arrancar el loop de temporadas.
+
+Verificado en navegador (`npm run dev`, puerto 5173, sin errores de consola en ningún paso): flujo completo creación (con búsqueda de país y cancha táctica funcionando) → hub en `CLUB_PENDING` con las ofertas de club → selección de club → `ACTIVE` con el club elegido → avanzar temporada → evento con las píldoras de efecto → hub con el timeline mostrando la temporada recién jugada con datos reales → repetido hasta retiro (edad 35, dentro de 34-38) → resumen con stats coherentes → reinicio a `/`. `/minigame` y `/leaderboard` (paso liviano, sin rediseño estructural) cargan con el tema dark aplicado, sin errores.
+
+`npm run test` (25/25), `npx tsc -b --noEmit` y `npm run lint` (oxlint) corren limpios. `node_modules` no estaba instalado al empezar esta sesión — se corrió `npm install` (147 paquetes; las 2 vulnerabilidades de severidad alta que reporta `npm audit` son la de `react-router-dom`/RSC ya registrada abajo como no aplicable, confirmado).
+
 ### Fase 3a — Motor: transfers/préstamos/lesiones, títulos de liga (2026-08-04, **EN PROGRESO, SIN TERMINAR** — se cortó por falta de tiempo, retomar desde acá)
 
 Plan completo en `C:\Users\devandroid\.claude\plans\nifty-mixing-quiche.md`. El usuario pidió explícitamente separar Fase 3 en 3a (motor + contenido, sin dependencias externas) y 3b (datos reales de clubes desde Wikipedia/openfootball, investigación aparte) — ver ese plan para el razonamiento completo.
@@ -179,5 +210,5 @@ Plan completo en `C:\Users\devandroid\.claude\plans\nifty-mixing-quiche.md`. El 
 - Cobertura de clubes fuera de Europa/Sudamérica va a quedar incompleta al principio (depende de cuánta data haya organizada en Wikipedia por país para segundas divisiones de CONCACAF/CAF/AFC más chicas). No es bloqueante, se puede sumar de forma incremental.
 - Sin anti-cheat: si el proyecto gana tracción real, revisar el diseño de validación server-side por replay que está esbozado en el plan (motor puro portado a una Edge Function).
 - `react-router-dom` tiene una vulnerabilidad reportada (alta severidad) específica del modo RSC (React Server Components) — no aplica a este proyecto porque es una SPA client-only sin RSC. Registrado acá para no re-investigarlo cada vez que `npm audit` lo marque.
-- **`createCareer.ts` elige el club de debut filtrando `SAMPLE_CLUBS` por `reputation < 40`.** Si ese filtro alguna vez da un array vacío, `rng.pickWeighted` (`engine/rng.ts`) hace `items[items.length - 1]` sobre un array vacío y devuelve `undefined`, rompiendo la carrera sin un error claro. Hoy no pasa (hay 2 clubes con reputación <40 en el set de 13 hardcodeados), pero cuando la Fase 3b reemplace el contenido por datos reales de Wikipedia por país/confederación no hay garantía de que todos los países tengan clubes de reputación baja. Al armar `content/clubs.json`, o bien agregar un fallback al pool completo (como ya hace `eventSelector.ts` con `SAMPLE_EVENTS`, y como ya hace `clubTransition.ts#selectClubForMove` desde la Fase 3a), o asegurar que el generador de contenido siempre incluya clubes de baja reputación por país. **`engine/leagueEngine.ts#resolveLeagueWinner` (Fase 3a) tiene exactamente el mismo riesgo sin mitigar** — filtra por `country`+`tier` y llama `pickWeighted` directo, sin fallback; hoy nunca da vacío porque el grupo siempre incluye al club del jugador por construcción, pero si `resolveLeagueWinner` se llama alguna vez con un club fuera de `clubs` este supuesto se rompe. Revisar los tres puntos juntos cuando se arme `content/clubs.json` en 3b.
+- ~~`createCareer.ts` elige el club de debut filtrando `SAMPLE_CLUBS` por `reputation < 40`...~~ — **resuelto en la integración de diseño (2026-08-05).** `createCareer.ts` ahora usa `selectDebutClubOffers` (`engine/clubTransition.ts`), que relaja al pool completo de clubes si el filtro por reputación da menos candidatos de los pedidos, y nunca llama `pickWeighted` sobre un array vacío. **`engine/leagueEngine.ts#resolveLeagueWinner` (Fase 3a) sigue con el mismo riesgo sin mitigar** — filtra por `country`+`tier` y llama `pickWeighted` directo, sin fallback; hoy nunca da vacío porque el grupo siempre incluye al club del jugador por construcción, pero si se llama alguna vez con un club fuera de `clubs` este supuesto se rompe. Revisar cuando se arme `content/clubs.json` en 3b.
 - **Sin persistencia de la carrera en curso.** `store/careerStore.ts` vive solo en memoria; un refresh de página o una navegación de URL completa (no vía React Router) pierde la carrera y las guardas de ruta redirigen a `/`. Es el comportamiento esperado para la Fase 2 — no hay `localStorage` ni sync con Supabase todavía (eso es Fase 6).

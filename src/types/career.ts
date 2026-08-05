@@ -24,7 +24,7 @@ export interface ClubStint {
   toYear: number | null
 }
 
-export type CareerPhase = 'ACTIVE' | 'EVENT_PENDING' | 'RETIRED'
+export type CareerPhase = 'CLUB_PENDING' | 'ACTIVE' | 'EVENT_PENDING' | 'RETIRED'
 
 export interface LoanState {
   parentClubId: string
@@ -46,13 +46,27 @@ export interface Title {
   tier: 1 | 2
 }
 
+export interface SeasonHistoryEntry {
+  season: number
+  year: number
+  age: number
+  clubId: string
+  overallRating: number
+  matches: number
+  goals: number
+  assists: number
+}
+
 export interface CareerState {
   id: string
   seed: number
   /** estado interno del PRNG (mulberry32); junto con `seed` hace la carrera reproducible */
   rngState: number
   player: PlayerState
-  currentClub: Club
+  /** `null` solo mientras `phase === 'CLUB_PENDING'`, antes de que el jugador elija una oferta */
+  currentClub: Club | null
+  /** ofertas de club de debut, ponderadas por reputación; solo pobladas durante `CLUB_PENDING` */
+  clubOffers: Club[]
   clubHistory: ClubStint[]
   retirementAge: number
   season: number
@@ -65,9 +79,12 @@ export interface CareerState {
   stats: CareerStats
   titles: Title[]
   eventLog: { season: number; eventId: string; choiceId: string }[]
+  /** snapshot por temporada resuelta (edad, club, rating, PJ/GLS/AST) — usado por el timeline de carrera */
+  seasonHistory: SeasonHistoryEntry[]
 }
 
 export type CareerAction =
   | { type: 'CREATE_CAREER'; input: CharacterCreationInput; seed?: number }
+  | { type: 'SELECT_CLUB'; clubId: string }
   | { type: 'ADVANCE_SEASON' }
   | { type: 'RESOLVE_EVENT'; choiceId: string }

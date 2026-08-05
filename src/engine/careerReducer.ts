@@ -9,7 +9,7 @@ import { SAMPLE_CLUBS } from '@/content/clubs'
 import { getEventById } from '@/content/events'
 import type { Rng } from './rng'
 import type { PlayerAttributes } from '@/types/player'
-import type { CareerAction, CareerPhase, CareerState, Title } from '@/types/career'
+import type { CareerAction, CareerPhase, CareerState, SeasonHistoryEntry, Title } from '@/types/career'
 import type { EventChoice, StatEffect } from '@/types/event'
 
 function applyClubTransition(
@@ -18,17 +18,19 @@ function applyClubTransition(
   newYear: number,
   rng: Rng,
 ): Pick<CareerState, 'currentClub' | 'clubHistory' | 'loan'> {
-  const unchanged = { currentClub: state.currentClub, clubHistory: state.clubHistory, loan: state.loan }
+  // no-null: solo se llama desde resolveEvent, alcanzable únicamente después de SELECT_CLUB
+  const currentClub = state.currentClub!
+  const unchanged = { currentClub, clubHistory: state.clubHistory, loan: state.loan }
 
   if (state.loan && newYear >= state.loan.returnYear) {
     return applyLoanReturn(state, newYear)
   }
   if (choice.transfer) {
-    const club = selectClubForMove(state.currentClub, SAMPLE_CLUBS, choice.transfer, rng, (c) => c.reputation)
+    const club = selectClubForMove(currentClub, SAMPLE_CLUBS, choice.transfer, rng, (c) => c.reputation)
     return club ? applyTransfer(state, club, newYear) : unchanged
   }
   if (choice.loan) {
-    const club = selectClubForMove(state.currentClub, SAMPLE_CLUBS, choice.loan, rng, (c) => 100 - c.reputation)
+    const club = selectClubForMove(currentClub, SAMPLE_CLUBS, choice.loan, rng, (c) => 100 - c.reputation)
     return club ? applyLoanStart(state, club, newYear, choice.loan.durationSeasons ?? 1) : unchanged
   }
   return unchanged
@@ -85,6 +87,8 @@ function resolveEvent(state: CareerState, choiceId: string): CareerState {
   const marketValue = Math.round(baselineMarketValue * marketValueMultiplierFromEffects(choice.effects))
 
   const clubTransition = applyClubTransition(state, choice, newYear, rng)
+  // no-null: applyClubTransition siempre devuelve un club (invariante de fase ACTIVE)
+  const currentClub = clubTransition.currentClub!
 
   const performance = simulateSeasonPerformance(
     { ...state.player, attributes, age: newAge, overallRating, marketValue },
@@ -92,12 +96,8 @@ function resolveEvent(state: CareerState, choiceId: string): CareerState {
     { matchesMultiplier: choice.injury ? 1 - choice.injury.matchesReductionPct : undefined },
   )
 
-  const leagueWinner = resolveLeagueWinner(
-    SAMPLE_CLUBS,
-    { country: clubTransition.currentClub.country, tier: clubTransition.currentClub.tier },
-    rng,
-  )
-  const wonLeague = leagueWinner.id === clubTransition.currentClub.id
+  const leagueWinner = resolveLeagueWinner(SAMPLE_CLUBS, { country: currentClub.country, tier: currentClub.tier }, rng)
+  const wonLeague = leagueWinner.id === currentClub.id
   const titles: Title[] = wonLeague
     ? [
         ...state.titles,
@@ -105,12 +105,23 @@ function resolveEvent(state: CareerState, choiceId: string): CareerState {
           type: 'league',
           season: state.season,
           year: newYear,
-          clubId: clubTransition.currentClub.id,
-          country: clubTransition.currentClub.country,
-          tier: clubTransition.currentClub.tier,
+          clubId: currentClub.id,
+          country: currentClub.country,
+          tier: currentClub.tier,
         },
       ]
     : state.titles
+
+  const seasonHistoryEntry: SeasonHistoryEntry = {
+    season: state.season,
+    year: newYear,
+    age: newAge,
+    clubId: currentClub.id,
+    overallRating,
+    matches: performance.matches,
+    goals: performance.goals,
+    assists: performance.assists,
+  }
 
   const phase: CareerPhase = newAge >= state.retirementAge ? 'RETIRED' : 'ACTIVE'
 
@@ -132,6 +143,21 @@ function resolveEvent(state: CareerState, choiceId: string): CareerState {
     },
     titles,
     eventLog: [...state.eventLog, { season: state.season, eventId: event.id, choiceId: choice.id }],
+    seasonHistory: [...state.seasonHistory, seasonHistoryEntry],
+  }
+}
+
+function selectClub(state: CareerState, clubId: string): CareerState {
+  if (state.phase !== 'CLUB_PENDING') throw new Error('No hay ninguna oferta de club pendiente')
+  const club = state.clubOffers.find((candidate) => candidate.id === clubId)
+  if (!club) throw new Error(`Oferta de club desconocida "${clubId}"`)
+
+  return {
+    ...state,
+    currentClub: club,
+    clubHistory: [{ clubId: club.id, fromYear: state.year, toYear: null }],
+    clubOffers: [],
+    phase: 'ACTIVE',
   }
 }
 
@@ -139,6 +165,9 @@ export function careerReducer(state: CareerState | null, action: CareerAction): 
   switch (action.type) {
     case 'CREATE_CAREER':
       return createCareer(action.input, action.seed)
+    case 'SELECT_CLUB':
+      if (!state) throw new Error('No hay una carrera en curso: despachá CREATE_CAREER primero')
+      return selectClub(state, action.clubId)
     case 'ADVANCE_SEASON':
       if (!state) throw new Error('No hay una carrera en curso: despachá CREATE_CAREER primero')
       if (state.phase !== 'ACTIVE') return state

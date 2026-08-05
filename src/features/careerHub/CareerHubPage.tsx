@@ -1,41 +1,31 @@
 import { Navigate, useNavigate } from 'react-router-dom'
+import { AttributeBar } from '@/components/ui/AttributeBar'
+import { ClubOfferPicker } from '@/components/ui/ClubOfferPicker'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { PlayerIdentityHeader } from '@/components/ui/PlayerIdentityHeader'
+import { SeasonTimelineTable } from '@/components/ui/SeasonTimelineTable'
+import { StatTilesRow } from '@/components/ui/StatTilesRow'
+import { TrophyIcon } from '@/components/icons/TrophyIcon'
+import { InfoCircleIcon } from '@/components/icons/InfoCircleIcon'
+import { getClubById } from '@/content/clubs'
+import { getCountryByName } from '@/content/countries'
 import { useCareerEngine } from '@/hooks/useCareerEngine'
 import { useCareerStore } from '@/store/careerStore'
 import { ATTRIBUTE_KEYS } from '@/engine/statMath'
-import { ATTRIBUTE_LABELS, FOOT_LABELS, POSITION_LABELS, formatCurrency } from '@/lib/labels'
-
-function StatTile({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="rounded-lg border border-neutral-200 p-3 text-center dark:border-neutral-800">
-      <p className="text-lg font-semibold">{value}</p>
-      <p className="text-xs text-neutral-500">{label}</p>
-    </div>
-  )
-}
-
-function AttributeBar({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="flex justify-between text-xs text-neutral-500">
-        <span>{label}</span>
-        <span>{value}</span>
-      </div>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
-        <div className="h-full rounded-full bg-neutral-900 dark:bg-white" style={{ width: `${value}%` }} />
-      </div>
-    </div>
-  )
-}
+import { ATTRIBUTE_LABELS, POSITION_SHORT_LABELS } from '@/lib/labels'
 
 export function CareerHubPage() {
   const navigate = useNavigate()
-  const { career, advanceSeason } = useCareerEngine()
+  const { career, advanceSeason, selectClub } = useCareerEngine()
 
   if (!career) return <Navigate to="/" replace />
   if (career.phase === 'EVENT_PENDING') return <Navigate to="/event" replace />
   if (career.phase === 'RETIRED') return <Navigate to="/summary" replace />
 
   const { player, currentClub, stats } = career
+  const country = getCountryByName(player.identity.nationality)
+  const countryId = country?.id ?? 'ar'
+  const countryCode = player.identity.nationality.slice(0, 3).toUpperCase()
 
   function handleAdvance() {
     advanceSeason()
@@ -43,54 +33,58 @@ export function CareerHubPage() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col gap-6 p-8">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold">
-            {player.identity.firstName} {player.identity.surname}
-          </h1>
-          <p className="text-neutral-500">
-            {POSITION_LABELS[player.identity.position]} · {player.identity.nationality} · #{player.identity.jerseyNumber} ·{' '}
-            {FOOT_LABELS[player.identity.dominantFoot]}
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-3xl font-bold">{player.overallRating}</p>
-          <p className="text-sm text-neutral-500">rating</p>
-        </div>
-      </header>
+    <main className="mx-auto grid max-w-[1180px] grid-cols-1 items-start gap-7 px-6 py-8 lg:grid-cols-[1.15fr_1fr]">
+      <div className="flex flex-col gap-[22px]">
+        <PlayerIdentityHeader
+          overallRating={player.overallRating}
+          countryId={countryId}
+          countryCode={countryCode}
+          jerseyNumber={player.identity.jerseyNumber}
+          positionShort={POSITION_SHORT_LABELS[player.identity.position]}
+          age={player.age}
+          marketValue={player.marketValue}
+          clubName={currentClub?.name}
+        />
 
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatTile label="Edad" value={player.age} />
-        <StatTile label="Temporada" value={career.season} />
-        <StatTile label="Club" value={currentClub.name} />
-        <StatTile label="Valor de mercado" value={formatCurrency(player.marketValue)} />
-      </section>
+        {career.phase === 'CLUB_PENDING' && (
+          <div className="flex items-center gap-1.5 text-[13px] text-text-secondary">
+            <span>Libre — elegí un club</span>
+            <InfoCircleIcon />
+          </div>
+        )}
 
-      <section className="rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
-        <h2 className="mb-3 font-medium">Atributos</h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {ATTRIBUTE_KEYS.map((key) => (
-            <AttributeBar key={key} label={ATTRIBUTE_LABELS[key]} value={player.attributes[key]} />
-          ))}
+        <div className="rounded-card bg-surface p-4">
+          <h3 className="m-0 mb-3 text-[13px] font-bold text-text">Atributos</h3>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {ATTRIBUTE_KEYS.map((key) => (
+              <AttributeBar key={key} label={ATTRIBUTE_LABELS[key]} value={player.attributes[key]} />
+            ))}
+          </div>
         </div>
-      </section>
 
-      <section className="rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
-        <h2 className="mb-3 font-medium">Estadísticas de carrera</h2>
-        <div className="grid grid-cols-3 gap-3 text-center">
-          <StatTile label="Partidos" value={stats.matches} />
-          <StatTile label="Goles" value={stats.goals} />
-          <StatTile label="Asistencias" value={stats.assists} />
-        </div>
-      </section>
+        <StatTilesRow matches={stats.matches} goals={stats.goals} assists={stats.assists} />
 
-      <button
-        onClick={handleAdvance}
-        className="mt-auto rounded-md bg-neutral-900 px-4 py-3 font-medium text-white transition hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-      >
-        Avanzar temporada
-      </button>
+        <EmptyState icon={<TrophyIcon />} label="VITRINA VACÍA" />
+
+        {career.phase === 'CLUB_PENDING' ? (
+          <ClubOfferPicker offers={career.clubOffers} onSelect={selectClub} />
+        ) : (
+          <button
+            type="button"
+            onClick={handleAdvance}
+            className="mt-1 cursor-pointer rounded-card border-none bg-accent px-4 py-3.5 text-[15px] font-bold text-[#141414] hover:bg-accent-hover"
+          >
+            Avanzar temporada
+          </button>
+        )}
+      </div>
+
+      <SeasonTimelineTable
+        seasonHistory={career.seasonHistory}
+        currentAge={player.age}
+        retirementAge={career.retirementAge}
+        getClubLabel={(clubId) => getClubById(clubId).name}
+      />
     </main>
   )
 }
