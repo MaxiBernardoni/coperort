@@ -27,7 +27,7 @@ Este proyecto combina y mejora ambos: prioriza (1) minijuegos interactivos para 
 - Tailwind CSS v4 (vía `@tailwindcss/vite`, sin `tailwind.config.js` — todo el theming vive en CSS con `@import "tailwindcss"` en `src/index.css`)
 - Zustand (estado de carrera, wrapper fino sobre un reducer puro)
 - React Router v7 (`BrowserRouter`)
-- Zod (validación de contenido data-driven — todavía no implementado, ver Pendiente)
+- Zod (validación de contenido data-driven — `content/contentSchema.ts`, ver Fase 3a)
 - Vitest + Testing Library + jsdom
 - Supabase (Postgres) — sin Supabase Auth
 
@@ -48,8 +48,11 @@ src/
     clubs.ts     # SAMPLE_CLUBS: ~13 clubes hardcodeados a mano (NO es content/clubs.json todavía — eso es Fase 3b); getClubById(id)
     countries.ts # COUNTRIES: ~195 países (ISO, nombres en español), sin colores — getCountryByName/getCountryById (integración de diseño)
     tacticalPositions.ts # TACTICAL_POSITIONS: 12 posiciones tácticas de la cancha interactiva de creación, mapeadas a Position (cosmético, integración de diseño)
-    events/      # SAMPLE_EVENTS armado desde 8 archivos por categoría + index.ts; getEventById(id). Reemplaza al viejo events.ts (Fase 3a, EN PROGRESO — ver Pendiente)
+    contentSchema.ts # validación Zod de SeasonEvent/EventChoice/StatEffect/ClubMoveCriteria/LoanEffect/InjuryEffect y Club — seasonEventsSchema/clubsSchema (ids únicos, minAge<=maxAge) (Fase 3a)
+    events/      # SAMPLE_EVENTS armado desde 8 archivos por categoría + index.ts; getEventById(id). Las 8 categorías tienen contenido real (Fase 3a)
       index.ts, training.ts, diet.ts, injury.ts, transfer.ts, loan.ts, media.ts, personal.ts, scandal.ts
+    __tests__/
+      contentSchema.test.ts # SAMPLE_EVENTS/SAMPLE_CLUBS reales validan contra el schema, más casos inválidos (ids duplicados, minAge>maxAge, category/tier/reputation fuera de rango)
   engine/        # TS puro, sin imports de React/DOM/Supabase — confirmado, cero dependencias externas de UI
     rng.ts               # createRng(seed) — PRNG mulberry32, expone next/randInt/pick/pickWeighted/getState
     statMath.ts           # generateBaseAttributes, attributeGrowthDelta, deriveOverallRating, marketValueForRating, clamp, ATTRIBUTE_KEYS
@@ -61,7 +64,10 @@ src/
     careerReducer.ts          # careerReducer(state, action) — único punto de entrada al motor; beginSeason() + resolveEvent() + selectClub() internos; resolveEvent aplica transfer/loan/retorno de préstamo, lesión, título de liga y push a seasonHistory
     __tests__/
       rng.test.ts              # determinismo, resumibilidad desde un estado capturado, rango [0,1)
-      careerReducer.test.ts     # 25 tests: carrera completa hasta RETIRED, determinismo end-to-end, invariantes de stats, flujo CLUB_PENDING/SELECT_CLUB, flujo EVENT_PENDING/RESOLVE_EVENT, seasonHistory. TODAVÍA NO cubre transfer/loan/injury/titles (Fase 3a sin terminar, ver Pendiente)
+      careerReducer.test.ts     # 25 tests: carrera completa hasta RETIRED, determinismo end-to-end, invariantes de stats, flujo CLUB_PENDING/SELECT_CLUB, flujo EVENT_PENDING/RESOLVE_EVENT, seasonHistory, transfer real, loan + retorno automático, injury reduce partidos, título de liga se agrega a titles (Fase 3a)
+      clubTransition.test.ts    # selectClubForMove (relajación en 3 pasos, nunca elige el club actual), selectDebutClubOffers, applyTransfer, applyLoanStart, applyLoanReturn (Fase 3a)
+      leagueEngine.test.ts      # resolveLeagueWinner agrupa por country+tier, ponderado por reputación, determinístico (Fase 3a)
+      eventSelector.test.ts     # filtro minAge/maxAge, loan-lock (sin transfer/loan mientras hay préstamo activo), relajación de pool (Fase 3a)
   minigames/        # subcarpetas penaltyShootout/, freeKick/, dribbleChallenge/, shared/ creadas, vacías (Fase 4-5)
   store/
     careerStore.ts    # useCareerStore (Zustand) — { career, dispatch } fino sobre careerReducer, sin lógica propia
@@ -172,32 +178,32 @@ Verificado en navegador (`npm run dev`, puerto 5173, sin errores de consola en n
 
 `npm run test` (25/25), `npx tsc -b --noEmit` y `npm run lint` (oxlint) corren limpios. `node_modules` no estaba instalado al empezar esta sesión — se corrió `npm install` (147 paquetes; las 2 vulnerabilidades de severidad alta que reporta `npm audit` son la de `react-router-dom`/RSC ya registrada abajo como no aplicable, confirmado).
 
-### Fase 3a — Motor: transfers/préstamos/lesiones, títulos de liga (2026-08-04, **EN PROGRESO, SIN TERMINAR** — se cortó por falta de tiempo, retomar desde acá)
+### Fase 3a — Motor: transfers/préstamos/lesiones, títulos de liga (motor 2026-08-04, contenido+tests+cierre 2026-08-05)
 
-Plan completo en `C:\Users\devandroid\.claude\plans\nifty-mixing-quiche.md`. El usuario pidió explícitamente separar Fase 3 en 3a (motor + contenido, sin dependencias externas) y 3b (datos reales de clubes desde Wikipedia/openfootball, investigación aparte) — ver ese plan para el razonamiento completo.
+Plan original en `C:\Users\devandroid\.claude\plans\nifty-mixing-quiche.md` (no accesible desde esta máquina, ver nota de multi-entorno en CLAUDE.md). Terminada después de la integración de diseño, por decisión explícita del usuario de hacer el diseño primero.
 
-**Hecho y verificado (`npm run test`, `npx tsc -b --noEmit`, `npm run lint` corren limpios, 17/17 tests):**
+**Motor (2026-08-04):**
 - `types/event.ts`: `ClubMoveCriteria` (reputationMin/Max, sameCountry, tier), `LoanEffect` (extiende `ClubMoveCriteria` + `durationSeasons`), `InjuryEffect` (`matchesReductionPct`), y `EventChoice` gana `transfer?`/`loan?`/`injury?` opcionales — aditivo, no rompe contenido existente.
 - `types/career.ts`: `LoanState { parentClubId, returnYear }`, `Title { type: 'league', season, year, clubId, country, tier }`, `CareerState.loan: LoanState | null` y `CareerState.titles: Title[]`.
-- `content/clubs.ts`: `getClubById(id)` (mismo patrón que `getEventById`).
-- `engine/clubTransition.ts` (nuevo): `selectClubForMove` (excluye siempre el club actual, relajación en 3 pasos si el criterio no tiene candidatos, nunca llama `pickWeighted` sobre un array vacío — ataca el riesgo ya documentado más abajo), `applyTransfer`, `applyLoanStart`, `applyLoanReturn`.
+- `engine/clubTransition.ts` (nuevo): `selectClubForMove` (excluye siempre el club actual, relajación en 3 pasos si el criterio no tiene candidatos, nunca llama `pickWeighted` sobre un array vacío), `applyTransfer`, `applyLoanStart`, `applyLoanReturn`.
 - `engine/leagueEngine.ts` (nuevo): `resolveLeagueWinner(clubs, {country, tier}, rng)` — título de liga automático cada temporada, ponderado por reputación.
-- `engine/seasonPerformance.ts`: segundo parámetro opcional `options.matchesMultiplier`, backward-compatible (sin `options`, comportamiento idéntico a antes).
+- `engine/seasonPerformance.ts`: segundo parámetro opcional `options.matchesMultiplier`, backward-compatible.
 - `engine/eventSelector.ts`: filtro de "loan lock" — mientras `state.loan` esté activo, no elegir eventos de categoría `transfer`/`loan`.
-- `engine/createCareer.ts`: inicializa `loan: null`, `titles: []`.
-- `engine/careerReducer.ts`: `resolveEvent` ahora aplica, en orden, transición de club (retorno de préstamo automático si corresponde, si no transfer, si no loan-start, si no nada) → recalcular rating/marketValue → performance de la temporada (con `matchesMultiplier` si la elección tiene `injury`) → resolución de liga (agrega a `titles` si el club del jugador ganó) → chequeo de retiro.
-- `content/events.ts` → `content/events/` (index.ts + un archivo por categoría), **reestructuración no rompe nada** — `@/content/events` sigue resolviendo igual para todos los imports existentes. `training.ts` y `diet.ts` recibieron el tratamiento completo de 5 eventos cada uno (contenido nuevo, en español). El resto de las categorías (`injury`, `transfer`, `media`, `personal`) solo tienen los eventos originales migrados tal cual (sin usar todavía los campos nuevos `transfer`/`loan`/`injury`). `loan.ts` y `scandal.ts` quedaron como arrays vacíos.
+- `engine/careerReducer.ts`: `resolveEvent` aplica, en orden, transición de club (retorno de préstamo automático si corresponde, si no transfer, si no loan-start, si no nada) → recalcular rating/marketValue → performance de la temporada (con `matchesMultiplier` si la elección tiene `injury`) → resolución de liga (agrega a `titles` si el club del jugador ganó) → chequeo de retiro.
+- `content/events.ts` → `content/events/` (index.ts + un archivo por categoría), reestructuración sin romper imports existentes.
 
-**SIN TERMINAR — esto es lo que falta para cerrar 3a, no es opcional, retomar en este orden:**
-1. **Contenido:** el evento `transfer-offer` (en `content/events/transfer.ts`) todavía NO usa el campo `choice.transfer` — la opción de irse solo multiplica `marketValue`, no mueve de club de verdad. `minor-injury` (en `injury.ts`) tampoco usa `choice.injury.matchesReductionPct` todavía. `loan.ts` y `scandal.ts` no tienen ningún evento — la mecánica de préstamo (motor) está construida y lista pero **nunca se dispara** porque no hay contenido que la use. Sin esto, transfers/préstamos/lesiones/títulos de liga están implementados en el motor pero no son alcanzables jugando una carrera real todavía.
-2. **`content/contentSchema.ts` no se creó.** El plan lo especifica en detalle (zod, `z.ZodType<T>` contra los tipos reales, con refinamientos a nivel array).
-3. **Tests nuevos no se escribieron:** `clubTransition.test.ts`, `leagueEngine.test.ts`, `eventSelector.test.ts`, `content/__tests__/contentSchema.test.ts`, y las extensiones a `careerReducer.test.ts` para transfer/loan/injury/titles que lista el plan. Los 17 tests que pasan son los de antes de esta fase — **las mecánicas nuevas no tienen cobertura de tests todavía**, solo compilan y no rompen lo existente.
-4. **Sanity check manual no se corrió** (el paso 4 de verificación del plan: correr una carrera con seed fija y loguear si transfers/préstamos/lesiones/títulos disparan de verdad).
-5. Actualizar esta sección de `CLAUDE.md` a "Hecho" sin el disclaimer de "sin terminar" una vez que 1-4 estén cerrados.
+**Contenido, schema, tests y cierre (2026-08-05):**
+- `content/events/transfer.ts` ampliado a 5 eventos: `transfer-offer` (ahora usa `choice.transfer: {reputationMin: 60}` de verdad), más `foreign-suitor`, `release-clause-triggered`, `relegation-release`, `boyhood-club-calls` (este último usa `sameCountry: true` para la vuelta al club de la infancia).
+- `content/events/injury.ts` ampliado a 5 eventos: `minor-injury` (ahora usa `choice.injury.matchesReductionPct`), más `ligament-scare`, `preseason-knock`, `overuse-fatigue`, `matchday-collision` — cada uno con la elección "arriesgada" perdiendo menos partidos pero con mayor penalty de atributo, y la elección "prudente" al revés.
+- `content/events/loan.ts`: 5 eventos nuevos (antes vacío) usando `choice.loan` con distintos criterios (`reputationMax`, `sameCountry`, `tier`, `durationSeasons` de 1 y 2 temporadas) — dispara la mecánica de préstamo que ya estaba construida en el motor.
+- `content/events/scandal.ts`: 5 eventos nuevos (antes vacío), tono liviano/potrero (video viral, asado con hinchas rivales, posteo en redes, foto de joda, entrevista picante) — sin temas sensibles, efectos mayormente sobre `marketValue`.
+- `content/contentSchema.ts` (nuevo): validación Zod (`z.ZodType<T>` contra los tipos reales de `types/event.ts` y `types/club.ts`) — `seasonEventsSchema`/`clubsSchema`, con refinamiento a nivel array de ids únicos (`superRefine`), y a nivel evento de `minAge<=maxAge` y choices con ids únicos dentro del evento. `parseSeasonEvents`/`parseClubs` como funciones de conveniencia (no se invocan todavía en tiempo de carga real — el contenido hardcodeado ya se sabe válido vía tests, invocarlas en runtime queda para cuando el contenido deje de ser 100% hardcodeado, ej. Fase 3b).
+- **36 tests nuevos** repartidos en `clubTransition.test.ts` (13), `leagueEngine.test.ts` (4), `eventSelector.test.ts` (5), `content/__tests__/contentSchema.test.ts` (10) y 4 extensiones a `careerReducer.test.ts` (transfer real mueve de club y extiende `clubHistory`; loan real + retorno automático al año exacto de `returnYear`; injury reduce partidos jugados esa temporada vs. una elección equivalente sin lesión; título de liga se agrega a `titles` cuando el club del jugador gana). **61 tests en total, todos pasando.**
+- Sanity check manual (script temporal en `engine/__tests__/_sanityCheck.test.ts`, después borrado): 5 carreras completas con seeds fijas (100-104), logueando cada vez que dispara transfer/loan-start/loan-return/injury/title. Confirmado con datos reales: transfers mueven de club y respetan el criterio (ej. `push-for-move` siempre a un club con reputación ≥60); préstamos de 1 y 2 temporadas vuelven exactamente en el año esperado; lesiones bajan partidos jugados esa temporada. **Hallazgo no-bug, ya anotado en "Decisiones abiertas":** con las 13 clubes hardcodeadas, Argentina tier 2 y Inglaterra tier 1 tienen un solo club cada uno (Tigre y Manchester City respectivamente), así que un jugador en esos clubes gana la liga *todas* las temporadas — comportamiento correcto del motor (grupo de un club siempre se gana a sí mismo, ya cubierto por `leagueEngine.test.ts`), pero un desbalance de contenido a tener en cuenta al armar `content/clubs.json` en la Fase 3b.
+- `npm run test` (61/61), `npx tsc -b --noEmit` y `npm run lint` (oxlint) corren limpios. Verificado también en navegador: carrera completa de punta a punta con el contenido nuevo cargado, sin errores de consola.
 
 ## Pendiente (TODO)
 
-- **Fase 3a — terminar lo de arriba** (contenido de transfer/loan/injury/scandal, `contentSchema.ts`, tests nuevos, sanity check).
 - **Fase 3b — datos reales de clubes:** armar `content/clubs.json` (ver sección de fuente de datos arriba) desde Wikipedia/openfootball. Separada de 3a a pedido del usuario — es investigación externa con mucho fetching y alcance abierto (cuántos países/confederaciones cubrir), no depende de que 3a esté terminada para empezar.
 - **Fase 4 — Minijuegos, primera entrada:** `minigames/types.ts` (contrato `MinigameDefinition`), `minigames/registry.ts`, primer minijuego real (`penaltyShootout`), conectado a `engine/trophyEngine.ts` para finales de copa.
 - **Fase 5 — Más minijuegos:** `freeKick`, `dribbleChallenge`, sistema de comodines de motivación.
@@ -211,4 +217,5 @@ Plan completo en `C:\Users\devandroid\.claude\plans\nifty-mixing-quiche.md`. El 
 - Sin anti-cheat: si el proyecto gana tracción real, revisar el diseño de validación server-side por replay que está esbozado en el plan (motor puro portado a una Edge Function).
 - `react-router-dom` tiene una vulnerabilidad reportada (alta severidad) específica del modo RSC (React Server Components) — no aplica a este proyecto porque es una SPA client-only sin RSC. Registrado acá para no re-investigarlo cada vez que `npm audit` lo marque.
 - ~~`createCareer.ts` elige el club de debut filtrando `SAMPLE_CLUBS` por `reputation < 40`...~~ — **resuelto en la integración de diseño (2026-08-05).** `createCareer.ts` ahora usa `selectDebutClubOffers` (`engine/clubTransition.ts`), que relaja al pool completo de clubes si el filtro por reputación da menos candidatos de los pedidos, y nunca llama `pickWeighted` sobre un array vacío. **`engine/leagueEngine.ts#resolveLeagueWinner` (Fase 3a) sigue con el mismo riesgo sin mitigar** — filtra por `country`+`tier` y llama `pickWeighted` directo, sin fallback; hoy nunca da vacío porque el grupo siempre incluye al club del jugador por construcción, pero si se llama alguna vez con un club fuera de `clubs` este supuesto se rompe. Revisar cuando se arme `content/clubs.json` en 3b.
+- **Ligas de un solo club con las 13 clubes hardcodeadas.** Argentina tier 2 (Tigre) e Inglaterra tier 1 (Manchester City) tienen un único club en `SAMPLE_CLUBS` — `resolveLeagueWinner` los corona todas las temporadas por construcción (no es un bug, ver Fase 3a). Al armar `content/clubs.json` en la Fase 3b, asegurar al menos 2-3 clubes por combinación país+división relevante para que el título de liga sea disputado de verdad.
 - **Sin persistencia de la carrera en curso.** `store/careerStore.ts` vive solo en memoria; un refresh de página o una navegación de URL completa (no vía React Router) pierde la carrera y las guardas de ruta redirigen a `/`. Es el comportamiento esperado para la Fase 2 — no hay `localStorage` ni sync con Supabase todavía (eso es Fase 6).

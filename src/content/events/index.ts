@@ -8,11 +8,7 @@ import { TRAINING_EVENTS } from './training'
 import { TRANSFER_EVENTS } from './transfer'
 import type { SeasonEvent } from '@/types/event'
 
-/**
- * Contenido narrativo hardcodeado a mano, organizado por categoría (ver `EventCategory`
- * en `types/event.ts`). `loan.ts` y `scandal.ts` todavía están vacíos — ver TODOs en esos
- * archivos y en `CLAUDE.md`, sección "Fase 3a" (sin terminar).
- */
+/** Contenido narrativo hardcodeado a mano, organizado por categoría (ver `EventCategory` en `types/event.ts`). */
 export const SAMPLE_EVENTS: SeasonEvent[] = [
   ...TRAINING_EVENTS,
   ...DIET_EVENTS,

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { careerReducer } from '../careerReducer'
+import { getClubById } from '@/content/clubs'
 import { getEventById } from '@/content/events'
 import type { CareerState, CharacterCreationInput } from '@/types/career'
 
@@ -42,6 +43,11 @@ function runFullCareer(seed: number, input: CharacterCreationInput = testInput):
 function withoutId(state: CareerState) {
   const { id: _id, ...rest } = state
   return rest
+}
+
+/** Fuerza el evento pendiente a un id conocido, saltando la selección aleatoria de selectEvent. */
+function withPendingEvent(state: CareerState, eventId: string): CareerState {
+  return { ...state, phase: 'EVENT_PENDING', pendingEventId: eventId }
 }
 
 describe('careerReducer', () => {
@@ -216,5 +222,74 @@ describe('careerReducer', () => {
 
   it('throws if RESOLVE_EVENT is dispatched before CREATE_CAREER', () => {
     expect(() => careerReducer(null, { type: 'RESOLVE_EVENT', choiceId: 'x' })).toThrow()
+  })
+
+  it('a choice with `transfer` moves the player to a matching club and extends clubHistory', () => {
+    const active = createCareerAndSelectClub(30)
+    const originalClubId = active.currentClub!.id
+    const pending = withPendingEvent(active, 'transfer-offer')
+    const resolved = careerReducer(pending, { type: 'RESOLVE_EVENT', choiceId: 'push-for-move' })
+
+    expect(resolved.currentClub).not.toBeNull()
+    expect(resolved.currentClub!.id).not.toBe(originalClubId)
+    expect(resolved.currentClub!.reputation).toBeGreaterThanOrEqual(60)
+    expect(resolved.clubHistory).toHaveLength(2)
+    expect(resolved.clubHistory[0]).toEqual({ clubId: originalClubId, fromYear: active.year, toYear: resolved.year })
+    expect(resolved.clubHistory[1]).toEqual({ clubId: resolved.currentClub!.id, fromYear: resolved.year, toYear: null })
+    expect(resolved.loan).toBeNull()
+  })
+
+  it('a choice with `loan` sends the player out on loan and returns automatically after `durationSeasons`', () => {
+    const active = createCareerAndSelectClub(31)
+    const parentClubId = active.currentClub!.id
+
+    const loanStart = careerReducer(withPendingEvent(active, 'loan-for-minutes'), {
+      type: 'RESOLVE_EVENT',
+      choiceId: 'accept-loan',
+    })
+
+    expect(loanStart.currentClub!.id).not.toBe(parentClubId)
+    expect(loanStart.currentClub!.reputation).toBeLessThanOrEqual(40)
+    expect(loanStart.loan).toEqual({ parentClubId, returnYear: loanStart.year + 1 })
+
+    // la temporada siguiente resuelve en el año exacto de retorno del préstamo (durationSeasons: 1)
+    const loanReturn = careerReducer(withPendingEvent(loanStart, 'preseason-intensity'), {
+      type: 'RESOLVE_EVENT',
+      choiceId: 'high-intensity',
+    })
+
+    expect(loanReturn.loan).toBeNull()
+    expect(loanReturn.currentClub!.id).toBe(parentClubId)
+    expect(loanReturn.clubHistory).toHaveLength(3)
+    expect(loanReturn.clubHistory.at(-1)).toEqual({ clubId: parentClubId, fromYear: loanReturn.year, toYear: null })
+  })
+
+  it('a choice with `injury` reduces matches played that season compared to an equivalent choice without injury', () => {
+    const active = createCareerAndSelectClub(32)
+    const pending = withPendingEvent(active, 'matchday-collision')
+
+    const withInjury = careerReducer(pending, { type: 'RESOLVE_EVENT', choiceId: 'accept-medical-timeout' })
+    const withoutInjury = careerReducer(pending, { type: 'RESOLVE_EVENT', choiceId: 'finish-the-match' })
+
+    expect(withInjury.stats.matches).toBeLessThan(withoutInjury.stats.matches)
+  })
+
+  it('winning the league adds a title to `titles` for the player\'s club', () => {
+    const active = createCareerAndSelectClub(33)
+    const solePremierLeagueClub = getClubById('manchester-city')
+    const stateAtThatClub: CareerState = { ...active, currentClub: solePremierLeagueClub }
+
+    const resolved = careerReducer(withPendingEvent(stateAtThatClub, 'preseason-intensity'), {
+      type: 'RESOLVE_EVENT',
+      choiceId: 'high-intensity',
+    })
+
+    expect(resolved.titles).toHaveLength(1)
+    expect(resolved.titles[0]).toMatchObject({
+      type: 'league',
+      clubId: solePremierLeagueClub.id,
+      country: solePremierLeagueClub.country,
+      tier: solePremierLeagueClub.tier,
+    })
   })
 })
