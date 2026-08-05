@@ -1,25 +1,22 @@
+import clubsData from './clubs.json'
+import { parseClubs } from './contentSchema'
 import type { Club } from '@/types/club'
 
 /**
- * Set mínimo de clubes para poder correr y testear el motor. Se reemplaza en
- * la Fase 3 por `content/clubs.json`, generado a partir de las listas de
- * Wikipedia por confederación (ver CLAUDE.md).
+ * Clubes reales de las 10 confederaciones CONMEBOL (primera división completa,
+ * segunda división donde la fuente de Wikipedia la documentaba limpiamente:
+ * Argentina, Brasil, Chile, Uruguay) más los 5 clubes europeos originales
+ * (Fase 1), sin tocar — Europa/resto de confederaciones quedan para una
+ * pasada futura (Fase 3b es explícitamente incremental, ver CLAUDE.md).
+ *
+ * `reputation` no es un dato real-world investigado (no existe una fuente
+ * pública de "puntaje de reputación" de un club) — es una heurística de
+ * balance de juego: baseline por tier + boost manual para clubes de
+ * reconocimiento regional/internacional alto, mismo criterio que ya se usaba
+ * en el set de 13 clubes original. `parseClubs` valida la forma de los datos
+ * (incluye unicidad de ids) apenas se importa este módulo.
  */
-export const SAMPLE_CLUBS: Club[] = [
-  { id: 'ca-tigre', name: 'Club Atlético Tigre', country: 'Argentina', tier: 2, reputation: 30 },
-  { id: 'cd-riestra', name: 'Deportivo Riestra', country: 'Argentina', tier: 1, reputation: 35 },
-  { id: 'ca-independiente', name: 'Independiente', country: 'Argentina', tier: 1, reputation: 55 },
-  { id: 'racing-club', name: 'Racing Club', country: 'Argentina', tier: 1, reputation: 58 },
-  { id: 'river-plate', name: 'River Plate', country: 'Argentina', tier: 1, reputation: 75 },
-  { id: 'boca-juniors', name: 'Boca Juniors', country: 'Argentina', tier: 1, reputation: 78 },
-  { id: 'gremio', name: 'Grêmio', country: 'Brasil', tier: 1, reputation: 65 },
-  { id: 'sao-paulo', name: 'São Paulo FC', country: 'Brasil', tier: 1, reputation: 68 },
-  { id: 'sevilla', name: 'Sevilla FC', country: 'España', tier: 1, reputation: 72 },
-  { id: 'atletico-madrid', name: 'Atlético de Madrid', country: 'España', tier: 1, reputation: 85 },
-  { id: 'real-madrid', name: 'Real Madrid', country: 'España', tier: 1, reputation: 97 },
-  { id: 'barcelona', name: 'FC Barcelona', country: 'España', tier: 1, reputation: 96 },
-  { id: 'manchester-city', name: 'Manchester City', country: 'Inglaterra', tier: 1, reputation: 95 },
-]
+export const SAMPLE_CLUBS: Club[] = parseClubs(clubsData)
 
 export function getClubById(id: string): Club {
   const club = SAMPLE_CLUBS.find((candidate) => candidate.id === id)

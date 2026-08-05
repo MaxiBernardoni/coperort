@@ -34,7 +34,7 @@ describe('selectClubForMove', () => {
 
   it('respeta el criterio cuando hay candidatos que lo cumplen', () => {
     const rng = createRng(2)
-    const currentClub = getClubById('ca-tigre')
+    const currentClub = getClubById('tigre')
     const picked = selectClubForMove(currentClub, SAMPLE_CLUBS, { reputationMin: 90 }, rng, equalWeight)
     expect(picked).not.toBeNull()
     expect(picked!.reputation).toBeGreaterThanOrEqual(90)
@@ -42,7 +42,7 @@ describe('selectClubForMove', () => {
 
   it('relaja los límites de reputación si nadie los cumple, pero mantiene otros criterios', () => {
     const rng = createRng(3)
-    const currentClub = getClubById('ca-tigre')
+    const currentClub = getClubById('tigre')
     // ningún club llega a reputación 999: fuerza la relajación de reputationMin
     const picked = selectClubForMove(currentClub, SAMPLE_CLUBS, { reputationMin: 999, tier: 1 }, rng, equalWeight)
     expect(picked).not.toBeNull()
@@ -51,7 +51,7 @@ describe('selectClubForMove', () => {
 
   it('se rinde y devuelve cualquier otro club si ningún criterio tiene candidatos', () => {
     const rng = createRng(4)
-    const currentClub = getClubById('ca-tigre')
+    const currentClub = getClubById('tigre')
     const picked = selectClubForMove(currentClub, SAMPLE_CLUBS, { reputationMin: 999, sameCountry: true, tier: 2 }, rng, equalWeight)
     expect(picked).not.toBeNull()
     expect(picked!.id).not.toBe(currentClub.id)
