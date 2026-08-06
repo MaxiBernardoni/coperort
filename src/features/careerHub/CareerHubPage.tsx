@@ -1,11 +1,10 @@
 import { Navigate, useNavigate } from 'react-router-dom'
 import { AttributeBar } from '@/components/ui/AttributeBar'
 import { ClubOfferPicker } from '@/components/ui/ClubOfferPicker'
-import { EmptyState } from '@/components/ui/EmptyState'
 import { PlayerIdentityHeader } from '@/components/ui/PlayerIdentityHeader'
 import { SeasonTimelineTable } from '@/components/ui/SeasonTimelineTable'
 import { StatTilesRow } from '@/components/ui/StatTilesRow'
-import { TrophyIcon } from '@/components/icons/TrophyIcon'
+import { TrophyCase } from '@/components/ui/TrophyCase'
 import { InfoCircleIcon } from '@/components/icons/InfoCircleIcon'
 import { getClubById } from '@/content/clubs'
 import { getCountryByName } from '@/content/countries'
@@ -20,6 +19,7 @@ export function CareerHubPage() {
 
   if (!career) return <Navigate to="/" replace />
   if (career.phase === 'EVENT_PENDING') return <Navigate to="/event" replace />
+  if (career.phase === 'MINIGAME_PENDING') return <Navigate to="/minigame" replace />
   if (career.phase === 'RETIRED') return <Navigate to="/summary" replace />
 
   const { player, currentClub, stats } = career
@@ -64,7 +64,7 @@ export function CareerHubPage() {
 
         <StatTilesRow matches={stats.matches} goals={stats.goals} assists={stats.assists} />
 
-        <EmptyState icon={<TrophyIcon />} label="VITRINA VACÍA" />
+        <TrophyCase titles={career.titles} getClubLabel={(clubId) => getClubById(clubId).name} />
 
         {career.phase === 'CLUB_PENDING' ? (
           <ClubOfferPicker offers={career.clubOffers} onSelect={selectClub} />

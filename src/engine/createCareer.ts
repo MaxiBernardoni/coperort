@@ -45,6 +45,7 @@ export function createCareer(input: CharacterCreationInput, seed?: number): Care
     year,
     phase: 'CLUB_PENDING',
     pendingEventId: null,
+    pendingMinigame: null,
     loan: null,
     stats: { matches: 0, goals: 0, assists: 0, peakRating: overallRating, peakMarketValue: marketValue },
     titles: [],

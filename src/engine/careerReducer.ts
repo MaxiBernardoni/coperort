@@ -5,12 +5,14 @@ import { resolveLeagueWinner } from './leagueEngine'
 import { createRng } from './rng'
 import { simulateSeasonPerformance } from './seasonPerformance'
 import { ATTRIBUTE_KEYS, attributeGrowthDelta, clamp, deriveOverallRating, marketValueForRating } from './statMath'
+import { resolveCupFinal } from './trophyEngine'
 import { SAMPLE_CLUBS } from '@/content/clubs'
 import { getEventById } from '@/content/events'
 import type { Rng } from './rng'
 import type { PlayerAttributes } from '@/types/player'
 import type { CareerAction, CareerPhase, CareerState, SeasonHistoryEntry, Title } from '@/types/career'
 import type { EventChoice, StatEffect } from '@/types/event'
+import type { MinigameResult, PendingMinigame } from '@/types/minigame'
 
 function applyClubTransition(
   state: CareerState,
@@ -123,7 +125,15 @@ function resolveEvent(state: CareerState, choiceId: string): CareerState {
     assists: performance.assists,
   }
 
-  const phase: CareerPhase = newAge >= state.retirementAge ? 'RETIRED' : 'ACTIVE'
+  // La final de copa no se resuelve sola: si el club clasificó, la temporada queda en
+  // MINIGAME_PENDING y el título se define recién cuando el usuario juega el minijuego
+  // (RESOLVE_MINIGAME). El chequeo de retiro se difiere hasta ese momento.
+  const cupOpponent = resolveCupFinal(SAMPLE_CLUBS, currentClub, rng)
+  const pendingMinigame: PendingMinigame | null = cupOpponent
+    ? { seed: rng.randInt(0, 2 ** 31 - 1), difficulty: cupOpponent.reputation, opponentClubId: cupOpponent.id }
+    : null
+
+  const phase: CareerPhase = pendingMinigame ? 'MINIGAME_PENDING' : newAge >= state.retirementAge ? 'RETIRED' : 'ACTIVE'
 
   return {
     ...state,
@@ -134,6 +144,7 @@ function resolveEvent(state: CareerState, choiceId: string): CareerState {
     year: newYear,
     phase,
     pendingEventId: null,
+    pendingMinigame,
     stats: {
       matches: state.stats.matches + performance.matches,
       goals: state.stats.goals + performance.goals,
@@ -144,6 +155,39 @@ function resolveEvent(state: CareerState, choiceId: string): CareerState {
     titles,
     eventLog: [...state.eventLog, { season: state.season, eventId: event.id, choiceId: choice.id }],
     seasonHistory: [...state.seasonHistory, seasonHistoryEntry],
+  }
+}
+
+/**
+ * Cierra la final de copa con el resultado que trae el minijuego. El título solo se otorga
+ * si el usuario ganó — a diferencia del de liga, que `leagueEngine` resuelve automáticamente.
+ * Acá se aplica el chequeo de retiro que `resolveEvent` dejó diferido.
+ */
+function resolveMinigame(state: CareerState, result: MinigameResult): CareerState {
+  if (!state.pendingMinigame) throw new Error('No hay ninguna final de copa pendiente para resolver')
+
+  // no-null: MINIGAME_PENDING solo es alcanzable desde ACTIVE, que ya tiene club asignado
+  const currentClub = state.currentClub!
+  const titles: Title[] = result.won
+    ? [
+        ...state.titles,
+        {
+          type: 'cup',
+          // `season`/`year` ya fueron avanzados por resolveEvent: la temporada que se cerró es la anterior
+          season: state.season - 1,
+          year: state.year,
+          clubId: currentClub.id,
+          country: currentClub.country,
+          tier: currentClub.tier,
+        },
+      ]
+    : state.titles
+
+  return {
+    ...state,
+    phase: state.player.age >= state.retirementAge ? 'RETIRED' : 'ACTIVE',
+    pendingMinigame: null,
+    titles,
   }
 }
 
@@ -176,5 +220,9 @@ export function careerReducer(state: CareerState | null, action: CareerAction): 
       if (!state) throw new Error('No hay una carrera en curso: despachá CREATE_CAREER primero')
       if (state.phase !== 'EVENT_PENDING') throw new Error('No hay ningún evento pendiente para resolver')
       return resolveEvent(state, action.choiceId)
+    case 'RESOLVE_MINIGAME':
+      if (!state) throw new Error('No hay una carrera en curso: despachá CREATE_CAREER primero')
+      if (state.phase !== 'MINIGAME_PENDING') throw new Error('No hay ninguna final de copa pendiente para resolver')
+      return resolveMinigame(state, action.result)
   }
 }

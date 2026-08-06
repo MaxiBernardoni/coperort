@@ -3,6 +3,7 @@ import { careerReducer } from '../careerReducer'
 import { getClubById } from '@/content/clubs'
 import { getEventById } from '@/content/events'
 import type { CareerState, CharacterCreationInput } from '@/types/career'
+import type { MinigameResult } from '@/types/minigame'
 
 const testInput: CharacterCreationInput = {
   firstName: 'Diego',
@@ -21,7 +22,10 @@ function createCareerAndSelectClub(seed: number, input: CharacterCreationInput =
   return careerReducer(created, { type: 'SELECT_CLUB', clubId: created.clubOffers[0].id })
 }
 
-/** Simula a la UI: elige club, avanza la temporada y siempre elige la primera opción del evento pendiente. */
+/** Resultado fijo para las finales de copa en los tests end-to-end: constante, así el determinismo se mantiene. */
+const LOST_FINAL: MinigameResult = { won: false, score: 2, maxScore: 5 }
+
+/** Simula a la UI: elige club, avanza la temporada, elige la primera opción y resuelve la final si la hay. */
 function runFullCareer(seed: number, input: CharacterCreationInput = testInput): CareerState {
   let state = createCareerAndSelectClub(seed, input)
   let iterations = 0
@@ -30,6 +34,9 @@ function runFullCareer(seed: number, input: CharacterCreationInput = testInput):
     if (state.phase === 'EVENT_PENDING') {
       const event = getEventById(state.pendingEventId!)
       state = careerReducer(state, { type: 'RESOLVE_EVENT', choiceId: event.choices[0].id })
+    }
+    if (state.phase === 'MINIGAME_PENDING') {
+      state = careerReducer(state, { type: 'RESOLVE_MINIGAME', result: LOST_FINAL })
     }
     iterations += 1
     if (iterations > MAX_SEASONS) {
@@ -72,6 +79,9 @@ describe('careerReducer', () => {
       if (state.phase === 'EVENT_PENDING') {
         const event = getEventById(state.pendingEventId!)
         state = careerReducer(state, { type: 'RESOLVE_EVENT', choiceId: event.choices[0].id })
+      }
+      if (state.phase === 'MINIGAME_PENDING') {
+        state = careerReducer(state, { type: 'RESOLVE_MINIGAME', result: LOST_FINAL })
       }
       expect(state.player.overallRating).toBeGreaterThanOrEqual(1)
       expect(state.player.overallRating).toBeLessThanOrEqual(99)
@@ -272,6 +282,93 @@ describe('careerReducer', () => {
     const withoutInjury = careerReducer(pending, { type: 'RESOLVE_EVENT', choiceId: 'finish-the-match' })
 
     expect(withInjury.stats.matches).toBeLessThan(withoutInjury.stats.matches)
+  })
+
+  it('reaching a cup final leaves the career in MINIGAME_PENDING without retiring yet', () => {
+    // Boca tiene la reputación más alta de Argentina: llega a finales seguido. Se busca la
+    // primera temporada que dispare una, sin forzar el motor.
+    let state: CareerState = { ...createCareerAndSelectClub(40), currentClub: getClubById('boca-juniors') }
+    let found = false
+
+    for (let i = 0; i < MAX_SEASONS && !found; i++) {
+      const beforeAge = state.player.age
+      const resolved = careerReducer(withPendingEvent(state, 'preseason-intensity'), {
+        type: 'RESOLVE_EVENT',
+        choiceId: 'high-intensity',
+      })
+      if (resolved.phase === 'MINIGAME_PENDING') {
+        found = true
+        expect(resolved.pendingMinigame).not.toBeNull()
+        expect(resolved.pendingMinigame!.opponentClubId).not.toBe(resolved.currentClub!.id)
+        expect(getClubById(resolved.pendingMinigame!.opponentClubId).country).toBe('Argentina')
+        expect(resolved.player.age).toBe(beforeAge + 1)
+      }
+      state = resolved.phase === 'MINIGAME_PENDING' ? resolved : { ...resolved, phase: 'ACTIVE' }
+    }
+
+    expect(found).toBe(true)
+  })
+
+  it('RESOLVE_MINIGAME adds a cup title when won and none when lost', () => {
+    const active: CareerState = { ...createCareerAndSelectClub(41), currentClub: getClubById('boca-juniors') }
+    let pending: CareerState | null = null
+
+    let cursor = active
+    for (let i = 0; i < MAX_SEASONS && !pending; i++) {
+      const resolved = careerReducer(withPendingEvent(cursor, 'preseason-intensity'), {
+        type: 'RESOLVE_EVENT',
+        choiceId: 'high-intensity',
+      })
+      if (resolved.phase === 'MINIGAME_PENDING') pending = resolved
+      cursor = { ...resolved, phase: 'ACTIVE', pendingMinigame: null }
+    }
+    expect(pending).not.toBeNull()
+
+    const titlesBefore = pending!.titles.length
+    const won = careerReducer(pending!, { type: 'RESOLVE_MINIGAME', result: { won: true, score: 4, maxScore: 5 } })
+    const lost = careerReducer(pending!, { type: 'RESOLVE_MINIGAME', result: { won: false, score: 1, maxScore: 5 } })
+
+    expect(won.titles).toHaveLength(titlesBefore + 1)
+    expect(won.titles.at(-1)).toMatchObject({ type: 'cup', clubId: pending!.currentClub!.id })
+    expect(lost.titles).toHaveLength(titlesBefore)
+
+    // en ambos casos la final queda cerrada y la carrera sale de MINIGAME_PENDING
+    for (const result of [won, lost]) {
+      expect(result.pendingMinigame).toBeNull()
+      expect(result.phase).not.toBe('MINIGAME_PENDING')
+    }
+  })
+
+  it('ADVANCE_SEASON is a no-op while a cup final is pending', () => {
+    const pending: CareerState = {
+      ...createCareerAndSelectClub(42),
+      phase: 'MINIGAME_PENDING',
+      pendingMinigame: { seed: 1, difficulty: 50, opponentClubId: 'river-plate' },
+    }
+    expect(careerReducer(pending, { type: 'ADVANCE_SEASON' })).toBe(pending)
+  })
+
+  it('a cup final in the last season still retires the player once resolved', () => {
+    const base = createCareerAndSelectClub(43)
+    const pending: CareerState = {
+      ...base,
+      player: { ...base.player, age: base.retirementAge },
+      phase: 'MINIGAME_PENDING',
+      pendingMinigame: { seed: 1, difficulty: 50, opponentClubId: 'river-plate' },
+    }
+
+    const resolved = careerReducer(pending, { type: 'RESOLVE_MINIGAME', result: { won: true, score: 5, maxScore: 5 } })
+    expect(resolved.phase).toBe('RETIRED')
+    expect(resolved.titles.at(-1)?.type).toBe('cup')
+  })
+
+  it('throws when RESOLVE_MINIGAME is dispatched outside of MINIGAME_PENDING', () => {
+    const active = createCareerAndSelectClub(44)
+    expect(() => careerReducer(active, { type: 'RESOLVE_MINIGAME', result: LOST_FINAL })).toThrow()
+  })
+
+  it('throws if RESOLVE_MINIGAME is dispatched before CREATE_CAREER', () => {
+    expect(() => careerReducer(null, { type: 'RESOLVE_MINIGAME', result: LOST_FINAL })).toThrow()
   })
 
   it('winning the league adds a title to `titles` for the player\'s club', () => {

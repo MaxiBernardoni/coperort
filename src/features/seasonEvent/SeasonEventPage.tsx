@@ -29,6 +29,7 @@ export function SeasonEventPage() {
   function handleChoice(choiceId: string) {
     resolveEvent(choiceId)
     const updated = useCareerStore.getState().career
+    if (updated?.phase === 'MINIGAME_PENDING') return navigate('/minigame')
     navigate(updated?.phase === 'RETIRED' ? '/summary' : '/hub')
   }
 
