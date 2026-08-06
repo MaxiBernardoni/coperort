@@ -1,6 +1,6 @@
 import { CheckIcon } from '@/components/icons/CheckIcon'
 import { SearchIcon } from '@/components/icons/SearchIcon'
-import { ColorRoundel } from './FlagChip'
+import { CountryFlag } from './CountryFlag'
 import type { Country } from '@/content/countries'
 
 interface CountryPickerProps {
@@ -39,7 +39,7 @@ export function CountryPicker({ countries, search, onSearchChange, selectedId, o
                 selected ? 'border-accent bg-surface-raised' : 'border-transparent bg-transparent'
               } text-text-secondary-light-2`}
             >
-              <ColorRoundel seed={country.id} size={22} rounded="full" />
+              <CountryFlag countryId={country.id} width={22} rounded="full" />
               <span className="flex-1">{country.name}</span>
               {selected && <CheckIcon />}
             </button>
