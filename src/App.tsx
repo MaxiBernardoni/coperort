@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { CharacterCreationPage } from '@/features/characterCreation/CharacterCreationPage'
 import { CareerHubPage } from '@/features/careerHub/CareerHubPage'
+import { PreseasonPage } from '@/features/preseason/PreseasonPage'
 import { SeasonEventPage } from '@/features/seasonEvent/SeasonEventPage'
 import { MinigamePlayerPage } from '@/features/minigamePlayer/MinigamePlayerPage'
 import { CareerSummaryPage } from '@/features/careerSummary/CareerSummaryPage'
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<CharacterCreationPage />} />
         <Route path="/hub" element={<CareerHubPage />} />
+        <Route path="/preseason" element={<PreseasonPage />} />
         <Route path="/event" element={<SeasonEventPage />} />
         <Route path="/minigame" element={<MinigamePlayerPage />} />
         <Route path="/summary" element={<CareerSummaryPage />} />

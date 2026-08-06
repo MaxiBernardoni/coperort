@@ -39,7 +39,16 @@ function otherZones(zone: Zone): Zone[] {
   return ZONES.filter((candidate) => candidate !== zone)
 }
 
-export function PenaltyShootout({ seed, difficulty, opponentName, onComplete }: MinigameComponentProps) {
+/**
+ * Cuando el arquero amaga en falso tiene dos palos para elegir. Con buena definición el
+ * remate es más difícil de adivinar, así que sube la chance de que agarre el equivocado:
+ * 50% con definición 0 (moneda al aire) hasta 80% con definición 99.
+ */
+function keeperEvadeChance(shooting: number): number {
+  return 0.5 + (shooting / 100) * 0.3
+}
+
+export function PenaltyShootout({ seed, difficulty, opponentName, attributes, onComplete }: MinigameComponentProps) {
   // Todo el azar sale de la seed del motor, precomputado: el minijuego es reproducible.
   const rounds = useMemo<Round[]>(() => {
     const rng = createRng(seed)
@@ -63,7 +72,15 @@ export function PenaltyShootout({ seed, difficulty, opponentName, onComplete }: 
     if (!round || lastShot) return
 
     const bluffOptions = otherZones(round.lean)
-    const keeperZone = round.honest ? round.lean : bluffOptions[round.bluffPick < 0.5 ? 0 : 1]
+    const playerBluffIndex = bluffOptions.indexOf(playerZone)
+    // Si pateaste al palo del amague no hay nada que esquivar: o el arquero fue sincero (atajó)
+    // o se tiró a cualquiera de los otros dos (gol). La definición solo pesa cuando amagó en falso.
+    const bluffZone =
+      playerBluffIndex === -1
+        ? bluffOptions[round.bluffPick < 0.5 ? 0 : 1]
+        : bluffOptions[round.bluffPick < keeperEvadeChance(attributes.shooting) ? 1 - playerBluffIndex : playerBluffIndex]
+
+    const keeperZone = round.honest ? round.lean : bluffZone
     const outcome: ShotOutcome = { playerZone, keeperZone, scored: keeperZone !== playerZone }
 
     setOutcomes([...outcomes, outcome])

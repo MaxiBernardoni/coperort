@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import type { Club } from '@/types/club'
 import type { ClubMoveCriteria, EventChoice, InjuryEffect, LoanEffect, SeasonEvent, StatEffect } from '@/types/event'
-import type { PlayerAttributes } from '@/types/player'
+import type { Motivation } from '@/types/motivation'
+import type { PlayerAttributes, Position } from '@/types/player'
 
 const attributeKeySchema: z.ZodType<keyof PlayerAttributes> = z.enum([
   'pace',
@@ -66,6 +67,23 @@ const seasonEventSchema: z.ZodType<SeasonEvent> = z
     path: ['choices'],
   })
 
+const positionSchema: z.ZodType<Position> = z.enum(['GK', 'DEF', 'MID', 'FWD'])
+
+const motivationSchema: z.ZodType<Motivation> = z
+  .object({
+    id: z.string().min(1),
+    name: z.string().min(1),
+    description: z.string().min(1),
+    effects: z.array(statEffectSchema).min(1),
+    minAge: z.number().int().positive().optional(),
+    maxAge: z.number().int().positive().optional(),
+    positions: z.array(positionSchema).min(1).optional(),
+  })
+  .refine(
+    (motivation) => motivation.minAge === undefined || motivation.maxAge === undefined || motivation.minAge <= motivation.maxAge,
+    { message: 'minAge no puede ser mayor que maxAge', path: ['minAge'] },
+  )
+
 const clubSchema: z.ZodType<Club> = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -86,6 +104,7 @@ function uniqueIdsRefinement<T extends { id: string }>(items: T[], ctx: z.Refine
 
 export const seasonEventsSchema = z.array(seasonEventSchema).superRefine(uniqueIdsRefinement)
 export const clubsSchema = z.array(clubSchema).superRefine(uniqueIdsRefinement)
+export const motivationsSchema = z.array(motivationSchema).superRefine(uniqueIdsRefinement)
 
 export function parseSeasonEvents(events: unknown): SeasonEvent[] {
   return seasonEventsSchema.parse(events)
@@ -93,4 +112,8 @@ export function parseSeasonEvents(events: unknown): SeasonEvent[] {
 
 export function parseClubs(clubs: unknown): Club[] {
   return clubsSchema.parse(clubs)
+}
+
+export function parseMotivations(motivations: unknown): Motivation[] {
+  return motivationsSchema.parse(motivations)
 }

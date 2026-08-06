@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react'
 import type { MinigameResult } from '@/types/minigame'
+import type { PlayerAttributes } from '@/types/player'
 
 export type { MinigameResult }
 
@@ -9,6 +10,12 @@ export interface MinigameComponentProps {
   /** 1-100, reputación del rival — cuanto más alta, más difícil */
   difficulty: number
   opponentName: string
+  /**
+   * Atributos del jugador. Se pasan enteros y cada minijuego elige los que le sirven
+   * (penales -> shooting, tiro libre -> shooting/passing, gambeta -> dribbling/pace),
+   * así el contrato no se amplía cada vez que se suma uno con necesidades distintas.
+   */
+  attributes: PlayerAttributes
   onComplete: (result: MinigameResult) => void
 }
 

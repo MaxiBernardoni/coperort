@@ -8,6 +8,7 @@ import { TrophyCase } from '@/components/ui/TrophyCase'
 import { InfoCircleIcon } from '@/components/icons/InfoCircleIcon'
 import { getClubById } from '@/content/clubs'
 import { getCountryByName } from '@/content/countries'
+import { getMotivationById } from '@/content/motivations'
 import { useCareerEngine } from '@/hooks/useCareerEngine'
 import { useCareerStore } from '@/store/careerStore'
 import { ATTRIBUTE_KEYS } from '@/engine/statMath'
@@ -18,18 +19,20 @@ export function CareerHubPage() {
   const { career, advanceSeason, selectClub } = useCareerEngine()
 
   if (!career) return <Navigate to="/" replace />
+  if (career.phase === 'PRESEASON_PENDING') return <Navigate to="/preseason" replace />
   if (career.phase === 'EVENT_PENDING') return <Navigate to="/event" replace />
   if (career.phase === 'MINIGAME_PENDING') return <Navigate to="/minigame" replace />
   if (career.phase === 'RETIRED') return <Navigate to="/summary" replace />
 
   const { player, currentClub, stats } = career
+  const activeMotivation = career.activeMotivationId ? getMotivationById(career.activeMotivationId) : null
   const country = getCountryByName(player.identity.nationality)
   const countryId = country?.id ?? 'ar'
   const countryCode = player.identity.nationality.slice(0, 3).toUpperCase()
 
   function handleAdvance() {
     advanceSeason()
-    if (useCareerStore.getState().career?.phase === 'EVENT_PENDING') navigate('/event')
+    if (useCareerStore.getState().career?.phase === 'PRESEASON_PENDING') navigate('/preseason')
   }
 
   return (
@@ -50,6 +53,13 @@ export function CareerHubPage() {
           <div className="flex items-center gap-1.5 text-[13px] text-text-secondary">
             <span>Libre — elegí un club</span>
             <InfoCircleIcon />
+          </div>
+        )}
+
+        {activeMotivation && (
+          <div className="flex items-center gap-2 rounded-card bg-surface-alt px-3.5 py-2.5">
+            <span className="text-[10px] font-bold tracking-[1.2px] text-text-label">ENFOQUE</span>
+            <span className="text-[13px] font-bold text-accent">{activeMotivation.name}</span>
           </div>
         )}
 

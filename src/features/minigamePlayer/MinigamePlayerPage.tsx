@@ -29,6 +29,7 @@ export function MinigamePlayerPage() {
         seed={seed}
         difficulty={difficulty}
         opponentName={getClubById(opponentClubId).name}
+        attributes={career.player.attributes}
         onComplete={handleComplete}
       />
     </main>

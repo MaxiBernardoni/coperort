@@ -25,7 +25,13 @@ export interface ClubStint {
   toYear: number | null
 }
 
-export type CareerPhase = 'CLUB_PENDING' | 'ACTIVE' | 'EVENT_PENDING' | 'MINIGAME_PENDING' | 'RETIRED'
+export type CareerPhase =
+  | 'CLUB_PENDING'
+  | 'ACTIVE'
+  | 'PRESEASON_PENDING'
+  | 'EVENT_PENDING'
+  | 'MINIGAME_PENDING'
+  | 'RETIRED'
 
 export interface LoanState {
   parentClubId: string
@@ -73,6 +79,10 @@ export interface CareerState {
   season: number
   year: number
   phase: CareerPhase
+  /** enfoques de pretemporada ofrecidos cuando `phase === 'PRESEASON_PENDING'` (ids de Motivation) */
+  motivationOffers: string[]
+  /** enfoque elegido para la temporada en curso, para poder mostrarlo en el hub */
+  activeMotivationId: string | null
   /** id del evento que espera una elección del usuario cuando `phase === 'EVENT_PENDING'` */
   pendingEventId: string | null
   /** final de copa esperando que el usuario la juegue cuando `phase === 'MINIGAME_PENDING'` */
@@ -90,5 +100,6 @@ export type CareerAction =
   | { type: 'CREATE_CAREER'; input: CharacterCreationInput; seed?: number }
   | { type: 'SELECT_CLUB'; clubId: string }
   | { type: 'ADVANCE_SEASON' }
+  | { type: 'SELECT_MOTIVATION'; motivationId: string }
   | { type: 'RESOLVE_EVENT'; choiceId: string }
   | { type: 'RESOLVE_MINIGAME'; result: MinigameResult }

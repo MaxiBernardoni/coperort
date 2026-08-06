@@ -45,12 +45,14 @@ src/
     event.ts     # StatEffect, EventChoice (+ transfer/loan/injury opcionales), ClubMoveCriteria, LoanEffect, InjuryEffect, SeasonEvent
     career.ts    # CharacterCreationInput, CareerState (currentClub nullable, clubOffers, pendingEventId, pendingMinigame, loan, titles, seasonHistory), SeasonHistoryEntry, LoanState, Title (league|cup), CareerAction (CREATE_CAREER | SELECT_CLUB | ADVANCE_SEASON | RESOLVE_EVENT | RESOLVE_MINIGAME)
     minigame.ts  # MinigameResult, PendingMinigame — tipos de dominio puros, acá y no en minigames/ para que engine/ los importe sin depender de la capa de UI (Fase 4)
+    motivation.ts # Motivation — enfoque de pretemporada elegible (effects reusa StatEffect; minAge/maxAge/positions filtran la oferta) (Fase 5)
   content/
     clubs.json   # 274 clubes: 10 países CONMEBOL (primera + segunda división donde la fuente era limpia) + 5 clubes europeos originales sin tocar (Fase 3b)
     clubs.ts     # loader fino: valida clubs.json con parseClubs (contentSchema.ts) al importar, exporta SAMPLE_CLUBS + getClubById(id)
     countries.ts # COUNTRIES: ~195 países (ISO, nombres en español), sin colores — getCountryByName/getCountryById (integración de diseño)
     tacticalPositions.ts # TACTICAL_POSITIONS: 12 posiciones tácticas de la cancha interactiva de creación, mapeadas a Position (cosmético, integración de diseño)
-    contentSchema.ts # validación Zod de SeasonEvent/EventChoice/StatEffect/ClubMoveCriteria/LoanEffect/InjuryEffect y Club — seasonEventsSchema/clubsSchema (ids únicos, minAge<=maxAge) (Fase 3a)
+    motivations.ts # MOTIVATIONS: 12 enfoques de pretemporada con tradeoffs reales + getMotivationById (Fase 5)
+    contentSchema.ts # validación Zod de SeasonEvent/EventChoice/StatEffect/ClubMoveCriteria/LoanEffect/InjuryEffect, Club y Motivation — seasonEventsSchema/clubsSchema/motivationsSchema (ids únicos, minAge<=maxAge) (Fase 3a, ampliado en 5)
     events/      # SAMPLE_EVENTS armado desde 8 archivos por categoría + index.ts; getEventById(id). Las 8 categorías tienen contenido real (Fase 3a)
       index.ts, training.ts, diet.ts, injury.ts, transfer.ts, loan.ts, media.ts, personal.ts, scandal.ts
     __tests__/
@@ -64,6 +66,7 @@ src/
     clubTransition.ts        # selectClubForMove (con relajación en 3 pasos), selectDebutClubOffers (integración de diseño — hasta N clubes distintos ponderados, con la misma relajación), applyTransfer, applyLoanStart, applyLoanReturn (Fase 3a)
     leagueEngine.ts           # resolveLeagueWinner(clubs, {country,tier}, rng) — título de liga automático, ponderado por reputación (Fase 3a, nuevo)
     trophyEngine.ts            # resolveCupFinal(clubs, playerClub, rng) -> rival | null + cupFinalChance(club) — la copa NO se resuelve sola, se juega (Fase 4)
+    motivationSelector.ts       # selectMotivationOffers(age, position, rng, count) — 3 enfoques distintos filtrados por edad/posición, con relajación al pool completo (Fase 5)
     careerReducer.ts          # careerReducer(state, action) — único punto de entrada al motor; beginSeason() + resolveEvent() + resolveMinigame() + selectClub() internos; resolveEvent aplica transfer/loan/retorno de préstamo, lesión, título de liga, push a seasonHistory y deja MINIGAME_PENDING si hay final de copa
     __tests__/
       rng.test.ts              # determinismo, resumibilidad desde un estado capturado, rango [0,1)
@@ -72,11 +75,14 @@ src/
       leagueEngine.test.ts      # resolveLeagueWinner agrupa por country+tier, ponderado por reputación, determinístico (Fase 3a)
       eventSelector.test.ts     # filtro minAge/maxAge, loan-lock (sin transfer/loan mientras hay préstamo activo), relajación de pool (Fase 3a)
       trophyEngine.test.ts      # cupFinalChance dentro de rango y escalando con reputación, rival siempre del mismo país y distinto del propio, determinismo, país de un solo club -> null (Fase 4)
+      motivationSelector.test.ts # 3 ofertas distintas, filtro por edad/posición, la oferta cambia entre un pibe y un veterano, determinismo, siempre 3 aunque el filtro deje pocas (Fase 5)
   minigames/        # capa de minijuegos (Fase 4). El motor NO importa nada de acá — ver "Decisiones de producto"
-    types.ts          # MinigameDefinition (id, name, description, Component) + MinigameComponentProps (seed, difficulty, opponentName, onComplete)
+    types.ts          # MinigameDefinition (id, name, description, Component) + MinigameComponentProps (seed, difficulty, opponentName, attributes, onComplete)
     registry.ts       # MINIGAMES + getMinigameById(id) + pickMinigame(seed) — agregar un minijuego es sumarlo acá y nada más
-    penaltyShootout/  # PenaltyShootout.tsx + index.ts — 5 penales, el arquero amaga y a veces miente (Fase 4)
-    freeKick/, dribbleChallenge/, shared/   # vacías todavía (Fase 5)
+    penaltyShootout/  # 5 penales, el arquero amaga y a veces miente — mecánica de LECTURA (Fase 4)
+    freeKick/         # barra de precisión que hay que frenar a tiempo — mecánica de TIMING (Fase 5)
+    dribbleChallenge/ # encarar rivales y decidir cuándo cobrar — mecánica de PUSH-YOUR-LUCK (Fase 5)
+    shared/           # vacía: con 3 minijuegos todavía no apareció nada genuinamente compartido
     __tests__/registry.test.ts   # ids únicos, contrato completo, getMinigameById, pickMinigame determinístico
   store/
     careerStore.ts    # useCareerStore (Zustand) — { career, dispatch } fino sobre careerReducer, sin lógica propia
@@ -86,6 +92,7 @@ src/
   features/
     characterCreation/CharacterCreationPage.tsx   # real, con el diseño integrado: 3 columnas (camiseta+identidad, buscador de país, cancha táctica), ruta "/"
     characterCreation/components/                 # JerseyPreview, PositionPitch — de uso único en esta pantalla, no van en components/ui
+    preseason/PreseasonPage.tsx                   # 3 enfoques de pretemporada con sus tradeoffs a la vista, ruta "/preseason" (Fase 5)
     careerHub/CareerHubPage.tsx                   # real, con el diseño integrado: rama por career.phase (CLUB_PENDING → ClubOfferPicker; ACTIVE → botón "Avanzar temporada"), timeline de temporadas real, ruta "/hub"
     seasonEvent/SeasonEventPage.tsx               # real, con el diseño integrado: EventChoiceCard por elección (efecto cualitativo Sube/Baja/Sin cambios, no porcentajes), ruta "/event"
     minigamePlayer/MinigamePlayerPage.tsx         # real (Fase 4): resuelve el minijuego vía pickMinigame(seed) y despacha RESOLVE_MINIGAME, ruta "/minigame"
@@ -97,7 +104,7 @@ src/
     labels.ts            # POSITION_LABELS, POSITION_SHORT_LABELS, FOOT_LABELS, ATTRIBUTE_LABELS, EVENT_CATEGORY_LABELS, formatCurrency — strings en español compartidos entre pantallas
     colorHash.ts          # hashColorPair(seed) — par de colores HSL determinístico (escudos de club, banderas, camisetas — sin curar color a mano por item)
     clubVisuals.ts         # clubInitials(name) — iniciales para el escudo placeholder
-    eventEffects.ts         # summarizeChoiceEffect(choice) -> {direction, label} — resume el efecto neto de una elección sin revelar números exactos
+    eventEffects.ts         # summarizeChoiceEffect(choice) -> efecto neto SIN números (eventos: ocultarlos es parte de la tensión) + describeStatEffects(effects) -> CON números (pretemporada: es una decisión de build, sin el número no podés elegir)
     api/                # vacío — leaderboard.ts, rivals.ts van acá en Fase 6
   hooks/
     useCareerEngine.ts    # wrapper del store: { career, createCareer, selectClub, advanceSeason, resolveEvent }
@@ -129,7 +136,18 @@ El plan (`generic-sprouting-panda.md`) esbozaba el motor a alto nivel; al implem
 - ~~`ADVANCE_SEASON` resuelve el evento de la temporada automáticamente~~ — **cambiado en la Fase 2.** Ahora `ADVANCE_SEASON` solo elige el evento de la temporada (vía `selectEvent`) y deja la carrera en `phase: 'EVENT_PENDING'` con `pendingEventId` seteado, sin tocar al jugador todavía. `RESOLVE_EVENT(choiceId)` es quien aplica la elección real del usuario, el crecimiento de atributos y la performance de la temporada, y decide si pasa a `ACTIVE` o `RETIRED`. `CareerState.phase` pasó de `'ACTIVE' | 'RETIRED'` a `'ACTIVE' | 'EVENT_PENDING' | 'RETIRED'`. `ADVANCE_SEASON` dispatcheado en `EVENT_PENDING` es un no-op (igual que en `RETIRED`); `RESOLVE_EVENT` fuera de `EVENT_PENDING`, o con un `choiceId` que no existe en el evento pendiente, tira error.
 - ~~`Title.type` solo tiene `'league'`~~ — **`'cup'` agregado en la Fase 4** junto con `engine/trophyEngine.ts`, siguiendo el criterio de no declarar una variante sin código que la llene. `awards` y `rival` siguen sin existir, se agregan en Fase 7/8.
 - **`content/clubs.ts` sigue siendo TypeScript a mano** (~13 clubes). Pasa a `content/clubs.json` (generado desde Wikipedia, ver sección de arriba) recién en la Fase 3b, separada de 3a a pedido explícito del usuario por ser un trabajo de investigación externa con alcance abierto. `content/events.ts` sí se reestructuró en la Fase 3a a `content/events/` (un archivo por categoría), pero el volumen de contenido real quedó a mitad de camino — ver Pendiente.
-- **Rating de debut a los 17 años puede salir bastante alto** (~65-75 en las pruebas manuales) porque `generateBaseAttributes` da un rango generoso (30-45 base + 20-35 extra en los atributos de la posición). Es una decisión de diseño válida para un juego (arranca como promesa, no como jugador genérico), no un bug — pero si en algún momento se quiere una curva de dificultad distinta, este es el lugar (`statMath.ts`).
+- **Rating de debut a los 17 años puede salir bastante alto** (~65-75 en las pruebas manuales) porque `generateBaseAttributes` da un rango generoso (30-45 base + 20-35 extra en los atributos de la posición). Es una decisión de diseño válida para un juego (arranca como promesa, no como jugador genérico), no un bug — pero si en algún momento se quiere una curva de dificultad distinta, este es el lugar (`statMath.ts`). **Ver también el punto de inflación de rating en "Decisiones abiertas".**
+
+## Flujo de fases del motor
+
+```
+CREATE_CAREER -> CLUB_PENDING --SELECT_CLUB--> ACTIVE
+ACTIVE --ADVANCE_SEASON--> PRESEASON_PENDING --SELECT_MOTIVATION--> EVENT_PENDING
+EVENT_PENDING --RESOLVE_EVENT--> MINIGAME_PENDING (si hubo final de copa) --RESOLVE_MINIGAME--> ACTIVE | RETIRED
+                             \--> ACTIVE | RETIRED (si no hubo final)
+```
+
+Cada fase `*_PENDING` espera una acción del usuario y tiene su propia ruta en la UI (`/hub`, `/preseason`, `/event`, `/minigame`). Al agregar una fase nueva hay que tocar: el tipo `CareerPhase`, el reducer, la guarda del hub, la navegación de la pantalla anterior, y `resolvePendingPhase` en `careerReducer.test.ts` (ese último es el único punto donde los tests conocen las fases — ver Fase 5).
 
 ## Progreso (Hecho)
 
@@ -243,10 +261,24 @@ Primera fase que agrega **gameplay real** en vez de simulación automática. Pla
 - Verificado en navegador de punta a punta: carrera → final de copa → **jugar los 5 penales de verdad** → ganar suma la copa a la vitrina → perder no la suma → sigue a `/hub` o `/summary` según corresponda. Sin errores de consola en ningún paso.
 - `npm run test` (77/77), `npx tsc -b --noEmit` y `npm run lint` (oxlint) corren limpios.
 
+### Fase 5 — Dos minijuegos más + pretemporada roguelike (2026-08-06)
+
+**El contrato del registry aguantó la prueba.** La Fase 4 lo dejó planteado como test explícito ("si agregar un minijuego obliga a tocar algo más, el contrato quedó corto"): agregar `freeKick` y `dribbleChallenge` tocó **solo `src/minigames/`** — dos carpetas nuevas y una línea en el array de `MINIGAMES`. Cero cambios en el motor, cero en las pantallas.
+
+- **Tres mecánicas deliberadamente distintas**, no variantes de lo mismo: `penaltyShootout` es **lectura** (interpretar el amague del arquero), `freeKick` es **timing** (frenar un marcador que barre una barra de precisión), `dribbleChallenge` es **push-your-luck** (encarar rivales cada vez más difíciles y decidir cuándo cobrar, sabiendo que perder la pelota te deja sin nada).
+- **Los atributos del jugador ahora importan en los minijuegos.** Hueco encontrado al abrir la fase: un delantero de 90 pateaba penales exactamente igual que uno de 50, así que progresar la carrera no se sentía en el gameplay. `MinigameComponentProps` gana `attributes` — **sin tocar el motor**, porque `MinigamePlayerPage` ya tenía la carrera en mano y `PendingMinigame` sigue siendo agnóstico. Se pasan los atributos enteros y cada minijuego elige los suyos (penales → definición, tiro libre → definición/pase, gambeta → regate/ritmo), así el contrato no se amplía con cada minijuego nuevo.
+- **Pretemporada roguelike** (los "comodines de motivación" del roadmap, que nunca se habían definido). Decisión del usuario: modificador pasivo **elegible entre opciones**, que es justo el "sistema RPG de pretemporada" que el brief ya citaba de El Ídolo. Flujo nuevo: `ADVANCE_SEASON` → `PRESEASON_PENDING` con 3 enfoques ofrecidos → `SELECT_MOTIVATION` aplica los efectos y recién ahí elige el evento → `EVENT_PENDING`. Mismo patrón de fases que ya usaban `CLUB_PENDING`/`MINIGAME_PENDING`.
+- `content/motivations.ts`: 12 enfoques con **tradeoffs reales** (*"Obsesión con el gol"* +4 definición/−2 pase, *"Volver al potrero"* +4 regate/−2 físico), reusando `StatEffect` para no inventar maquinaria — el reducer ya sabía aplicar esa forma. Filtrados por `minAge`/`maxAge`/`positions`, así un pibe de 19 ve *"Hambre de pibe"* y un veterano de 33 ve *"Oficio de veterano"*, verificado en el sanity check.
+- **Los tradeoffs de pretemporada se muestran con números exactos**, al revés que los eventos. No es una inconsistencia: en los eventos ocultar el número es parte de la tensión (`docs/design-brief.md` lo pide explícitamente), pero la pretemporada es una decisión de build — sin ver el tradeoff no podés elegir con criterio. `lib/eventEffects.ts` expone las dos funciones y el comentario explica cuál va dónde.
+- **Deuda de tests saldada:** los helpers end-to-end se rompieron por tercera vez con una fase nueva (`SELECT_CLUB` en la integración de diseño, `RESOLVE_MINIGAME` en Fase 4, `SELECT_MOTIVATION` acá). Se extrajo `resolvePendingPhase(state)` como **único lugar donde los tests saben qué fases existen** — la próxima fase que agregue un paso se suma ahí y no en cinco loops distintos.
+- **13 tests nuevos** (90 en total): `motivationSelector.test.ts` (6), 4 extensiones a `contentSchema.test.ts` y 3 nuevos en `careerReducer.test.ts` (la pretemporada no toca al jugador hasta que elegís; `SELECT_MOTIVATION` aplica los efectos de verdad y pasa a `EVENT_PENDING`; los tres casos de error).
+- Verificado en navegador: pretemporada con los 3 enfoques y sus tradeoffs, el elegido aplicándose y quedando visible en el hub, y **los tres minijuegos jugados de punta a punta** (se recorrieron varias carreras hasta que salieran los tres). Sin errores de consola.
+- `npm run test` (90/90), `npx tsc -b --noEmit` y `npm run lint` (oxlint) corren limpios.
+
 ## Pendiente (TODO)
 
 - **Fase 3b — Europa y resto de confederaciones:** Sudamérica ya está (ver Progreso). Falta ampliar `content/clubs.json` a Europa (más allá de los 5 clubes actuales) y opcionalmente CONCACAF/CAF/AFC/OFC — mismo método (Wikipedia por país, adaptando a página de temporada si la lista general no organiza por división), incremental, no bloqueante.
-- **Fase 5 — Más minijuegos:** `freeKick`, `dribbleChallenge`, sistema de comodines de motivación. El registry ya está construido (Fase 4): agregar un minijuego debería ser escribir el componente + su `MinigameDefinition` y sumarlo a `MINIGAMES`, sin tocar motor ni pantallas. Si en la práctica hace falta tocar algo más, eso es una señal de que el contrato quedó corto y hay que revisarlo.
+- **Pasada visual (acordada con el usuario, va antes que Fase 6):** banderas reales en SVG para CONMEBOL + Europa grande (~25) con el `ColorRoundel` actual como fallback; escudos de club con formas y patrones derivados del hash; variantes de patrón en la camiseta; ilustraciones SVG por categoría de evento; y animación en los minijuegos (la pelota, el arquero). **No hacen falta assets subidos** — todo se genera por código. Los escudos reales de los clubes quedan explícitamente afuera por ser marcas registradas. Detalle completo en `C:\Users\49432830\.claude\plans\linked-brewing-starlight.md`.
 - **Fase 6 — Supabase real:** aplicar las migraciones del esquema (`careers`, `leaderboard_entries`, `rivals`, `legends` — diseño completo en el plan), `LeaderboardPage` real leyendo de Supabase, flujo de "ingresá tu alias" al retirarte.
 - **Fase 7 — Rival:** rival por arquetipo determinístico visible en el hub de carrera.
 - **Fase 8 — Pulido de portfolio:** UI de recreación de carrera por seed (feature "recreá a una leyenda", documentada — no easter egg oculto), tarjeta compartible (export a canvas/imagen), logros, personalización de apariencia más profunda, pase mobile.
@@ -258,4 +290,5 @@ Primera fase que agrega **gameplay real** en vez de simulación automática. Pla
 - `react-router-dom` tiene una vulnerabilidad reportada (alta severidad) específica del modo RSC (React Server Components) — no aplica a este proyecto porque es una SPA client-only sin RSC. Registrado acá para no re-investigarlo cada vez que `npm audit` lo marque.
 - ~~`createCareer.ts` elige el club de debut filtrando `SAMPLE_CLUBS` por `reputation < 40`...~~ — **resuelto en la integración de diseño (2026-08-05).** `createCareer.ts` ahora usa `selectDebutClubOffers` (`engine/clubTransition.ts`), que relaja al pool completo de clubes si el filtro por reputación da menos candidatos de los pedidos, y nunca llama `pickWeighted` sobre un array vacío. `engine/leagueEngine.ts#resolveLeagueWinner` sigue filtrando por `country`+`tier` y llamando `pickWeighted` directo sin fallback — con los 274 clubes de la Fase 3b esto no es un problema práctico hoy (todos los grupos CONMEBOL tienen varios clubes), pero si se agrega un país/confederación nuevo con un solo club en algún tier, revisar si conviene el mismo tipo de relajación que ya tiene `selectClubForMove`.
 - ~~**Ligas de un solo club con las 13 clubes hardcodeadas** (Argentina tier 2, Inglaterra tier 1)~~ — **Argentina resuelto en la Fase 3b** (38 clubes reales en tier 2). **Inglaterra tier 1 (Manchester City) sigue siendo de un solo club** porque Europa no se tocó en esta pasada — se resuelve cuando se amplíe `content/clubs.json` a Europa.
+- **Inflación de rating: casi toda carrera termina con un jugador de 90+.** Observado en el sanity check de la Fase 5: una carrera típica va de OVR 64 a los 17 hasta **96 a los 25**, y ahí se queda. La causa principal es previa a la Fase 5 (`attributeGrowthDelta` da +2 a +5 por atributo por temporada hasta los 21 y +1 a +3 hasta los 25, sobre un debut ya generoso); los enfoques de pretemporada suman ~+1 neto por temporada encima. **No se tocó en la Fase 5 a propósito** — rebalancear la curva de crecimiento es una decisión de diseño que invalida la nota deliberada de "Desviaciones" sobre el rating de debut, y merece medirse aparte. Importa para la Fase 8 ("recreá a una leyenda"): si todos terminan en 95, el rating deja de distinguir carreras y la comparación con leyendas pierde sentido. El lugar para tocarlo es `statMath.ts`.
 - **Sin persistencia de la carrera en curso.** `store/careerStore.ts` vive solo en memoria; un refresh de página o una navegación de URL completa (no vía React Router) pierde la carrera y las guardas de ruta redirigen a `/`. Es el comportamiento esperado para la Fase 2 — no hay `localStorage` ni sync con Supabase todavía (eso es Fase 6).

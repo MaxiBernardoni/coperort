@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { clubsSchema, seasonEventsSchema } from '../contentSchema'
+import { clubsSchema, motivationsSchema, seasonEventsSchema } from '../contentSchema'
 import { SAMPLE_CLUBS } from '../clubs'
 import { SAMPLE_EVENTS } from '../events'
+import { MOTIVATIONS } from '../motivations'
 
 describe('contentSchema', () => {
   it('SAMPLE_EVENTS es válido contra seasonEventsSchema', () => {
@@ -51,5 +52,24 @@ describe('contentSchema', () => {
   it('rechaza un club con tier inválido', () => {
     const invalid = { ...SAMPLE_CLUBS[0], tier: 3 }
     expect(() => clubsSchema.parse([invalid])).toThrow()
+  })
+
+  it('MOTIVATIONS es válido contra motivationsSchema', () => {
+    expect(() => motivationsSchema.parse(MOTIVATIONS)).not.toThrow()
+  })
+
+  it('rechaza motivaciones con ids duplicados', () => {
+    const [first] = MOTIVATIONS
+    expect(() => motivationsSchema.parse([first, first])).toThrow()
+  })
+
+  it('rechaza una motivación con minAge mayor que maxAge', () => {
+    const invalid = { ...MOTIVATIONS[0], minAge: 32, maxAge: 20 }
+    expect(() => motivationsSchema.parse([invalid])).toThrow()
+  })
+
+  it('rechaza una motivación sin efectos o con una posición inválida', () => {
+    expect(() => motivationsSchema.parse([{ ...MOTIVATIONS[0], effects: [] }])).toThrow()
+    expect(() => motivationsSchema.parse([{ ...MOTIVATIONS[0], positions: ['SW'] }])).toThrow()
   })
 })

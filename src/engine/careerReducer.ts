@@ -2,12 +2,14 @@ import { applyLoanReturn, applyLoanStart, applyTransfer, selectClubForMove } fro
 import { createCareer } from './createCareer'
 import { selectEvent } from './eventSelector'
 import { resolveLeagueWinner } from './leagueEngine'
+import { selectMotivationOffers } from './motivationSelector'
 import { createRng } from './rng'
 import { simulateSeasonPerformance } from './seasonPerformance'
 import { ATTRIBUTE_KEYS, attributeGrowthDelta, clamp, deriveOverallRating, marketValueForRating } from './statMath'
 import { resolveCupFinal } from './trophyEngine'
 import { SAMPLE_CLUBS } from '@/content/clubs'
 import { getEventById } from '@/content/events'
+import { getMotivationById } from '@/content/motivations'
 import type { Rng } from './rng'
 import type { PlayerAttributes } from '@/types/player'
 import type { CareerAction, CareerPhase, CareerState, SeasonHistoryEntry, Title } from '@/types/career'
@@ -55,16 +57,56 @@ function marketValueMultiplierFromEffects(effects: StatEffect[]): number {
     .reduce((multiplier, effect) => multiplier * effect.value, 1)
 }
 
-/** Elige el evento de la temporada y lo deja pendiente de que la UI resuelva una elección. */
+/**
+ * Arranca la pretemporada: ofrece 3 enfoques y espera que el usuario elija uno. El evento de
+ * la temporada se elige recién en `selectMotivation`, para que los efectos del enfoque ya
+ * estén aplicados cuando la temporada se juegue.
+ */
 function beginSeason(state: CareerState): CareerState {
   const rng = createRng(state.rngState)
-  const event = selectEvent(state, rng)
+  const offers = selectMotivationOffers(state.player.age, state.player.identity.position, rng)
 
   return {
     ...state,
     rngState: rng.getState(),
+    phase: 'PRESEASON_PENDING',
+    motivationOffers: offers.map((motivation) => motivation.id),
+    activeMotivationId: null,
+  }
+}
+
+/** Aplica el enfoque de pretemporada elegido y elige el evento que va a definir la temporada. */
+function selectMotivation(state: CareerState, motivationId: string): CareerState {
+  if (!state.motivationOffers.includes(motivationId)) {
+    throw new Error(`Enfoque de pretemporada desconocido "${motivationId}"`)
+  }
+
+  const motivation = getMotivationById(motivationId)
+  const rng = createRng(state.rngState)
+
+  const attributes = applyAttributeEffects(state.player.attributes, motivation.effects)
+  const overallRating = deriveOverallRating(attributes, state.player.identity.position)
+  const marketValue = Math.round(state.player.marketValue * marketValueMultiplierFromEffects(motivation.effects))
+
+  const withMotivation: CareerState = {
+    ...state,
+    player: { ...state.player, attributes, overallRating, marketValue },
+    motivationOffers: [],
+    activeMotivationId: motivation.id,
+  }
+
+  const event = selectEvent(withMotivation, rng)
+
+  return {
+    ...withMotivation,
+    rngState: rng.getState(),
     phase: 'EVENT_PENDING',
     pendingEventId: event.id,
+    stats: {
+      ...withMotivation.stats,
+      peakRating: Math.max(withMotivation.stats.peakRating, overallRating),
+      peakMarketValue: Math.max(withMotivation.stats.peakMarketValue, marketValue),
+    },
   }
 }
 
@@ -216,6 +258,10 @@ export function careerReducer(state: CareerState | null, action: CareerAction): 
       if (!state) throw new Error('No hay una carrera en curso: despachá CREATE_CAREER primero')
       if (state.phase !== 'ACTIVE') return state
       return beginSeason(state)
+    case 'SELECT_MOTIVATION':
+      if (!state) throw new Error('No hay una carrera en curso: despachá CREATE_CAREER primero')
+      if (state.phase !== 'PRESEASON_PENDING') throw new Error('No hay ninguna pretemporada pendiente')
+      return selectMotivation(state, action.motivationId)
     case 'RESOLVE_EVENT':
       if (!state) throw new Error('No hay una carrera en curso: despachá CREATE_CAREER primero')
       if (state.phase !== 'EVENT_PENDING') throw new Error('No hay ningún evento pendiente para resolver')

@@ -1,4 +1,6 @@
 import { createRng } from '@/engine/rng'
+import { dribbleChallenge } from './dribbleChallenge'
+import { freeKick } from './freeKick'
 import { penaltyShootout } from './penaltyShootout'
 import type { MinigameDefinition } from './types'
 
@@ -7,9 +9,10 @@ import type { MinigameDefinition } from './types'
  * a este array — el motor no se toca (no sabe qué minijuegos existen, solo emite un
  * `PendingMinigame` agnóstico y consume el `MinigameResult`; ver `types/minigame.ts`).
  *
- * Fase 5 suma `freeKick` y `dribbleChallenge` acá.
+ * Las tres mecánicas son deliberadamente distintas entre sí (lectura / timing / push-your-luck),
+ * no variantes de lo mismo.
  */
-export const MINIGAMES: MinigameDefinition[] = [penaltyShootout]
+export const MINIGAMES: MinigameDefinition[] = [penaltyShootout, freeKick, dribbleChallenge]
 
 export function getMinigameById(id: string): MinigameDefinition {
   const minigame = MINIGAMES.find((candidate) => candidate.id === id)

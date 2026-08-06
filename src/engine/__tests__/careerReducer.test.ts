@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { careerReducer } from '../careerReducer'
 import { getClubById } from '@/content/clubs'
 import { getEventById } from '@/content/events'
+import { getMotivationById } from '@/content/motivations'
 import type { CareerState, CharacterCreationInput } from '@/types/career'
 import type { MinigameResult } from '@/types/minigame'
 
@@ -25,19 +26,55 @@ function createCareerAndSelectClub(seed: number, input: CharacterCreationInput =
 /** Resultado fijo para las finales de copa en los tests end-to-end: constante, así el determinismo se mantiene. */
 const LOST_FINAL: MinigameResult = { won: false, score: 2, maxScore: 5 }
 
-/** Simula a la UI: elige club, avanza la temporada, elige la primera opción y resuelve la final si la hay. */
+/**
+ * Resuelve una única fase pendiente eligiendo siempre la primera opción, o devuelve `null` si
+ * la carrera no está esperando nada (ACTIVE/RETIRED).
+ *
+ * Único punto donde los tests saben qué fases existen: cada fase nueva del motor se agrega acá
+ * y no en cinco loops distintos. Esto ya rompió los tests tres veces (`SELECT_CLUB` en la
+ * integración de diseño, `RESOLVE_MINIGAME` en Fase 4, `SELECT_MOTIVATION` en Fase 5).
+ */
+function resolvePendingPhase(state: CareerState): CareerState | null {
+  switch (state.phase) {
+    case 'CLUB_PENDING':
+      return careerReducer(state, { type: 'SELECT_CLUB', clubId: state.clubOffers[0].id })
+    case 'PRESEASON_PENDING':
+      return careerReducer(state, { type: 'SELECT_MOTIVATION', motivationId: state.motivationOffers[0] })
+    case 'EVENT_PENDING':
+      return careerReducer(state, {
+        type: 'RESOLVE_EVENT',
+        choiceId: getEventById(state.pendingEventId!).choices[0].id,
+      })
+    case 'MINIGAME_PENDING':
+      return careerReducer(state, { type: 'RESOLVE_MINIGAME', result: LOST_FINAL })
+    default:
+      return null
+  }
+}
+
+/** Avanza una temporada completa: `ADVANCE_SEASON` y después todas las fases que queden pendientes. */
+function playOneSeason(state: CareerState): CareerState {
+  let next = careerReducer(state, { type: 'ADVANCE_SEASON' })
+  for (let step = 0; step < 10; step++) {
+    const resolved = resolvePendingPhase(next)
+    if (!resolved) break
+    next = resolved
+  }
+  return next
+}
+
+/** Avanza desde ACTIVE hasta EVENT_PENDING, pasando por la pretemporada con el primer enfoque. */
+function advanceToEvent(state: CareerState): CareerState {
+  const preseason = careerReducer(state, { type: 'ADVANCE_SEASON' })
+  return careerReducer(preseason, { type: 'SELECT_MOTIVATION', motivationId: preseason.motivationOffers[0] })
+}
+
+/** Simula a la UI: elige club y juega temporada tras temporada hasta el retiro. */
 function runFullCareer(seed: number, input: CharacterCreationInput = testInput): CareerState {
   let state = createCareerAndSelectClub(seed, input)
   let iterations = 0
   while (state.phase !== 'RETIRED') {
-    state = careerReducer(state, { type: 'ADVANCE_SEASON' })
-    if (state.phase === 'EVENT_PENDING') {
-      const event = getEventById(state.pendingEventId!)
-      state = careerReducer(state, { type: 'RESOLVE_EVENT', choiceId: event.choices[0].id })
-    }
-    if (state.phase === 'MINIGAME_PENDING') {
-      state = careerReducer(state, { type: 'RESOLVE_MINIGAME', result: LOST_FINAL })
-    }
+    state = playOneSeason(state)
     iterations += 1
     if (iterations > MAX_SEASONS) {
       throw new Error('La carrera no llegó a RETIRED dentro del límite de seguridad de temporadas')
@@ -75,14 +112,7 @@ describe('careerReducer', () => {
 
     let iterations = 0
     while (state.phase !== 'RETIRED') {
-      state = careerReducer(state, { type: 'ADVANCE_SEASON' })
-      if (state.phase === 'EVENT_PENDING') {
-        const event = getEventById(state.pendingEventId!)
-        state = careerReducer(state, { type: 'RESOLVE_EVENT', choiceId: event.choices[0].id })
-      }
-      if (state.phase === 'MINIGAME_PENDING') {
-        state = careerReducer(state, { type: 'RESOLVE_MINIGAME', result: LOST_FINAL })
-      }
+      state = playOneSeason(state)
       expect(state.player.overallRating).toBeGreaterThanOrEqual(1)
       expect(state.player.overallRating).toBeLessThanOrEqual(99)
       iterations += 1
@@ -165,27 +195,71 @@ describe('careerReducer', () => {
     expect(() => careerReducer(null, { type: 'SELECT_CLUB', clubId: 'x' })).toThrow()
   })
 
-  it('ADVANCE_SEASON moves to EVENT_PENDING with a resolvable pendingEventId, without touching the player yet', () => {
+  it('ADVANCE_SEASON opens the preseason with three distinct offers, without touching the player yet', () => {
     const created = createCareerAndSelectClub(7)
-    const pending = careerReducer(created, { type: 'ADVANCE_SEASON' })
+    const preseason = careerReducer(created, { type: 'ADVANCE_SEASON' })
+
+    expect(preseason.phase).toBe('PRESEASON_PENDING')
+    expect(preseason.motivationOffers).toHaveLength(3)
+    expect(new Set(preseason.motivationOffers).size).toBe(3)
+    expect(preseason.activeMotivationId).toBeNull()
+    expect(preseason.player).toEqual(created.player)
+    expect(preseason.season).toBe(created.season)
+  })
+
+  it('SELECT_MOTIVATION applies the chosen focus and moves to EVENT_PENDING', () => {
+    const created = createCareerAndSelectClub(7)
+    const preseason = careerReducer(created, { type: 'ADVANCE_SEASON' })
+    const chosenId = preseason.motivationOffers[0]
+    const pending = careerReducer(preseason, { type: 'SELECT_MOTIVATION', motivationId: chosenId })
 
     expect(pending.phase).toBe('EVENT_PENDING')
+    expect(pending.activeMotivationId).toBe(chosenId)
+    expect(pending.motivationOffers).toHaveLength(0)
     expect(pending.pendingEventId).not.toBeNull()
     expect(() => getEventById(pending.pendingEventId!)).not.toThrow()
+    // el enfoque toca atributos pero todavía no juega la temporada
     expect(pending.player.age).toBe(created.player.age)
     expect(pending.season).toBe(created.season)
   })
 
-  it('ADVANCE_SEASON is a no-op while an event is already pending', () => {
+  it('SELECT_MOTIVATION really applies the effects of the chosen focus', () => {
     const created = createCareerAndSelectClub(7)
-    const pending = careerReducer(created, { type: 'ADVANCE_SEASON' })
-    const again = careerReducer(pending, { type: 'ADVANCE_SEASON' })
-    expect(again).toBe(pending)
+    const preseason = careerReducer(created, { type: 'ADVANCE_SEASON' })
+    const motivation = getMotivationById(preseason.motivationOffers[0])
+    const applied = careerReducer(preseason, { type: 'SELECT_MOTIVATION', motivationId: motivation.id })
+
+    for (const effect of motivation.effects) {
+      if (effect.target === 'marketValue') continue
+      const before = created.player.attributes[effect.target]
+      const after = applied.player.attributes[effect.target]
+      if (effect.op === 'add' && before + effect.value >= 1 && before + effect.value <= 99) {
+        expect(after).toBe(before + effect.value)
+      }
+    }
+  })
+
+  it('throws when SELECT_MOTIVATION gets an unknown id, is out of phase, or has no career', () => {
+    const created = createCareerAndSelectClub(7)
+    const preseason = careerReducer(created, { type: 'ADVANCE_SEASON' })
+
+    expect(() => careerReducer(preseason, { type: 'SELECT_MOTIVATION', motivationId: 'no-existe' })).toThrow()
+    expect(() => careerReducer(created, { type: 'SELECT_MOTIVATION', motivationId: 'goal-obsession' })).toThrow()
+    expect(() => careerReducer(null, { type: 'SELECT_MOTIVATION', motivationId: 'goal-obsession' })).toThrow()
+  })
+
+  it('ADVANCE_SEASON is a no-op while the preseason or an event is already pending', () => {
+    const created = createCareerAndSelectClub(7)
+    const preseason = careerReducer(created, { type: 'ADVANCE_SEASON' })
+    expect(careerReducer(preseason, { type: 'ADVANCE_SEASON' })).toBe(preseason)
+
+    const pending = advanceToEvent(created)
+    expect(careerReducer(pending, { type: 'ADVANCE_SEASON' })).toBe(pending)
   })
 
   it('RESOLVE_EVENT applies the chosen effects, advances age/season and clears pendingEventId', () => {
     const created = createCareerAndSelectClub(7)
-    const pending = careerReducer(created, { type: 'ADVANCE_SEASON' })
+    const pending = advanceToEvent(created)
     const event = getEventById(pending.pendingEventId!)
     const resolved = careerReducer(pending, { type: 'RESOLVE_EVENT', choiceId: event.choices[0].id })
 
@@ -197,7 +271,7 @@ describe('careerReducer', () => {
 
   it('RESOLVE_EVENT appends exactly one seasonHistory entry matching that season\'s stats', () => {
     const created = createCareerAndSelectClub(7)
-    const pending = careerReducer(created, { type: 'ADVANCE_SEASON' })
+    const pending = advanceToEvent(created)
     const event = getEventById(pending.pendingEventId!)
     const resolved = careerReducer(pending, { type: 'RESOLVE_EVENT', choiceId: event.choices[0].id })
 
