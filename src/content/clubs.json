@@ -1,290 +1,3271 @@
 [
-  { "id": "argentinos-juniors", "name": "Argentinos Juniors", "country": "Argentina", "tier": 1, "reputation": 50 },
-  { "id": "atletico-tucuman", "name": "Atlético Tucumán", "country": "Argentina", "tier": 1, "reputation": 42 },
-  { "id": "banfield", "name": "Banfield", "country": "Argentina", "tier": 1, "reputation": 44 },
-  { "id": "barracas-central", "name": "Barracas Central", "country": "Argentina", "tier": 1, "reputation": 38 },
-  { "id": "belgrano", "name": "Belgrano", "country": "Argentina", "tier": 1, "reputation": 46 },
-  { "id": "boca-juniors", "name": "Boca Juniors", "country": "Argentina", "tier": 1, "reputation": 92 },
-  { "id": "central-cordoba-sde", "name": "Central Córdoba (SdE)", "country": "Argentina", "tier": 1, "reputation": 38 },
-  { "id": "defensa-y-justicia", "name": "Defensa y Justicia", "country": "Argentina", "tier": 1, "reputation": 46 },
-  { "id": "deportivo-riestra", "name": "Deportivo Riestra", "country": "Argentina", "tier": 1, "reputation": 36 },
-  { "id": "estudiantes-lp", "name": "Estudiantes (LP)", "country": "Argentina", "tier": 1, "reputation": 58 },
-  { "id": "gimnasia-esgrima-lp", "name": "Gimnasia y Esgrima (LP)", "country": "Argentina", "tier": 1, "reputation": 50 },
-  { "id": "godoy-cruz", "name": "Godoy Cruz", "country": "Argentina", "tier": 1, "reputation": 46 },
-  { "id": "huracan", "name": "Huracán", "country": "Argentina", "tier": 1, "reputation": 52 },
-  { "id": "independiente", "name": "Independiente", "country": "Argentina", "tier": 1, "reputation": 76 },
-  { "id": "independiente-rivadavia", "name": "Independiente Rivadavia", "country": "Argentina", "tier": 1, "reputation": 40 },
-  { "id": "instituto", "name": "Instituto", "country": "Argentina", "tier": 1, "reputation": 40 },
-  { "id": "lanus", "name": "Lanús", "country": "Argentina", "tier": 1, "reputation": 48 },
-  { "id": "newells-old-boys", "name": "Newell's Old Boys", "country": "Argentina", "tier": 1, "reputation": 60 },
-  { "id": "platense", "name": "Platense", "country": "Argentina", "tier": 1, "reputation": 42 },
-  { "id": "racing", "name": "Racing", "country": "Argentina", "tier": 1, "reputation": 74 },
-  { "id": "river-plate", "name": "River Plate", "country": "Argentina", "tier": 1, "reputation": 90 },
-  { "id": "rosario-central", "name": "Rosario Central", "country": "Argentina", "tier": 1, "reputation": 58 },
-  { "id": "san-lorenzo", "name": "San Lorenzo", "country": "Argentina", "tier": 1, "reputation": 66 },
-  { "id": "sarmiento-junin", "name": "Sarmiento (J)", "country": "Argentina", "tier": 1, "reputation": 40 },
-  { "id": "talleres-cordoba", "name": "Talleres (C)", "country": "Argentina", "tier": 1, "reputation": 60 },
-  { "id": "tigre", "name": "Tigre", "country": "Argentina", "tier": 1, "reputation": 42 },
-  { "id": "union", "name": "Unión", "country": "Argentina", "tier": 1, "reputation": 48 },
-  { "id": "velez-sarsfield", "name": "Vélez Sarsfield", "country": "Argentina", "tier": 1, "reputation": 62 },
-
-  { "id": "agropecuario-argentino", "name": "Agropecuario Argentino", "country": "Argentina", "tier": 2, "reputation": 18 },
-  { "id": "aldosivi", "name": "Aldosivi", "country": "Argentina", "tier": 2, "reputation": 28 },
-  { "id": "all-boys", "name": "All Boys", "country": "Argentina", "tier": 2, "reputation": 20 },
-  { "id": "almagro", "name": "Almagro", "country": "Argentina", "tier": 2, "reputation": 24 },
-  { "id": "almirante-brown", "name": "Almirante Brown", "country": "Argentina", "tier": 2, "reputation": 18 },
-  { "id": "alvarado", "name": "Alvarado", "country": "Argentina", "tier": 2, "reputation": 20 },
-  { "id": "arsenal-arg", "name": "Arsenal", "country": "Argentina", "tier": 2, "reputation": 28 },
-  { "id": "atlanta", "name": "Atlanta", "country": "Argentina", "tier": 2, "reputation": 26 },
-  { "id": "atletico-de-rafaela", "name": "Atlético de Rafaela", "country": "Argentina", "tier": 2, "reputation": 24 },
-  { "id": "brown-adrogue", "name": "Brown", "country": "Argentina", "tier": 2, "reputation": 18 },
-  { "id": "chacarita-juniors", "name": "Chacarita Juniors", "country": "Argentina", "tier": 2, "reputation": 26 },
-  { "id": "chaco-for-ever", "name": "Chaco For Ever", "country": "Argentina", "tier": 2, "reputation": 16 },
-  { "id": "colon", "name": "Colón", "country": "Argentina", "tier": 2, "reputation": 34 },
-  { "id": "defensores-de-belgrano", "name": "Defensores de Belgrano", "country": "Argentina", "tier": 2, "reputation": 18 },
-  { "id": "defensores-unidos", "name": "Defensores Unidos", "country": "Argentina", "tier": 2, "reputation": 15 },
-  { "id": "deportivo-madryn", "name": "Deportivo Madryn", "country": "Argentina", "tier": 2, "reputation": 20 },
-  { "id": "deportivo-maipu", "name": "Deportivo Maipú", "country": "Argentina", "tier": 2, "reputation": 16 },
-  { "id": "deportivo-moron", "name": "Deportivo Morón", "country": "Argentina", "tier": 2, "reputation": 20 },
-  { "id": "estudiantes-ba", "name": "Estudiantes (BA)", "country": "Argentina", "tier": 2, "reputation": 18 },
-  { "id": "estudiantes-rc", "name": "Estudiantes (RC)", "country": "Argentina", "tier": 2, "reputation": 18 },
-  { "id": "ferro-carril-oeste", "name": "Ferro Carril Oeste", "country": "Argentina", "tier": 2, "reputation": 26 },
-  { "id": "gimnasia-esgrima-jujuy", "name": "Gimnasia y Esgrima (J)", "country": "Argentina", "tier": 2, "reputation": 18 },
-  { "id": "gimnasia-esgrima-mendoza", "name": "Gimnasia y Esgrima (M)", "country": "Argentina", "tier": 2, "reputation": 18 },
-  { "id": "gimnasia-y-tiro", "name": "Gimnasia y Tiro", "country": "Argentina", "tier": 2, "reputation": 16 },
-  { "id": "guemes", "name": "Güemes", "country": "Argentina", "tier": 2, "reputation": 16 },
-  { "id": "guillermo-brown", "name": "Guillermo Brown", "country": "Argentina", "tier": 2, "reputation": 16 },
-  { "id": "mitre", "name": "Mitre", "country": "Argentina", "tier": 2, "reputation": 18 },
-  { "id": "nueva-chicago", "name": "Nueva Chicago", "country": "Argentina", "tier": 2, "reputation": 22 },
-  { "id": "patronato", "name": "Patronato", "country": "Argentina", "tier": 2, "reputation": 26 },
-  { "id": "quilmes", "name": "Quilmes", "country": "Argentina", "tier": 2, "reputation": 30 },
-  { "id": "racing-cordoba", "name": "Racing (C)", "country": "Argentina", "tier": 2, "reputation": 16 },
-  { "id": "san-martin-sj", "name": "San Martín (SJ)", "country": "Argentina", "tier": 2, "reputation": 20 },
-  { "id": "san-martin-tucuman", "name": "San Martín (T)", "country": "Argentina", "tier": 2, "reputation": 20 },
-  { "id": "san-miguel", "name": "San Miguel", "country": "Argentina", "tier": 2, "reputation": 15 },
-  { "id": "san-telmo", "name": "San Telmo", "country": "Argentina", "tier": 2, "reputation": 15 },
-  { "id": "talleres-re", "name": "Talleres (RE)", "country": "Argentina", "tier": 2, "reputation": 15 },
-  { "id": "temperley", "name": "Temperley", "country": "Argentina", "tier": 2, "reputation": 20 },
-  { "id": "tristan-suarez", "name": "Tristán Suárez", "country": "Argentina", "tier": 2, "reputation": 15 },
-
-  { "id": "athletico-paranaense", "name": "Athletico Paranaense", "country": "Brasil", "tier": 1, "reputation": 62 },
-  { "id": "atletico-mineiro", "name": "Atlético Mineiro", "country": "Brasil", "tier": 1, "reputation": 74 },
-  { "id": "bahia", "name": "Bahia", "country": "Brasil", "tier": 1, "reputation": 52 },
-  { "id": "botafogo", "name": "Botafogo", "country": "Brasil", "tier": 1, "reputation": 66 },
-  { "id": "chapecoense", "name": "Chapecoense", "country": "Brasil", "tier": 1, "reputation": 40 },
-  { "id": "corinthians", "name": "Corinthians", "country": "Brasil", "tier": 1, "reputation": 82 },
-  { "id": "coritiba", "name": "Coritiba", "country": "Brasil", "tier": 1, "reputation": 44 },
-  { "id": "cruzeiro", "name": "Cruzeiro", "country": "Brasil", "tier": 1, "reputation": 70 },
-  { "id": "flamengo", "name": "Flamengo", "country": "Brasil", "tier": 1, "reputation": 95 },
-  { "id": "fluminense", "name": "Fluminense", "country": "Brasil", "tier": 1, "reputation": 68 },
-  { "id": "gremio", "name": "Grêmio", "country": "Brasil", "tier": 1, "reputation": 76 },
-  { "id": "internacional", "name": "Internacional", "country": "Brasil", "tier": 1, "reputation": 74 },
-  { "id": "mirassol", "name": "Mirassol", "country": "Brasil", "tier": 1, "reputation": 38 },
-  { "id": "palmeiras", "name": "Palmeiras", "country": "Brasil", "tier": 1, "reputation": 88 },
-  { "id": "red-bull-bragantino", "name": "Red Bull Bragantino", "country": "Brasil", "tier": 1, "reputation": 46 },
-  { "id": "remo", "name": "Remo", "country": "Brasil", "tier": 1, "reputation": 36 },
-  { "id": "santos", "name": "Santos", "country": "Brasil", "tier": 1, "reputation": 72 },
-  { "id": "sao-paulo", "name": "São Paulo FC", "country": "Brasil", "tier": 1, "reputation": 80 },
-  { "id": "vasco-da-gama", "name": "Vasco da Gama", "country": "Brasil", "tier": 1, "reputation": 62 },
-  { "id": "vitoria", "name": "Vitória", "country": "Brasil", "tier": 1, "reputation": 42 },
-
-  { "id": "america-mineiro", "name": "América Mineiro", "country": "Brasil", "tier": 2, "reputation": 40 },
-  { "id": "athletic-club-mg", "name": "Athletic", "country": "Brasil", "tier": 2, "reputation": 22 },
-  { "id": "atletico-goianiense", "name": "Atlético Goianiense", "country": "Brasil", "tier": 2, "reputation": 34 },
-  { "id": "avai", "name": "Avaí", "country": "Brasil", "tier": 2, "reputation": 32 },
-  { "id": "botafogo-sp", "name": "Botafogo-SP", "country": "Brasil", "tier": 2, "reputation": 24 },
-  { "id": "ceara", "name": "Ceará", "country": "Brasil", "tier": 2, "reputation": 42 },
-  { "id": "crb", "name": "CRB", "country": "Brasil", "tier": 2, "reputation": 34 },
-  { "id": "criciuma", "name": "Criciúma", "country": "Brasil", "tier": 2, "reputation": 30 },
-  { "id": "cuiaba", "name": "Cuiabá", "country": "Brasil", "tier": 2, "reputation": 32 },
-  { "id": "fortaleza", "name": "Fortaleza", "country": "Brasil", "tier": 2, "reputation": 46 },
-  { "id": "goias", "name": "Goiás", "country": "Brasil", "tier": 2, "reputation": 38 },
-  { "id": "juventude", "name": "Juventude", "country": "Brasil", "tier": 2, "reputation": 34 },
-  { "id": "londrina", "name": "Londrina", "country": "Brasil", "tier": 2, "reputation": 24 },
-  { "id": "nautico", "name": "Náutico", "country": "Brasil", "tier": 2, "reputation": 32 },
-  { "id": "novorizontino", "name": "Novorizontino", "country": "Brasil", "tier": 2, "reputation": 26 },
-  { "id": "operario-ferroviario", "name": "Operário Ferroviário", "country": "Brasil", "tier": 2, "reputation": 26 },
-  { "id": "ponte-preta", "name": "Ponte Preta", "country": "Brasil", "tier": 2, "reputation": 30 },
-  { "id": "sao-bernardo", "name": "São Bernardo", "country": "Brasil", "tier": 2, "reputation": 20 },
-  { "id": "sport-recife", "name": "Sport", "country": "Brasil", "tier": 2, "reputation": 38 },
-  { "id": "vila-nova", "name": "Vila Nova", "country": "Brasil", "tier": 2, "reputation": 26 },
-
-  { "id": "audax-italiano", "name": "Audax Italiano", "country": "Chile", "tier": 1, "reputation": 44 },
-  { "id": "cobresal", "name": "Cobresal", "country": "Chile", "tier": 1, "reputation": 38 },
-  { "id": "colo-colo", "name": "Colo-Colo", "country": "Chile", "tier": 1, "reputation": 85 },
-  { "id": "coquimbo-unido", "name": "Coquimbo Unido", "country": "Chile", "tier": 1, "reputation": 42 },
-  { "id": "deportes-concepcion", "name": "Deportes Concepción", "country": "Chile", "tier": 1, "reputation": 34 },
-  { "id": "deportes-la-serena", "name": "Deportes La Serena", "country": "Chile", "tier": 1, "reputation": 34 },
-  { "id": "deportes-limache", "name": "Deportes Limache", "country": "Chile", "tier": 1, "reputation": 32 },
-  { "id": "everton-cl", "name": "Everton", "country": "Chile", "tier": 1, "reputation": 44 },
-  { "id": "huachipato", "name": "Huachipato", "country": "Chile", "tier": 1, "reputation": 42 },
-  { "id": "nublense", "name": "Ñublense", "country": "Chile", "tier": 1, "reputation": 36 },
-  { "id": "ohiggins", "name": "O'Higgins", "country": "Chile", "tier": 1, "reputation": 44 },
-  { "id": "palestino", "name": "Palestino", "country": "Chile", "tier": 1, "reputation": 44 },
-  { "id": "union-la-calera", "name": "Unión La Calera", "country": "Chile", "tier": 1, "reputation": 36 },
-  { "id": "universidad-catolica", "name": "Universidad Católica", "country": "Chile", "tier": 1, "reputation": 78 },
-  { "id": "universidad-de-chile", "name": "Universidad de Chile", "country": "Chile", "tier": 1, "reputation": 80 },
-  { "id": "universidad-de-concepcion", "name": "Universidad de Concepción", "country": "Chile", "tier": 1, "reputation": 34 },
-
-  { "id": "cobreloa", "name": "Cobreloa", "country": "Chile", "tier": 2, "reputation": 38 },
-  { "id": "curico-unido", "name": "Curicó Unido", "country": "Chile", "tier": 2, "reputation": 26 },
-  { "id": "deportes-antofagasta", "name": "Deportes Antofagasta", "country": "Chile", "tier": 2, "reputation": 30 },
-  { "id": "deportes-copiapo", "name": "Deportes Copiapó", "country": "Chile", "tier": 2, "reputation": 20 },
-  { "id": "deportes-iquique", "name": "Deportes Iquique", "country": "Chile", "tier": 2, "reputation": 30 },
-  { "id": "deportes-puerto-montt", "name": "Deportes Puerto Montt", "country": "Chile", "tier": 2, "reputation": 22 },
-  { "id": "deportes-recoleta", "name": "Deportes Recoleta", "country": "Chile", "tier": 2, "reputation": 18 },
-  { "id": "deportes-santa-cruz", "name": "Deportes Santa Cruz", "country": "Chile", "tier": 2, "reputation": 18 },
-  { "id": "deportes-temuco", "name": "Deportes Temuco", "country": "Chile", "tier": 2, "reputation": 24 },
-  { "id": "magallanes", "name": "Magallanes", "country": "Chile", "tier": 2, "reputation": 26 },
-  { "id": "rangers-cl", "name": "Rangers", "country": "Chile", "tier": 2, "reputation": 26 },
-  { "id": "san-luis", "name": "San Luis", "country": "Chile", "tier": 2, "reputation": 20 },
-  { "id": "san-marcos", "name": "San Marcos", "country": "Chile", "tier": 2, "reputation": 20 },
-  { "id": "santiago-wanderers", "name": "Santiago Wanderers", "country": "Chile", "tier": 2, "reputation": 34 },
-  { "id": "union-espanola", "name": "Unión Española", "country": "Chile", "tier": 2, "reputation": 36 },
-  { "id": "union-san-felipe", "name": "Unión San Felipe", "country": "Chile", "tier": 2, "reputation": 22 },
-
-  { "id": "boston-river", "name": "Boston River", "country": "Uruguay", "tier": 1, "reputation": 32 },
-  { "id": "cerro", "name": "Cerro", "country": "Uruguay", "tier": 1, "reputation": 38 },
-  { "id": "danubio", "name": "Danubio", "country": "Uruguay", "tier": 1, "reputation": 42 },
-  { "id": "defensor-sporting", "name": "Defensor Sporting", "country": "Uruguay", "tier": 1, "reputation": 46 },
-  { "id": "fenix", "name": "Fénix", "country": "Uruguay", "tier": 1, "reputation": 34 },
-  { "id": "juventud-las-piedras", "name": "Juventud Las Piedras", "country": "Uruguay", "tier": 1, "reputation": 32 },
-  { "id": "liverpool-uy", "name": "Liverpool", "country": "Uruguay", "tier": 1, "reputation": 36 },
-  { "id": "montevideo-wanderers", "name": "Montevideo Wanderers", "country": "Uruguay", "tier": 1, "reputation": 36 },
-  { "id": "nacional", "name": "Nacional", "country": "Uruguay", "tier": 1, "reputation": 90 },
-  { "id": "penarol", "name": "Peñarol", "country": "Uruguay", "tier": 1, "reputation": 92 },
-  { "id": "plaza-colonia", "name": "Plaza Colonia", "country": "Uruguay", "tier": 1, "reputation": 34 },
-  { "id": "racing-uy", "name": "Racing", "country": "Uruguay", "tier": 1, "reputation": 30 },
-  { "id": "rampla-juniors", "name": "Rampla Juniors", "country": "Uruguay", "tier": 1, "reputation": 28 },
-  { "id": "river-plate-uy", "name": "River Plate", "country": "Uruguay", "tier": 1, "reputation": 32 },
-  { "id": "sud-america", "name": "Sud América", "country": "Uruguay", "tier": 1, "reputation": 26 },
-  { "id": "villa-espanola", "name": "Villa Española", "country": "Uruguay", "tier": 1, "reputation": 26 },
-
-  { "id": "atenas-uy", "name": "Atenas", "country": "Uruguay", "tier": 2, "reputation": 15 },
-  { "id": "bella-vista", "name": "Bella Vista", "country": "Uruguay", "tier": 2, "reputation": 22 },
-  { "id": "canadian", "name": "Canadian", "country": "Uruguay", "tier": 2, "reputation": 15 },
-  { "id": "central-espanol", "name": "Central Español", "country": "Uruguay", "tier": 2, "reputation": 18 },
-  { "id": "cerrito", "name": "Cerrito", "country": "Uruguay", "tier": 2, "reputation": 15 },
-  { "id": "cerro-largo", "name": "Cerro Largo", "country": "Uruguay", "tier": 2, "reputation": 18 },
-  { "id": "deportivo-maldonado", "name": "Deportivo Maldonado", "country": "Uruguay", "tier": 2, "reputation": 18 },
-  { "id": "el-tanque-sisley", "name": "El Tanque Sisley", "country": "Uruguay", "tier": 2, "reputation": 16 },
-  { "id": "huracan-uy", "name": "Huracán", "country": "Uruguay", "tier": 2, "reputation": 16 },
-  { "id": "miramar-misiones", "name": "Miramar Misiones", "country": "Uruguay", "tier": 2, "reputation": 16 },
-  { "id": "oriental", "name": "Oriental", "country": "Uruguay", "tier": 2, "reputation": 15 },
-  { "id": "progreso", "name": "Progreso", "country": "Uruguay", "tier": 2, "reputation": 20 },
-  { "id": "rentistas", "name": "Rentistas", "country": "Uruguay", "tier": 2, "reputation": 22 },
-  { "id": "rocha", "name": "Rocha", "country": "Uruguay", "tier": 2, "reputation": 16 },
-  { "id": "tacuarembo", "name": "Tacuarembó", "country": "Uruguay", "tier": 2, "reputation": 18 },
-  { "id": "torque", "name": "Torque", "country": "Uruguay", "tier": 2, "reputation": 20 },
-  { "id": "villa-teresa", "name": "Villa Teresa", "country": "Uruguay", "tier": 2, "reputation": 15 },
-
-  { "id": "cerro-porteno", "name": "Cerro Porteño", "country": "Paraguay", "tier": 1, "reputation": 80 },
-  { "id": "deportivo-capiata", "name": "Deportivo Capiatá", "country": "Paraguay", "tier": 1, "reputation": 30 },
-  { "id": "general-diaz", "name": "General Diaz", "country": "Paraguay", "tier": 1, "reputation": 28 },
-  { "id": "guarani", "name": "Guaraní", "country": "Paraguay", "tier": 1, "reputation": 52 },
-  { "id": "libertad", "name": "Libertad", "country": "Paraguay", "tier": 1, "reputation": 62 },
-  { "id": "nacional-py", "name": "Nacional", "country": "Paraguay", "tier": 1, "reputation": 44 },
-  { "id": "olimpia", "name": "Olimpia", "country": "Paraguay", "tier": 1, "reputation": 82 },
-  { "id": "rubio-nu", "name": "Rubio Ñú", "country": "Paraguay", "tier": 1, "reputation": 26 },
-  { "id": "sportivo-luqueno", "name": "Sportivo Luqueño", "country": "Paraguay", "tier": 1, "reputation": 34 },
-  { "id": "sol-de-america", "name": "Sol de América", "country": "Paraguay", "tier": 1, "reputation": 32 },
-  { "id": "river-plate-py", "name": "River Plate", "country": "Paraguay", "tier": 1, "reputation": 28 },
-  { "id": "general-caballero-zc", "name": "General Caballero ZC", "country": "Paraguay", "tier": 1, "reputation": 26 },
-
-  { "id": "abb", "name": "ABB", "country": "Bolivia", "tier": 1, "reputation": 24 },
-  { "id": "always-ready", "name": "Always Ready", "country": "Bolivia", "tier": 1, "reputation": 44 },
-  { "id": "aurora", "name": "Aurora", "country": "Bolivia", "tier": 1, "reputation": 28 },
-  { "id": "blooming", "name": "Blooming", "country": "Bolivia", "tier": 1, "reputation": 36 },
-  { "id": "bolivar", "name": "Bolívar", "country": "Bolivia", "tier": 1, "reputation": 58 },
-  { "id": "guabira", "name": "Guabirá", "country": "Bolivia", "tier": 1, "reputation": 30 },
-  { "id": "gv-san-jose", "name": "GV San José", "country": "Bolivia", "tier": 1, "reputation": 24 },
-  { "id": "independiente-petrolero", "name": "Independiente Petrolero", "country": "Bolivia", "tier": 1, "reputation": 26 },
-  { "id": "nacional-potosi", "name": "Nacional Potosí", "country": "Bolivia", "tier": 1, "reputation": 26 },
-  { "id": "oriente-petrolero", "name": "Oriente Petrolero", "country": "Bolivia", "tier": 1, "reputation": 46 },
-  { "id": "real-oruro", "name": "Real Oruro", "country": "Bolivia", "tier": 1, "reputation": 24 },
-  { "id": "real-potosi", "name": "Real Potosí", "country": "Bolivia", "tier": 1, "reputation": 26 },
-  { "id": "real-tomayapo", "name": "Real Tomayapo", "country": "Bolivia", "tier": 1, "reputation": 24 },
-  { "id": "san-antonio-bulo-bulo", "name": "San Antonio Bulo Bulo", "country": "Bolivia", "tier": 1, "reputation": 22 },
-  { "id": "the-strongest", "name": "The Strongest", "country": "Bolivia", "tier": 1, "reputation": 48 },
-  { "id": "universitario-de-vinto", "name": "Universitario de Vinto", "country": "Bolivia", "tier": 1, "reputation": 22 },
-
-  { "id": "adt", "name": "ADT", "country": "Perú", "tier": 1, "reputation": 26 },
-  { "id": "alianza-atletico", "name": "Alianza Atlético", "country": "Perú", "tier": 1, "reputation": 26 },
-  { "id": "alianza-lima", "name": "Alianza Lima", "country": "Perú", "tier": 1, "reputation": 62 },
-  { "id": "alianza-universidad", "name": "Alianza Universidad", "country": "Perú", "tier": 1, "reputation": 24 },
-  { "id": "atletico-grau", "name": "Atlético Grau", "country": "Perú", "tier": 1, "reputation": 26 },
-  { "id": "ayacucho", "name": "Ayacucho", "country": "Perú", "tier": 1, "reputation": 28 },
-  { "id": "binacional", "name": "Binacional", "country": "Perú", "tier": 1, "reputation": 32 },
-  { "id": "cienciano", "name": "Cienciano", "country": "Perú", "tier": 1, "reputation": 38 },
-  { "id": "comerciantes-unidos", "name": "Comerciantes Unidos", "country": "Perú", "tier": 1, "reputation": 22 },
-  { "id": "cusco-fc", "name": "Cusco", "country": "Perú", "tier": 1, "reputation": 28 },
-  { "id": "deportivo-garcilaso", "name": "Deportivo Garcilaso", "country": "Perú", "tier": 1, "reputation": 26 },
-  { "id": "los-chankas", "name": "Los Chankas", "country": "Perú", "tier": 1, "reputation": 22 },
-  { "id": "juan-pablo-ii-college", "name": "Juan Pablo II College", "country": "Perú", "tier": 1, "reputation": 20 },
-  { "id": "melgar", "name": "Melgar", "country": "Perú", "tier": 1, "reputation": 44 },
-  { "id": "sport-boys", "name": "Sport Boys", "country": "Perú", "tier": 1, "reputation": 34 },
-  { "id": "sport-huancayo", "name": "Sport Huancayo", "country": "Perú", "tier": 1, "reputation": 28 },
-  { "id": "sporting-cristal", "name": "Sporting Cristal", "country": "Perú", "tier": 1, "reputation": 58 },
-  { "id": "universitario", "name": "Universitario", "country": "Perú", "tier": 1, "reputation": 60 },
-  { "id": "utc", "name": "UTC", "country": "Perú", "tier": 1, "reputation": 24 },
-
-  { "id": "aucas", "name": "Aucas", "country": "Ecuador", "tier": 1, "reputation": 34 },
-  { "id": "barcelona-sc", "name": "Barcelona", "country": "Ecuador", "tier": 1, "reputation": 72 },
-  { "id": "cumbaya", "name": "Cumbayá", "country": "Ecuador", "tier": 1, "reputation": 24 },
-  { "id": "delfin", "name": "Delfín", "country": "Ecuador", "tier": 1, "reputation": 32 },
-  { "id": "deportivo-cuenca", "name": "Deportivo Cuenca", "country": "Ecuador", "tier": 1, "reputation": 28 },
-  { "id": "el-nacional", "name": "El Nacional", "country": "Ecuador", "tier": 1, "reputation": 40 },
-  { "id": "emelec", "name": "Emelec", "country": "Ecuador", "tier": 1, "reputation": 68 },
-  { "id": "gualaceo", "name": "Gualaceo", "country": "Ecuador", "tier": 1, "reputation": 22 },
-  { "id": "guayaquil-city", "name": "Guayaquil City", "country": "Ecuador", "tier": 1, "reputation": 24 },
-  { "id": "independiente-del-valle", "name": "Independiente del Valle", "country": "Ecuador", "tier": 1, "reputation": 56 },
-  { "id": "ldu-quito", "name": "LDU Quito", "country": "Ecuador", "tier": 1, "reputation": 66 },
-  { "id": "libertad-ec", "name": "Libertad", "country": "Ecuador", "tier": 1, "reputation": 22 },
-  { "id": "mushuc-runa", "name": "Mushuc Runa", "country": "Ecuador", "tier": 1, "reputation": 26 },
-  { "id": "orense", "name": "Orense", "country": "Ecuador", "tier": 1, "reputation": 24 },
-  { "id": "tecnico-universitario", "name": "Técnico Universitario", "country": "Ecuador", "tier": 1, "reputation": 22 },
-  { "id": "universidad-catolica-ec", "name": "Universidad Católica", "country": "Ecuador", "tier": 1, "reputation": 34 },
-
-  { "id": "aguilas-doradas", "name": "Águilas Doradas", "country": "Colombia", "tier": 1, "reputation": 28 },
-  { "id": "alianza-fc", "name": "Alianza", "country": "Colombia", "tier": 1, "reputation": 24 },
-  { "id": "america-de-cali", "name": "América de Cali", "country": "Colombia", "tier": 1, "reputation": 62 },
-  { "id": "atletico-bucaramanga", "name": "Atlético Bucaramanga", "country": "Colombia", "tier": 1, "reputation": 34 },
-  { "id": "atletico-nacional", "name": "Atlético Nacional", "country": "Colombia", "tier": 1, "reputation": 70 },
-  { "id": "boyaca-chico", "name": "Boyacá Chicó", "country": "Colombia", "tier": 1, "reputation": 26 },
-  { "id": "cucuta-deportivo", "name": "Cúcuta Deportivo", "country": "Colombia", "tier": 1, "reputation": 26 },
-  { "id": "deportes-tolima", "name": "Deportes Tolima", "country": "Colombia", "tier": 1, "reputation": 40 },
-  { "id": "deportivo-cali", "name": "Deportivo Cali", "country": "Colombia", "tier": 1, "reputation": 58 },
-  { "id": "deportivo-pasto", "name": "Deportivo Pasto", "country": "Colombia", "tier": 1, "reputation": 30 },
-  { "id": "deportivo-pereira", "name": "Deportivo Pereira", "country": "Colombia", "tier": 1, "reputation": 32 },
-  { "id": "fortaleza-fc-co", "name": "Fortaleza F.C.", "country": "Colombia", "tier": 1, "reputation": 22 },
-  { "id": "independiente-medellin", "name": "Independiente Medellín", "country": "Colombia", "tier": 1, "reputation": 54 },
-  { "id": "internacional-de-bogota", "name": "Internacional de Bogotá", "country": "Colombia", "tier": 1, "reputation": 20 },
-  { "id": "jaguares-de-cordoba", "name": "Jaguares de Córdoba", "country": "Colombia", "tier": 1, "reputation": 22 },
-  { "id": "junior-fc", "name": "Junior", "country": "Colombia", "tier": 1, "reputation": 56 },
-  { "id": "llaneros-fc", "name": "Llaneros F.C.", "country": "Colombia", "tier": 1, "reputation": 20 },
-  { "id": "millonarios", "name": "Millonarios", "country": "Colombia", "tier": 1, "reputation": 64 },
-  { "id": "once-caldas", "name": "Once Caldas", "country": "Colombia", "tier": 1, "reputation": 36 },
-  { "id": "santa-fe", "name": "Santa Fe", "country": "Colombia", "tier": 1, "reputation": 52 },
-
-  { "id": "academia-puerto-cabello", "name": "Academia Puerto Cabello", "country": "Venezuela", "tier": 1, "reputation": 24 },
-  { "id": "angostura", "name": "Angostura", "country": "Venezuela", "tier": 1, "reputation": 20 },
-  { "id": "carabobo", "name": "Carabobo", "country": "Venezuela", "tier": 1, "reputation": 34 },
-  { "id": "caracas", "name": "Caracas", "country": "Venezuela", "tier": 1, "reputation": 52 },
-  { "id": "deportivo-la-guaira", "name": "Deportivo La Guaira", "country": "Venezuela", "tier": 1, "reputation": 34 },
-  { "id": "deportivo-rayo-zuliano", "name": "Deportivo Rayo Zuliano", "country": "Venezuela", "tier": 1, "reputation": 20 },
-  { "id": "deportivo-tachira", "name": "Deportivo Táchira", "country": "Venezuela", "tier": 1, "reputation": 44 },
-  { "id": "estudiantes-de-merida", "name": "Estudiantes de Mérida", "country": "Venezuela", "tier": 1, "reputation": 26 },
-  { "id": "hermanos-colmenarez", "name": "Hermanos Colmenarez", "country": "Venezuela", "tier": 1, "reputation": 20 },
-  { "id": "metropolitanos", "name": "Metropolitanos", "country": "Venezuela", "tier": 1, "reputation": 28 },
-  { "id": "mineros-de-guayana", "name": "Mineros de Guayana", "country": "Venezuela", "tier": 1, "reputation": 26 },
-  { "id": "monagas", "name": "Monagas", "country": "Venezuela", "tier": 1, "reputation": 28 },
-  { "id": "portuguesa", "name": "Portuguesa", "country": "Venezuela", "tier": 1, "reputation": 26 },
-  { "id": "universidad-central", "name": "Universidad Central", "country": "Venezuela", "tier": 1, "reputation": 22 },
-  { "id": "zamora", "name": "Zamora", "country": "Venezuela", "tier": 1, "reputation": 32 },
-
-  { "id": "sevilla", "name": "Sevilla FC", "country": "España", "tier": 1, "reputation": 72 },
-  { "id": "atletico-madrid", "name": "Atlético de Madrid", "country": "España", "tier": 1, "reputation": 85 },
-  { "id": "real-madrid", "name": "Real Madrid", "country": "España", "tier": 1, "reputation": 97 },
-  { "id": "barcelona", "name": "FC Barcelona", "country": "España", "tier": 1, "reputation": 96 },
-  { "id": "manchester-city", "name": "Manchester City", "country": "Inglaterra", "tier": 1, "reputation": 95 }
+  {
+    "id": "argentinos-juniors",
+    "name": "Argentinos Juniors",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "atletico-tucuman",
+    "name": "Atlético Tucumán",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "banfield",
+    "name": "Banfield",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "barracas-central",
+    "name": "Barracas Central",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 38
+  },
+  {
+    "id": "belgrano",
+    "name": "Belgrano",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "boca-juniors",
+    "name": "Boca Juniors",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 92
+  },
+  {
+    "id": "central-cordoba-sde",
+    "name": "Central Córdoba (SdE)",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 38
+  },
+  {
+    "id": "defensa-y-justicia",
+    "name": "Defensa y Justicia",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "deportivo-riestra",
+    "name": "Deportivo Riestra",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 36
+  },
+  {
+    "id": "estudiantes-lp",
+    "name": "Estudiantes (LP)",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "gimnasia-esgrima-lp",
+    "name": "Gimnasia y Esgrima (LP)",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "godoy-cruz",
+    "name": "Godoy Cruz",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "huracan",
+    "name": "Huracán",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "independiente",
+    "name": "Independiente",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 76
+  },
+  {
+    "id": "independiente-rivadavia",
+    "name": "Independiente Rivadavia",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 40
+  },
+  {
+    "id": "instituto",
+    "name": "Instituto",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 40
+  },
+  {
+    "id": "lanus",
+    "name": "Lanús",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 48
+  },
+  {
+    "id": "newells-old-boys",
+    "name": "Newell's Old Boys",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 60
+  },
+  {
+    "id": "platense",
+    "name": "Platense",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "racing",
+    "name": "Racing",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 74
+  },
+  {
+    "id": "river-plate",
+    "name": "River Plate",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 90
+  },
+  {
+    "id": "rosario-central",
+    "name": "Rosario Central",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "san-lorenzo",
+    "name": "San Lorenzo",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "sarmiento-junin",
+    "name": "Sarmiento (J)",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 40
+  },
+  {
+    "id": "talleres-cordoba",
+    "name": "Talleres (C)",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 60
+  },
+  {
+    "id": "tigre",
+    "name": "Tigre",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "union",
+    "name": "Unión",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 48
+  },
+  {
+    "id": "velez-sarsfield",
+    "name": "Vélez Sarsfield",
+    "country": "Argentina",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "agropecuario-argentino",
+    "name": "Agropecuario Argentino",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "aldosivi",
+    "name": "Aldosivi",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 28
+  },
+  {
+    "id": "all-boys",
+    "name": "All Boys",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "almagro",
+    "name": "Almagro",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 24
+  },
+  {
+    "id": "almirante-brown",
+    "name": "Almirante Brown",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "alvarado",
+    "name": "Alvarado",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "arsenal-arg",
+    "name": "Arsenal",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 28
+  },
+  {
+    "id": "atlanta",
+    "name": "Atlanta",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "atletico-de-rafaela",
+    "name": "Atlético de Rafaela",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 24
+  },
+  {
+    "id": "brown-adrogue",
+    "name": "Brown",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "chacarita-juniors",
+    "name": "Chacarita Juniors",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "chaco-for-ever",
+    "name": "Chaco For Ever",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 16
+  },
+  {
+    "id": "colon",
+    "name": "Colón",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "defensores-de-belgrano",
+    "name": "Defensores de Belgrano",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "defensores-unidos",
+    "name": "Defensores Unidos",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 15
+  },
+  {
+    "id": "deportivo-madryn",
+    "name": "Deportivo Madryn",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "deportivo-maipu",
+    "name": "Deportivo Maipú",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 16
+  },
+  {
+    "id": "deportivo-moron",
+    "name": "Deportivo Morón",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "estudiantes-ba",
+    "name": "Estudiantes (BA)",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "estudiantes-rc",
+    "name": "Estudiantes (RC)",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "ferro-carril-oeste",
+    "name": "Ferro Carril Oeste",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "gimnasia-esgrima-jujuy",
+    "name": "Gimnasia y Esgrima (J)",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "gimnasia-esgrima-mendoza",
+    "name": "Gimnasia y Esgrima (M)",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "gimnasia-y-tiro",
+    "name": "Gimnasia y Tiro",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 16
+  },
+  {
+    "id": "guemes",
+    "name": "Güemes",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 16
+  },
+  {
+    "id": "guillermo-brown",
+    "name": "Guillermo Brown",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 16
+  },
+  {
+    "id": "mitre",
+    "name": "Mitre",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "nueva-chicago",
+    "name": "Nueva Chicago",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 22
+  },
+  {
+    "id": "patronato",
+    "name": "Patronato",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "quilmes",
+    "name": "Quilmes",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "racing-cordoba",
+    "name": "Racing (C)",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 16
+  },
+  {
+    "id": "san-martin-sj",
+    "name": "San Martín (SJ)",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "san-martin-tucuman",
+    "name": "San Martín (T)",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "san-miguel",
+    "name": "San Miguel",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 15
+  },
+  {
+    "id": "san-telmo",
+    "name": "San Telmo",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 15
+  },
+  {
+    "id": "talleres-re",
+    "name": "Talleres (RE)",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 15
+  },
+  {
+    "id": "temperley",
+    "name": "Temperley",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "tristan-suarez",
+    "name": "Tristán Suárez",
+    "country": "Argentina",
+    "tier": 2,
+    "reputation": 15
+  },
+  {
+    "id": "athletico-paranaense",
+    "name": "Athletico Paranaense",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "atletico-mineiro",
+    "name": "Atlético Mineiro",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 74
+  },
+  {
+    "id": "bahia",
+    "name": "Bahia",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "botafogo",
+    "name": "Botafogo",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "chapecoense",
+    "name": "Chapecoense",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 40
+  },
+  {
+    "id": "corinthians",
+    "name": "Corinthians",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 82
+  },
+  {
+    "id": "coritiba",
+    "name": "Coritiba",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "cruzeiro",
+    "name": "Cruzeiro",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 70
+  },
+  {
+    "id": "flamengo",
+    "name": "Flamengo",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 95
+  },
+  {
+    "id": "fluminense",
+    "name": "Fluminense",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 68
+  },
+  {
+    "id": "gremio",
+    "name": "Grêmio",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 76
+  },
+  {
+    "id": "internacional",
+    "name": "Internacional",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 74
+  },
+  {
+    "id": "mirassol",
+    "name": "Mirassol",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 38
+  },
+  {
+    "id": "palmeiras",
+    "name": "Palmeiras",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 88
+  },
+  {
+    "id": "red-bull-bragantino",
+    "name": "Red Bull Bragantino",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "remo",
+    "name": "Remo",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 36
+  },
+  {
+    "id": "santos",
+    "name": "Santos",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 72
+  },
+  {
+    "id": "sao-paulo",
+    "name": "São Paulo FC",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 80
+  },
+  {
+    "id": "vasco-da-gama",
+    "name": "Vasco da Gama",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "vitoria",
+    "name": "Vitória",
+    "country": "Brasil",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "america-mineiro",
+    "name": "América Mineiro",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "athletic-club-mg",
+    "name": "Athletic",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 22
+  },
+  {
+    "id": "atletico-goianiense",
+    "name": "Atlético Goianiense",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "avai",
+    "name": "Avaí",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "botafogo-sp",
+    "name": "Botafogo-SP",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 24
+  },
+  {
+    "id": "ceara",
+    "name": "Ceará",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 42
+  },
+  {
+    "id": "crb",
+    "name": "CRB",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "criciuma",
+    "name": "Criciúma",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "cuiaba",
+    "name": "Cuiabá",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "fortaleza",
+    "name": "Fortaleza",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 46
+  },
+  {
+    "id": "goias",
+    "name": "Goiás",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 38
+  },
+  {
+    "id": "juventude",
+    "name": "Juventude",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "londrina",
+    "name": "Londrina",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 24
+  },
+  {
+    "id": "nautico",
+    "name": "Náutico",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "novorizontino",
+    "name": "Novorizontino",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "operario-ferroviario",
+    "name": "Operário Ferroviário",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "ponte-preta",
+    "name": "Ponte Preta",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "sao-bernardo",
+    "name": "São Bernardo",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "sport-recife",
+    "name": "Sport",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 38
+  },
+  {
+    "id": "vila-nova",
+    "name": "Vila Nova",
+    "country": "Brasil",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "audax-italiano",
+    "name": "Audax Italiano",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "cobresal",
+    "name": "Cobresal",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 38
+  },
+  {
+    "id": "colo-colo",
+    "name": "Colo-Colo",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 85
+  },
+  {
+    "id": "coquimbo-unido",
+    "name": "Coquimbo Unido",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "deportes-concepcion",
+    "name": "Deportes Concepción",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "deportes-la-serena",
+    "name": "Deportes La Serena",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "deportes-limache",
+    "name": "Deportes Limache",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 32
+  },
+  {
+    "id": "everton-cl",
+    "name": "Everton",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "huachipato",
+    "name": "Huachipato",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "nublense",
+    "name": "Ñublense",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 36
+  },
+  {
+    "id": "ohiggins",
+    "name": "O'Higgins",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "palestino",
+    "name": "Palestino",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "union-la-calera",
+    "name": "Unión La Calera",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 36
+  },
+  {
+    "id": "universidad-catolica",
+    "name": "Universidad Católica",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 78
+  },
+  {
+    "id": "universidad-de-chile",
+    "name": "Universidad de Chile",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 80
+  },
+  {
+    "id": "universidad-de-concepcion",
+    "name": "Universidad de Concepción",
+    "country": "Chile",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "cobreloa",
+    "name": "Cobreloa",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 38
+  },
+  {
+    "id": "curico-unido",
+    "name": "Curicó Unido",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "deportes-antofagasta",
+    "name": "Deportes Antofagasta",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "deportes-copiapo",
+    "name": "Deportes Copiapó",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "deportes-iquique",
+    "name": "Deportes Iquique",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "deportes-puerto-montt",
+    "name": "Deportes Puerto Montt",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 22
+  },
+  {
+    "id": "deportes-recoleta",
+    "name": "Deportes Recoleta",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "deportes-santa-cruz",
+    "name": "Deportes Santa Cruz",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "deportes-temuco",
+    "name": "Deportes Temuco",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 24
+  },
+  {
+    "id": "magallanes",
+    "name": "Magallanes",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "rangers-cl",
+    "name": "Rangers",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "san-luis",
+    "name": "San Luis",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "san-marcos",
+    "name": "San Marcos",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "santiago-wanderers",
+    "name": "Santiago Wanderers",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "union-espanola",
+    "name": "Unión Española",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 36
+  },
+  {
+    "id": "union-san-felipe",
+    "name": "Unión San Felipe",
+    "country": "Chile",
+    "tier": 2,
+    "reputation": 22
+  },
+  {
+    "id": "boston-river",
+    "name": "Boston River",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 32
+  },
+  {
+    "id": "cerro",
+    "name": "Cerro",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 38
+  },
+  {
+    "id": "danubio",
+    "name": "Danubio",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "defensor-sporting",
+    "name": "Defensor Sporting",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "fenix",
+    "name": "Fénix",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "juventud-las-piedras",
+    "name": "Juventud Las Piedras",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 32
+  },
+  {
+    "id": "liverpool-uy",
+    "name": "Liverpool",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 36
+  },
+  {
+    "id": "montevideo-wanderers",
+    "name": "Montevideo Wanderers",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 36
+  },
+  {
+    "id": "nacional",
+    "name": "Nacional",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 90
+  },
+  {
+    "id": "penarol",
+    "name": "Peñarol",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 92
+  },
+  {
+    "id": "plaza-colonia",
+    "name": "Plaza Colonia",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "racing-uy",
+    "name": "Racing",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 30
+  },
+  {
+    "id": "rampla-juniors",
+    "name": "Rampla Juniors",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 28
+  },
+  {
+    "id": "river-plate-uy",
+    "name": "River Plate",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 32
+  },
+  {
+    "id": "sud-america",
+    "name": "Sud América",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "villa-espanola",
+    "name": "Villa Española",
+    "country": "Uruguay",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "atenas-uy",
+    "name": "Atenas",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 15
+  },
+  {
+    "id": "bella-vista",
+    "name": "Bella Vista",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 22
+  },
+  {
+    "id": "canadian",
+    "name": "Canadian",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 15
+  },
+  {
+    "id": "central-espanol",
+    "name": "Central Español",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "cerrito",
+    "name": "Cerrito",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 15
+  },
+  {
+    "id": "cerro-largo",
+    "name": "Cerro Largo",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "deportivo-maldonado",
+    "name": "Deportivo Maldonado",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "el-tanque-sisley",
+    "name": "El Tanque Sisley",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 16
+  },
+  {
+    "id": "huracan-uy",
+    "name": "Huracán",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 16
+  },
+  {
+    "id": "miramar-misiones",
+    "name": "Miramar Misiones",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 16
+  },
+  {
+    "id": "oriental",
+    "name": "Oriental",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 15
+  },
+  {
+    "id": "progreso",
+    "name": "Progreso",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "rentistas",
+    "name": "Rentistas",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 22
+  },
+  {
+    "id": "rocha",
+    "name": "Rocha",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 16
+  },
+  {
+    "id": "tacuarembo",
+    "name": "Tacuarembó",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 18
+  },
+  {
+    "id": "torque",
+    "name": "Torque",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "villa-teresa",
+    "name": "Villa Teresa",
+    "country": "Uruguay",
+    "tier": 2,
+    "reputation": 15
+  },
+  {
+    "id": "cerro-porteno",
+    "name": "Cerro Porteño",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 80
+  },
+  {
+    "id": "deportivo-capiata",
+    "name": "Deportivo Capiatá",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 30
+  },
+  {
+    "id": "general-diaz",
+    "name": "General Diaz",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 28
+  },
+  {
+    "id": "guarani",
+    "name": "Guaraní",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "libertad",
+    "name": "Libertad",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "nacional-py",
+    "name": "Nacional",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "olimpia",
+    "name": "Olimpia",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 82
+  },
+  {
+    "id": "rubio-nu",
+    "name": "Rubio Ñú",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "sportivo-luqueno",
+    "name": "Sportivo Luqueño",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "sol-de-america",
+    "name": "Sol de América",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 32
+  },
+  {
+    "id": "river-plate-py",
+    "name": "River Plate",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 28
+  },
+  {
+    "id": "general-caballero-zc",
+    "name": "General Caballero ZC",
+    "country": "Paraguay",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "abb",
+    "name": "ABB",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 24
+  },
+  {
+    "id": "always-ready",
+    "name": "Always Ready",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "aurora",
+    "name": "Aurora",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 28
+  },
+  {
+    "id": "blooming",
+    "name": "Blooming",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 36
+  },
+  {
+    "id": "bolivar",
+    "name": "Bolívar",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "guabira",
+    "name": "Guabirá",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 30
+  },
+  {
+    "id": "gv-san-jose",
+    "name": "GV San José",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 24
+  },
+  {
+    "id": "independiente-petrolero",
+    "name": "Independiente Petrolero",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "nacional-potosi",
+    "name": "Nacional Potosí",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "oriente-petrolero",
+    "name": "Oriente Petrolero",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "real-oruro",
+    "name": "Real Oruro",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 24
+  },
+  {
+    "id": "real-potosi",
+    "name": "Real Potosí",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "real-tomayapo",
+    "name": "Real Tomayapo",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 24
+  },
+  {
+    "id": "san-antonio-bulo-bulo",
+    "name": "San Antonio Bulo Bulo",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 22
+  },
+  {
+    "id": "the-strongest",
+    "name": "The Strongest",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 48
+  },
+  {
+    "id": "universitario-de-vinto",
+    "name": "Universitario de Vinto",
+    "country": "Bolivia",
+    "tier": 1,
+    "reputation": 22
+  },
+  {
+    "id": "adt",
+    "name": "ADT",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "alianza-atletico",
+    "name": "Alianza Atlético",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "alianza-lima",
+    "name": "Alianza Lima",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "alianza-universidad",
+    "name": "Alianza Universidad",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 24
+  },
+  {
+    "id": "atletico-grau",
+    "name": "Atlético Grau",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "ayacucho",
+    "name": "Ayacucho",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 28
+  },
+  {
+    "id": "binacional",
+    "name": "Binacional",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 32
+  },
+  {
+    "id": "cienciano",
+    "name": "Cienciano",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 38
+  },
+  {
+    "id": "comerciantes-unidos",
+    "name": "Comerciantes Unidos",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 22
+  },
+  {
+    "id": "cusco-fc",
+    "name": "Cusco",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 28
+  },
+  {
+    "id": "deportivo-garcilaso",
+    "name": "Deportivo Garcilaso",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "los-chankas",
+    "name": "Los Chankas",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 22
+  },
+  {
+    "id": "juan-pablo-ii-college",
+    "name": "Juan Pablo II College",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 20
+  },
+  {
+    "id": "melgar",
+    "name": "Melgar",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "sport-boys",
+    "name": "Sport Boys",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "sport-huancayo",
+    "name": "Sport Huancayo",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 28
+  },
+  {
+    "id": "sporting-cristal",
+    "name": "Sporting Cristal",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "universitario",
+    "name": "Universitario",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 60
+  },
+  {
+    "id": "utc",
+    "name": "UTC",
+    "country": "Perú",
+    "tier": 1,
+    "reputation": 24
+  },
+  {
+    "id": "aucas",
+    "name": "Aucas",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "barcelona-sc",
+    "name": "Barcelona",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 72
+  },
+  {
+    "id": "cumbaya",
+    "name": "Cumbayá",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 24
+  },
+  {
+    "id": "delfin",
+    "name": "Delfín",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 32
+  },
+  {
+    "id": "deportivo-cuenca",
+    "name": "Deportivo Cuenca",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 28
+  },
+  {
+    "id": "el-nacional",
+    "name": "El Nacional",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 40
+  },
+  {
+    "id": "emelec",
+    "name": "Emelec",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 68
+  },
+  {
+    "id": "gualaceo",
+    "name": "Gualaceo",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 22
+  },
+  {
+    "id": "guayaquil-city",
+    "name": "Guayaquil City",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 24
+  },
+  {
+    "id": "independiente-del-valle",
+    "name": "Independiente del Valle",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 56
+  },
+  {
+    "id": "ldu-quito",
+    "name": "LDU Quito",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "libertad-ec",
+    "name": "Libertad",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 22
+  },
+  {
+    "id": "mushuc-runa",
+    "name": "Mushuc Runa",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "orense",
+    "name": "Orense",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 24
+  },
+  {
+    "id": "tecnico-universitario",
+    "name": "Técnico Universitario",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 22
+  },
+  {
+    "id": "universidad-catolica-ec",
+    "name": "Universidad Católica",
+    "country": "Ecuador",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "aguilas-doradas",
+    "name": "Águilas Doradas",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 28
+  },
+  {
+    "id": "alianza-fc",
+    "name": "Alianza",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 24
+  },
+  {
+    "id": "america-de-cali",
+    "name": "América de Cali",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "atletico-bucaramanga",
+    "name": "Atlético Bucaramanga",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "atletico-nacional",
+    "name": "Atlético Nacional",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 70
+  },
+  {
+    "id": "boyaca-chico",
+    "name": "Boyacá Chicó",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "cucuta-deportivo",
+    "name": "Cúcuta Deportivo",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "deportes-tolima",
+    "name": "Deportes Tolima",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 40
+  },
+  {
+    "id": "deportivo-cali",
+    "name": "Deportivo Cali",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "deportivo-pasto",
+    "name": "Deportivo Pasto",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 30
+  },
+  {
+    "id": "deportivo-pereira",
+    "name": "Deportivo Pereira",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 32
+  },
+  {
+    "id": "fortaleza-fc-co",
+    "name": "Fortaleza F.C.",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 22
+  },
+  {
+    "id": "independiente-medellin",
+    "name": "Independiente Medellín",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "internacional-de-bogota",
+    "name": "Internacional de Bogotá",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 20
+  },
+  {
+    "id": "jaguares-de-cordoba",
+    "name": "Jaguares de Córdoba",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 22
+  },
+  {
+    "id": "junior-fc",
+    "name": "Junior",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 56
+  },
+  {
+    "id": "llaneros-fc",
+    "name": "Llaneros F.C.",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 20
+  },
+  {
+    "id": "millonarios",
+    "name": "Millonarios",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 64
+  },
+  {
+    "id": "once-caldas",
+    "name": "Once Caldas",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 36
+  },
+  {
+    "id": "santa-fe",
+    "name": "Santa Fe",
+    "country": "Colombia",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "academia-puerto-cabello",
+    "name": "Academia Puerto Cabello",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 24
+  },
+  {
+    "id": "angostura",
+    "name": "Angostura",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 20
+  },
+  {
+    "id": "carabobo",
+    "name": "Carabobo",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "caracas",
+    "name": "Caracas",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "deportivo-la-guaira",
+    "name": "Deportivo La Guaira",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 34
+  },
+  {
+    "id": "deportivo-rayo-zuliano",
+    "name": "Deportivo Rayo Zuliano",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 20
+  },
+  {
+    "id": "deportivo-tachira",
+    "name": "Deportivo Táchira",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "estudiantes-de-merida",
+    "name": "Estudiantes de Mérida",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "hermanos-colmenarez",
+    "name": "Hermanos Colmenarez",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 20
+  },
+  {
+    "id": "metropolitanos",
+    "name": "Metropolitanos",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 28
+  },
+  {
+    "id": "mineros-de-guayana",
+    "name": "Mineros de Guayana",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "monagas",
+    "name": "Monagas",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 28
+  },
+  {
+    "id": "portuguesa",
+    "name": "Portuguesa",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 26
+  },
+  {
+    "id": "universidad-central",
+    "name": "Universidad Central",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 22
+  },
+  {
+    "id": "zamora",
+    "name": "Zamora",
+    "country": "Venezuela",
+    "tier": 1,
+    "reputation": 32
+  },
+  {
+    "id": "sevilla",
+    "name": "Sevilla FC",
+    "country": "España",
+    "tier": 1,
+    "reputation": 72
+  },
+  {
+    "id": "atletico-madrid",
+    "name": "Atlético de Madrid",
+    "country": "España",
+    "tier": 1,
+    "reputation": 85
+  },
+  {
+    "id": "real-madrid",
+    "name": "Real Madrid",
+    "country": "España",
+    "tier": 1,
+    "reputation": 97
+  },
+  {
+    "id": "barcelona",
+    "name": "FC Barcelona",
+    "country": "España",
+    "tier": 1,
+    "reputation": 96
+  },
+  {
+    "id": "manchester-city",
+    "name": "Manchester City",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 95
+  },
+  {
+    "id": "liverpool",
+    "name": "Liverpool",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 94
+  },
+  {
+    "id": "arsenal",
+    "name": "Arsenal",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 92
+  },
+  {
+    "id": "manchester-united",
+    "name": "Manchester United",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 90
+  },
+  {
+    "id": "chelsea",
+    "name": "Chelsea",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 90
+  },
+  {
+    "id": "tottenham-hotspur",
+    "name": "Tottenham Hotspur",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 86
+  },
+  {
+    "id": "newcastle-united",
+    "name": "Newcastle United",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 82
+  },
+  {
+    "id": "aston-villa",
+    "name": "Aston Villa",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 78
+  },
+  {
+    "id": "west-ham-united",
+    "name": "West Ham United",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 74
+  },
+  {
+    "id": "brighton-hove-albion",
+    "name": "Brighton & Hove Albion",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 72
+  },
+  {
+    "id": "everton",
+    "name": "Everton",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 72
+  },
+  {
+    "id": "crystal-palace",
+    "name": "Crystal Palace",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 68
+  },
+  {
+    "id": "fulham",
+    "name": "Fulham",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "brentford",
+    "name": "Brentford",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "nottingham-forest",
+    "name": "Nottingham Forest",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "wolverhampton-wanderers",
+    "name": "Wolverhampton Wanderers",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "leeds-united",
+    "name": "Leeds United",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 64
+  },
+  {
+    "id": "bournemouth",
+    "name": "Bournemouth",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "sunderland",
+    "name": "Sunderland",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 60
+  },
+  {
+    "id": "burnley",
+    "name": "Burnley",
+    "country": "Inglaterra",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "leicester-city",
+    "name": "Leicester City",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 70
+  },
+  {
+    "id": "southampton",
+    "name": "Southampton",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 60
+  },
+  {
+    "id": "ipswich-town",
+    "name": "Ipswich Town",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 56
+  },
+  {
+    "id": "west-bromwich-albion",
+    "name": "West Bromwich Albion",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 52
+  },
+  {
+    "id": "sheffield-united",
+    "name": "Sheffield United",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 52
+  },
+  {
+    "id": "norwich-city",
+    "name": "Norwich City",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 52
+  },
+  {
+    "id": "watford",
+    "name": "Watford",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 52
+  },
+  {
+    "id": "middlesbrough",
+    "name": "Middlesbrough",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 50
+  },
+  {
+    "id": "sheffield-wednesday",
+    "name": "Sheffield Wednesday",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 50
+  },
+  {
+    "id": "stoke-city",
+    "name": "Stoke City",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 48
+  },
+  {
+    "id": "derby-county",
+    "name": "Derby County",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 48
+  },
+  {
+    "id": "swansea-city",
+    "name": "Swansea City",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 46
+  },
+  {
+    "id": "blackburn-rovers",
+    "name": "Blackburn Rovers",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 46
+  },
+  {
+    "id": "coventry-city",
+    "name": "Coventry City",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 45
+  },
+  {
+    "id": "hull-city",
+    "name": "Hull City",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 44
+  },
+  {
+    "id": "birmingham-city",
+    "name": "Birmingham City",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 44
+  },
+  {
+    "id": "queens-park-rangers",
+    "name": "Queens Park Rangers",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 42
+  },
+  {
+    "id": "bristol-city",
+    "name": "Bristol City",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 42
+  },
+  {
+    "id": "portsmouth",
+    "name": "Portsmouth",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 42
+  },
+  {
+    "id": "millwall",
+    "name": "Millwall",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "preston-north-end",
+    "name": "Preston North End",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "wrexham",
+    "name": "Wrexham",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "charlton-athletic",
+    "name": "Charlton Athletic",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "oxford-united",
+    "name": "Oxford United",
+    "country": "Inglaterra",
+    "tier": 2,
+    "reputation": 36
+  },
+  {
+    "id": "athletic-bilbao",
+    "name": "Athletic Bilbao",
+    "country": "España",
+    "tier": 1,
+    "reputation": 78
+  },
+  {
+    "id": "villarreal",
+    "name": "Villarreal",
+    "country": "España",
+    "tier": 1,
+    "reputation": 76
+  },
+  {
+    "id": "real-sociedad",
+    "name": "Real Sociedad",
+    "country": "España",
+    "tier": 1,
+    "reputation": 74
+  },
+  {
+    "id": "real-betis",
+    "name": "Real Betis",
+    "country": "España",
+    "tier": 1,
+    "reputation": 74
+  },
+  {
+    "id": "valencia",
+    "name": "Valencia",
+    "country": "España",
+    "tier": 1,
+    "reputation": 74
+  },
+  {
+    "id": "girona",
+    "name": "Girona",
+    "country": "España",
+    "tier": 1,
+    "reputation": 64
+  },
+  {
+    "id": "celta-vigo",
+    "name": "Celta Vigo",
+    "country": "España",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "espanyol",
+    "name": "Espanyol",
+    "country": "España",
+    "tier": 1,
+    "reputation": 60
+  },
+  {
+    "id": "osasuna",
+    "name": "Osasuna",
+    "country": "España",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "getafe",
+    "name": "Getafe",
+    "country": "España",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "rayo-vallecano",
+    "name": "Rayo Vallecano",
+    "country": "España",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "mallorca",
+    "name": "Mallorca",
+    "country": "España",
+    "tier": 1,
+    "reputation": 56
+  },
+  {
+    "id": "alaves",
+    "name": "Alavés",
+    "country": "España",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "levante",
+    "name": "Levante",
+    "country": "España",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "elche",
+    "name": "Elche",
+    "country": "España",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "real-oviedo",
+    "name": "Real Oviedo",
+    "country": "España",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "deportivo-de-la-coruna",
+    "name": "Deportivo de La Coruña",
+    "country": "España",
+    "tier": 2,
+    "reputation": 50
+  },
+  {
+    "id": "real-zaragoza",
+    "name": "Real Zaragoza",
+    "country": "España",
+    "tier": 2,
+    "reputation": 48
+  },
+  {
+    "id": "real-valladolid",
+    "name": "Real Valladolid",
+    "country": "España",
+    "tier": 2,
+    "reputation": 46
+  },
+  {
+    "id": "sporting-de-gijon",
+    "name": "Sporting de Gijón",
+    "country": "España",
+    "tier": 2,
+    "reputation": 46
+  },
+  {
+    "id": "malaga-cf",
+    "name": "Málaga CF",
+    "country": "España",
+    "tier": 2,
+    "reputation": 46
+  },
+  {
+    "id": "granada-cf",
+    "name": "Granada CF",
+    "country": "España",
+    "tier": 2,
+    "reputation": 46
+  },
+  {
+    "id": "racing-de-santander",
+    "name": "Racing de Santander",
+    "country": "España",
+    "tier": 2,
+    "reputation": 44
+  },
+  {
+    "id": "ud-las-palmas",
+    "name": "UD Las Palmas",
+    "country": "España",
+    "tier": 2,
+    "reputation": 44
+  },
+  {
+    "id": "cadiz-cf",
+    "name": "Cádiz CF",
+    "country": "España",
+    "tier": 2,
+    "reputation": 44
+  },
+  {
+    "id": "ud-almeria",
+    "name": "UD Almería",
+    "country": "España",
+    "tier": 2,
+    "reputation": 44
+  },
+  {
+    "id": "sd-eibar",
+    "name": "SD Eibar",
+    "country": "España",
+    "tier": 2,
+    "reputation": 42
+  },
+  {
+    "id": "cd-leganes",
+    "name": "CD Leganés",
+    "country": "España",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "sd-huesca",
+    "name": "SD Huesca",
+    "country": "España",
+    "tier": 2,
+    "reputation": 36
+  },
+  {
+    "id": "cordoba-cf",
+    "name": "Córdoba CF",
+    "country": "España",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "albacete-balompie",
+    "name": "Albacete Balompié",
+    "country": "España",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "burgos-cf",
+    "name": "Burgos CF",
+    "country": "España",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "cd-castellon",
+    "name": "CD Castellón",
+    "country": "España",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "cd-mirandes",
+    "name": "CD Mirandés",
+    "country": "España",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "fc-andorra",
+    "name": "FC Andorra",
+    "country": "España",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "cultural-y-deportiva-leonesa",
+    "name": "Cultural y Deportiva Leonesa",
+    "country": "España",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "ad-ceuta-fc",
+    "name": "AD Ceuta FC",
+    "country": "España",
+    "tier": 2,
+    "reputation": 28
+  },
+  {
+    "id": "real-sociedad-b",
+    "name": "Real Sociedad B",
+    "country": "España",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "inter-milan",
+    "name": "Inter Milan",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 90
+  },
+  {
+    "id": "ac-milan",
+    "name": "AC Milan",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 90
+  },
+  {
+    "id": "juventus",
+    "name": "Juventus",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 90
+  },
+  {
+    "id": "napoli",
+    "name": "Napoli",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 86
+  },
+  {
+    "id": "roma",
+    "name": "Roma",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 82
+  },
+  {
+    "id": "lazio",
+    "name": "Lazio",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 80
+  },
+  {
+    "id": "atalanta",
+    "name": "Atalanta",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 80
+  },
+  {
+    "id": "fiorentina",
+    "name": "Fiorentina",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 74
+  },
+  {
+    "id": "bologna",
+    "name": "Bologna",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 70
+  },
+  {
+    "id": "torino",
+    "name": "Torino",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "genoa",
+    "name": "Genoa",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "udinese",
+    "name": "Udinese",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "como",
+    "name": "Como",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 60
+  },
+  {
+    "id": "sassuolo",
+    "name": "Sassuolo",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 56
+  },
+  {
+    "id": "parma",
+    "name": "Parma",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 56
+  },
+  {
+    "id": "hellas-verona",
+    "name": "Hellas Verona",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 56
+  },
+  {
+    "id": "cagliari",
+    "name": "Cagliari",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 56
+  },
+  {
+    "id": "lecce",
+    "name": "Lecce",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "pisa",
+    "name": "Pisa",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "cremonese",
+    "name": "Cremonese",
+    "country": "Italia",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "sampdoria",
+    "name": "Sampdoria",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 52
+  },
+  {
+    "id": "monza",
+    "name": "Monza",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 52
+  },
+  {
+    "id": "palermo",
+    "name": "Palermo",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 50
+  },
+  {
+    "id": "empoli",
+    "name": "Empoli",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 50
+  },
+  {
+    "id": "venezia",
+    "name": "Venezia",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 46
+  },
+  {
+    "id": "spezia",
+    "name": "Spezia",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 44
+  },
+  {
+    "id": "bari",
+    "name": "Bari",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 44
+  },
+  {
+    "id": "frosinone",
+    "name": "Frosinone",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 44
+  },
+  {
+    "id": "pescara",
+    "name": "Pescara",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "cesena",
+    "name": "Cesena",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "modena",
+    "name": "Modena",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 38
+  },
+  {
+    "id": "catanzaro",
+    "name": "Catanzaro",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 36
+  },
+  {
+    "id": "reggiana",
+    "name": "Reggiana",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 36
+  },
+  {
+    "id": "padova",
+    "name": "Padova",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "avellino",
+    "name": "Avellino",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "sudtirol",
+    "name": "Südtirol",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "mantova",
+    "name": "Mantova",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "juve-stabia",
+    "name": "Juve Stabia",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "carrarese",
+    "name": "Carrarese",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "virtus-entella",
+    "name": "Virtus Entella",
+    "country": "Italia",
+    "tier": 2,
+    "reputation": 28
+  },
+  {
+    "id": "fc-bayern-munich",
+    "name": "FC Bayern Munich",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 94
+  },
+  {
+    "id": "borussia-dortmund",
+    "name": "Borussia Dortmund",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 86
+  },
+  {
+    "id": "bayer-04-leverkusen",
+    "name": "Bayer 04 Leverkusen",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 84
+  },
+  {
+    "id": "rb-leipzig",
+    "name": "RB Leipzig",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 80
+  },
+  {
+    "id": "eintracht-frankfurt",
+    "name": "Eintracht Frankfurt",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 74
+  },
+  {
+    "id": "vfb-stuttgart",
+    "name": "VfB Stuttgart",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 72
+  },
+  {
+    "id": "sc-freiburg",
+    "name": "SC Freiburg",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 68
+  },
+  {
+    "id": "vfl-wolfsburg",
+    "name": "VfL Wolfsburg",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "borussia-monchengladbach",
+    "name": "Borussia Mönchengladbach",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "werder-bremen",
+    "name": "Werder Bremen",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 64
+  },
+  {
+    "id": "1-fc-koln",
+    "name": "1. FC Köln",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "hamburger-sv",
+    "name": "Hamburger SV",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "1-fc-union-berlin",
+    "name": "1. FC Union Berlin",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "tsg-1899-hoffenheim",
+    "name": "TSG 1899 Hoffenheim",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "1-fsv-mainz-05",
+    "name": "1. FSV Mainz 05",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 60
+  },
+  {
+    "id": "fc-augsburg",
+    "name": "FC Augsburg",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "fc-st-pauli",
+    "name": "FC St. Pauli",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "1-fc-heidenheim",
+    "name": "1. FC Heidenheim",
+    "country": "Alemania",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "paris-saint-germain",
+    "name": "Paris Saint-Germain",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 92
+  },
+  {
+    "id": "marseille",
+    "name": "Marseille",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 80
+  },
+  {
+    "id": "monaco",
+    "name": "Monaco",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 78
+  },
+  {
+    "id": "lyon",
+    "name": "Lyon",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 74
+  },
+  {
+    "id": "lille",
+    "name": "Lille",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 72
+  },
+  {
+    "id": "nice",
+    "name": "Nice",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 70
+  },
+  {
+    "id": "lens",
+    "name": "Lens",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 68
+  },
+  {
+    "id": "rennes",
+    "name": "Rennes",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 68
+  },
+  {
+    "id": "strasbourg",
+    "name": "Strasbourg",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 60
+  },
+  {
+    "id": "nantes",
+    "name": "Nantes",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 60
+  },
+  {
+    "id": "brest",
+    "name": "Brest",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "toulouse",
+    "name": "Toulouse",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "auxerre",
+    "name": "Auxerre",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "paris-fc",
+    "name": "Paris FC",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "le-havre",
+    "name": "Le Havre",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "angers",
+    "name": "Angers",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "metz",
+    "name": "Metz",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "lorient",
+    "name": "Lorient",
+    "country": "Francia",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "benfica",
+    "name": "Benfica",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 84
+  },
+  {
+    "id": "porto",
+    "name": "Porto",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 84
+  },
+  {
+    "id": "sporting-cp",
+    "name": "Sporting CP",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 82
+  },
+  {
+    "id": "braga",
+    "name": "Braga",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 72
+  },
+  {
+    "id": "vitoria-de-guimaraes",
+    "name": "Vitória de Guimarães",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "famalicao",
+    "name": "Famalicão",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "moreirense",
+    "name": "Moreirense",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "gil-vicente",
+    "name": "Gil Vicente",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "rio-ave",
+    "name": "Rio Ave",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "arouca",
+    "name": "Arouca",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 48
+  },
+  {
+    "id": "santa-clara",
+    "name": "Santa Clara",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 48
+  },
+  {
+    "id": "estoril-praia",
+    "name": "Estoril Praia",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 48
+  },
+  {
+    "id": "nacional-pt",
+    "name": "Nacional",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "estrela-da-amadora",
+    "name": "Estrela da Amadora",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "casa-pia",
+    "name": "Casa Pia",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "tondela",
+    "name": "Tondela",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "alverca",
+    "name": "Alverca",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "avs",
+    "name": "AVS",
+    "country": "Portugal",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "afc-ajax",
+    "name": "AFC Ajax",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 82
+  },
+  {
+    "id": "psv-eindhoven",
+    "name": "PSV Eindhoven",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 80
+  },
+  {
+    "id": "feyenoord",
+    "name": "Feyenoord",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 80
+  },
+  {
+    "id": "az-alkmaar",
+    "name": "AZ Alkmaar",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 70
+  },
+  {
+    "id": "fc-twente",
+    "name": "FC Twente",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "fc-utrecht",
+    "name": "FC Utrecht",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "go-ahead-eagles",
+    "name": "Go Ahead Eagles",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "sc-heerenveen",
+    "name": "SC Heerenveen",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "nec-nijmegen",
+    "name": "NEC Nijmegen",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "fc-groningen",
+    "name": "FC Groningen",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "sparta-rotterdam",
+    "name": "Sparta Rotterdam",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "fortuna-sittard",
+    "name": "Fortuna Sittard",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "heracles-almelo",
+    "name": "Heracles Almelo",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "nac-breda",
+    "name": "NAC Breda",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "pec-zwolle",
+    "name": "PEC Zwolle",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "excelsior-rotterdam",
+    "name": "Excelsior Rotterdam",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 48
+  },
+  {
+    "id": "fc-volendam",
+    "name": "FC Volendam",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "sc-telstar",
+    "name": "SC Telstar",
+    "country": "Países Bajos",
+    "tier": 1,
+    "reputation": 42
+  }
 ]

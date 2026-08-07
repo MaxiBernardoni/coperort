@@ -57,8 +57,10 @@ describe('resolveCupFinal', () => {
 
   it('devuelve null si el país del club no tiene ningún otro club', () => {
     const rng = createRng(3)
-    const lonelyClub = getClubById('manchester-city')
-    // 100 intentos: aunque clasifique, no hay rival posible en Inglaterra
+    // Club sintético, único de su país (antes se usaba Manchester City, pero
+    // desde la Fase 3b Europa ya tiene rivales reales en Inglaterra).
+    const lonelyClub: Club = { id: 'lonely-fc', name: 'Lonely FC', country: 'Solandia', tier: 1, reputation: 80 }
+    // 100 intentos: aunque clasifique, no hay rival posible en Solandia
     for (let i = 0; i < 100; i++) {
       expect(resolveCupFinal(SAMPLE_CLUBS, lonelyClub, rng)).toBeNull()
     }

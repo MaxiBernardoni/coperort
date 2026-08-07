@@ -47,7 +47,7 @@ src/
     minigame.ts  # MinigameResult, PendingMinigame — tipos de dominio puros, acá y no en minigames/ para que engine/ los importe sin depender de la capa de UI (Fase 4)
     motivation.ts # Motivation — enfoque de pretemporada elegible (effects reusa StatEffect; minAge/maxAge/positions filtran la oferta) (Fase 5)
   content/
-    clubs.json   # 274 clubes: 10 países CONMEBOL (primera + segunda división donde la fuente era limpia) + 5 clubes europeos originales sin tocar (Fase 3b)
+    clubs.json   # 467 clubes: 10 países CONMEBOL (primera + segunda, Fase 3b Sudamérica) + 7 países europeos (Inglaterra/España/Italia con 1ª y 2ª; Alemania/Francia/Portugal/Países Bajos con 1ª — Fase 3b Europa, 2026-08-07). Generado por scripts/build_europe_clubs.py
     clubs.ts     # loader fino: valida clubs.json con parseClubs (contentSchema.ts) al importar, exporta SAMPLE_CLUBS + getClubById(id)
     countries.ts # COUNTRIES: ~195 países (ISO, nombres en español), sin colores — getCountryByName/getCountryById (integración de diseño)
     tacticalPositions.ts # TACTICAL_POSITIONS: 12 posiciones tácticas de la cancha interactiva de creación, mapeadas a Position (cosmético, integración de diseño)
@@ -123,7 +123,7 @@ Las carpetas que todavía no tienen contenido real (`minigames/*`, `features/riv
 
 ## Fuente de datos de clubes
 
-**Sudamérica (los 10 países CONMEBOL) implementada en la Fase 3b** — ver esa entrada en Progreso para el detalle completo (fuente por país, metodología de `reputation`, conteo final). Europa y el resto de las confederaciones (CONCACAF/CAF/AFC/OFC) **todavía no** — siguen con los 5 clubes hardcodeados originales (Sevilla, Atlético Madrid, Real Madrid, Barcelona, Manchester City). `openfootball` (GitHub, JSON sin key) se evaluó como atajo para bootstrapear ligas europeas grandes ya estructuradas pero no se usó en esta pasada (da nombres de equipo desde datos de partidos, sin metadata de club) — si se retoma Europa, evaluar de nuevo si conviene o si alcanza con el mismo método Wikipedia-por-país ya probado.
+**Sudamérica (los 10 países CONMEBOL) y Europa (7 países) implementadas en la Fase 3b** — ver esas entradas en Progreso para el detalle completo (fuente por país, metodología de `reputation`, conteo final). El resto de las confederaciones (CONCACAF/CAF/AFC/OFC) **todavía no** está cubierto. Método usado en ambas pasadas: Wikipedia por país (página "List of football clubs in [País]" cuando organiza por división; página de la temporada actual de la competencia cuando no). Para Europa se usaron las páginas de temporada 2025–26 de cada liga (Premier League + Championship, LaLiga + Segunda, Serie A + Serie B, Bundesliga, Ligue 1, Primeira Liga, Eredivisie). `openfootball` (GitHub, JSON sin key) se evaluó como atajo pero no se usó (da nombres de equipo desde datos de partidos, sin metadata de club).
 
 No se pudo confirmar cómo obtiene Copero sus propios datos de clubes (su sitio está bloqueado por el filtro de red del entorno de desarrollo y no hay documentación técnica pública) — no asumir nada al respecto si se retoma este punto.
 
@@ -245,6 +245,20 @@ Alcance elegido por decisión propia (se le preguntó al usuario, no contestó �
 - `npm run test` (61/61 — los mismos 61 de la Fase 3a, con el fix de 3 tests), `npx tsc -b --noEmit` y `npm run lint` (oxlint) corren limpios. Verificado en navegador: creación → hub con 3 ofertas de club reales de países distintos → un par de temporadas con timeline real, sin errores de consola.
 - **Pendiente explícitamente para más adelante** (no es un olvido, es alcance incremental a propósito): Europa (más allá de los 5 clubes actuales) y el resto de las confederaciones (CONCACAF/CAF/AFC/OFC) quedan afuera de esta pasada.
 
+### Fase 3b — datos reales de clubes: Europa (2026-08-07)
+
+Continuación incremental de la Fase 3b, con el mismo método y criterio que Sudamérica. Se agregaron **193 clubes europeos** (`content/clubs.json` pasó de 274 a 467 clubes) de 7 países:
+
+- **Inglaterra, España, Italia con dos divisiones**: Premier League (20) + Championship (24), LaLiga (20) + Segunda (22), Serie A (20) + Serie B (20).
+- **Alemania, Francia, Portugal, Países Bajos con primera división**: Bundesliga (18), Ligue 1 (18), Primeira Liga (18), Eredivisie (18).
+- **Fuente**: páginas de Wikipedia de la temporada 2025–26 de cada competencia (traídas con WebFetch, no transcritas de memoria — los ascensos/descensos de cada liga cambian año a año).
+- **Los 5 clubes europeos originales** (Real Madrid, Barcelona, Atlético Madrid, Sevilla, Manchester City) **se conservaron con su reputación curada** (97/96/85/72/95) — el script los dedup por id, no los duplica.
+- **`reputation` sigue siendo heurística de balance**, no un dato investigado (no existe fuente pública): baseline por tier + boost por peso regional/internacional (elites 90-97, grandes 80-90, mid 55-75, tier 2 default ~30 con clubes históricos venidos a menos más alto, ej. Leicester 70, Sampdoria 52, Deportivo 50).
+- **Ids con colisión entre países desambiguados con sufijo de país** (ej. `nacional-pt` = Nacional de Madeira vs `nacional` = Uruguay), igual que en Sudamérica, validado por la unicidad de ids del `clubsSchema`.
+- **Generado por `scripts/build_europe_clubs.py`** (versionado, documenta la provenance de los datos y el mapa de reputación por club — a diferencia de Sudamérica que se transcribió a mano). El loader `content/clubs.ts` corre Zod sobre el JSON al importar, así que cualquier fila mal formada revienta apenas algo importe `@/content/clubs`.
+- **2 tests adaptados** (`leagueEngine.test.ts`, `trophyEngine.test.ts`): ambos hardcodeaban que Manchester City era el único club de Inglaterra para probar el caso "liga/país de un solo club". Con Inglaterra ahora con 44 clubes reales, ese caso se prueba con un club sintético (`solo-fc`/`lonely-fc` en un país inventado "Solandia") en vez de depender de los datos reales. Esto **resuelve el riesgo de "Inglaterra tier 1 de un solo club"** que estaba anotado en Decisiones abiertas. **90/90 tests siguen pasando.**
+- Verificado con sanity check (script temporal, borrado): las ofertas de debut de 40 seeds ahora incluyen países europeos (España, Italia) además de todo CONMEBOL.
+
 ### Fase 4 — Minijuegos: registry + penaltyShootout + finales de copa (2026-08-06)
 
 Primera fase que agrega **gameplay real** en vez de simulación automática. Plan completo en `C:\Users\49432830\.claude\plans\linked-brewing-starlight.md`.
@@ -277,7 +291,7 @@ Primera fase que agrega **gameplay real** en vez de simulación automática. Pla
 
 ## Pendiente (TODO)
 
-- **Fase 3b — Europa y resto de confederaciones:** Sudamérica ya está (ver Progreso). Falta ampliar `content/clubs.json` a Europa (más allá de los 5 clubes actuales) y opcionalmente CONCACAF/CAF/AFC/OFC — mismo método (Wikipedia por país, adaptando a página de temporada si la lista general no organiza por división), incremental, no bloqueante.
+- **Fase 3b — resto de confederaciones:** Sudamérica y Europa (7 países) ya están (ver Progreso). Falta opcionalmente CONCACAF/CAF/AFC/OFC, y las segundas divisiones de Alemania/Francia/Portugal/Países Bajos (hoy solo tienen 1ª) — mismo método (Wikipedia por temporada), incremental, no bloqueante.
 - **Pasada visual (acordada con el usuario, va antes que Fase 6):** banderas reales en SVG para CONMEBOL + Europa grande (~25) con el `ColorRoundel` actual como fallback; escudos de club con formas y patrones derivados del hash; variantes de patrón en la camiseta; ilustraciones SVG por categoría de evento; y animación en los minijuegos (la pelota, el arquero). **No hacen falta assets subidos** — todo se genera por código. Los escudos reales de los clubes quedan explícitamente afuera por ser marcas registradas. Detalle completo en `C:\Users\49432830\.claude\plans\linked-brewing-starlight.md`.
 - **Fase 6 — Supabase real:** aplicar las migraciones del esquema (`careers`, `leaderboard_entries`, `rivals`, `legends` — diseño completo en el plan), `LeaderboardPage` real leyendo de Supabase, flujo de "ingresá tu alias" al retirarte.
 - **Fase 7 — Rival:** rival por arquetipo determinístico visible en el hub de carrera.
@@ -285,10 +299,10 @@ Primera fase que agrega **gameplay real** en vez de simulación automática. Pla
 
 ## Decisiones abiertas / riesgos conocidos
 
-- Sudamérica ya tiene datos reales completos (Fase 3b); Europa (más allá de los 5 clubes actuales) y CONCACAF/CAF/AFC/OFC siguen sin cubrir — depende de cuánta data haya organizada en Wikipedia por país para sus segundas divisiones. No es bloqueante, se puede sumar de forma incremental.
+- Sudamérica y Europa (7 países) ya tienen datos reales (Fase 3b); CONCACAF/CAF/AFC/OFC siguen sin cubrir, y Alemania/Francia/Portugal/Países Bajos solo tienen 1ª división por ahora. No es bloqueante, se puede sumar de forma incremental.
 - Sin anti-cheat: si el proyecto gana tracción real, revisar el diseño de validación server-side por replay que está esbozado en el plan (motor puro portado a una Edge Function).
 - `react-router-dom` tiene una vulnerabilidad reportada (alta severidad) específica del modo RSC (React Server Components) — no aplica a este proyecto porque es una SPA client-only sin RSC. Registrado acá para no re-investigarlo cada vez que `npm audit` lo marque.
 - ~~`createCareer.ts` elige el club de debut filtrando `SAMPLE_CLUBS` por `reputation < 40`...~~ — **resuelto en la integración de diseño (2026-08-05).** `createCareer.ts` ahora usa `selectDebutClubOffers` (`engine/clubTransition.ts`), que relaja al pool completo de clubes si el filtro por reputación da menos candidatos de los pedidos, y nunca llama `pickWeighted` sobre un array vacío. `engine/leagueEngine.ts#resolveLeagueWinner` sigue filtrando por `country`+`tier` y llamando `pickWeighted` directo sin fallback — con los 274 clubes de la Fase 3b esto no es un problema práctico hoy (todos los grupos CONMEBOL tienen varios clubes), pero si se agrega un país/confederación nuevo con un solo club en algún tier, revisar si conviene el mismo tipo de relajación que ya tiene `selectClubForMove`.
-- ~~**Ligas de un solo club con las 13 clubes hardcodeadas** (Argentina tier 2, Inglaterra tier 1)~~ — **Argentina resuelto en la Fase 3b** (38 clubes reales en tier 2). **Inglaterra tier 1 (Manchester City) sigue siendo de un solo club** porque Europa no se tocó en esta pasada — se resuelve cuando se amplíe `content/clubs.json` a Europa.
+- ~~**Ligas de un solo club con las 13 clubes hardcodeadas** (Argentina tier 2, Inglaterra tier 1)~~ — **Argentina resuelto en la Fase 3b Sudamérica** (38 clubes reales en tier 2). **Inglaterra resuelto en la Fase 3b Europa** (44 clubes reales entre 1ª y 2ª). Ya no queda ningún país con una liga de un solo club en los datos actuales.
 - **Inflación de rating: casi toda carrera termina con un jugador de 90+.** Observado en el sanity check de la Fase 5: una carrera típica va de OVR 64 a los 17 hasta **96 a los 25**, y ahí se queda. La causa principal es previa a la Fase 5 (`attributeGrowthDelta` da +2 a +5 por atributo por temporada hasta los 21 y +1 a +3 hasta los 25, sobre un debut ya generoso); los enfoques de pretemporada suman ~+1 neto por temporada encima. **No se tocó en la Fase 5 a propósito** — rebalancear la curva de crecimiento es una decisión de diseño que invalida la nota deliberada de "Desviaciones" sobre el rating de debut, y merece medirse aparte. Importa para la Fase 8 ("recreá a una leyenda"): si todos terminan en 95, el rating deja de distinguir carreras y la comparación con leyendas pierde sentido. El lugar para tocarlo es `statMath.ts`.
 - **Sin persistencia de la carrera en curso.** `store/careerStore.ts` vive solo en memoria; un refresh de página o una navegación de URL completa (no vía React Router) pierde la carrera y las guardas de ruta redirigen a `/`. Es el comportamiento esperado para la Fase 2 — no hay `localStorage` ni sync con Supabase todavía (eso es Fase 6).

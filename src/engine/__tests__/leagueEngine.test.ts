@@ -15,8 +15,11 @@ describe('resolveLeagueWinner', () => {
 
   it('un grupo de un solo club siempre lo devuelve a él', () => {
     const rng = createRng(2)
-    const winner = resolveLeagueWinner(SAMPLE_CLUBS, { country: 'Inglaterra', tier: 1 }, rng)
-    expect(winner.id).toBe('manchester-city')
+    // Grupo sintético de un solo club (antes se apoyaba en que Inglaterra tenía
+    // solo a Manchester City; desde la Fase 3b Europa tiene un pool real completo).
+    const soloClub = { id: 'solo-fc', name: 'Solo FC', country: 'Solandia', tier: 1 as const, reputation: 50 }
+    const winner = resolveLeagueWinner([...SAMPLE_CLUBS, soloClub], { country: 'Solandia', tier: 1 }, rng)
+    expect(winner.id).toBe('solo-fc')
   })
 
   it('es determinístico: mismo estado de rng produce el mismo ganador', () => {
