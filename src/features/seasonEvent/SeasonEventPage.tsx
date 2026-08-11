@@ -59,7 +59,7 @@ export function SeasonEventPage() {
               <EventChoiceCard
                 key={choice.id}
                 label={choice.label}
-                categoryLabel={EVENT_CATEGORY_LABELS[event.category]}
+                category={event.category}
                 effect={summarizeChoiceEffect(choice)}
                 onSelect={() => handleChoice(choice.id)}
               />

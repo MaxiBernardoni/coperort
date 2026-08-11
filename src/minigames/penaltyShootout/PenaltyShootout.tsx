@@ -39,6 +39,13 @@ function otherZones(zone: Zone): Zone[] {
   return ZONES.filter((candidate) => candidate !== zone)
 }
 
+/** Posición horizontal de una zona, reutilizada por el arquero y la pelota para que "vuelen" al mismo punto. */
+function zonePosition(zone: Zone): { left?: string; right?: string } {
+  if (zone === 'left') return { left: '18%' }
+  if (zone === 'right') return { right: '18%' }
+  return { left: 'calc(50% - 24px)' }
+}
+
 /**
  * Cuando el arquero amaga en falso tiene dos palos para elegir. Con buena definición el
  * remate es más difícil de adivinar, así que sube la chance de que agarre el equivocado:
@@ -126,16 +133,29 @@ export function PenaltyShootout({ seed, difficulty, opponentName, attributes, on
 
         {!finished && round && (
           <div
-            className="absolute top-[30%] h-14 w-12 rounded-[10px] transition-all duration-200"
+            className="absolute top-[30%] h-14 w-12 rounded-[10px] transition-all duration-500 ease-out"
             style={{
               background: '#f2984a',
-              left: round.lean === 'left' ? '18%' : round.lean === 'center' ? 'calc(50% - 24px)' : 'auto',
-              right: round.lean === 'right' ? '18%' : 'auto',
-              transform: lastShot ? 'scale(1.1)' : 'none',
+              ...zonePosition(lastShot ? lastShot.keeperZone : round.lean),
+              transform: lastShot ? 'scale(1.15) rotate(-8deg)' : 'none',
             }}
-            aria-label={`el arquero se inclina hacia ${ZONE_LABELS[round.lean].toLowerCase()}`}
+            aria-label={
+              lastShot
+                ? `el arquero se tiró a ${ZONE_LABELS[lastShot.keeperZone].toLowerCase()}`
+                : `el arquero se inclina hacia ${ZONE_LABELS[round.lean].toLowerCase()}`
+            }
           />
         )}
+
+        <div
+          className="absolute z-20 h-4 w-4 rounded-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.5)] transition-all duration-500 ease-out"
+          style={
+            lastShot
+              ? { ...zonePosition(lastShot.playerZone), bottom: lastShot.scored ? '55%' : '38%' }
+              : { left: 'calc(50% - 8px)', bottom: '8%' }
+          }
+          aria-hidden="true"
+        />
 
         <div className="relative z-10 grid grid-cols-3 gap-2">
           {ZONES.map((zone) => (
