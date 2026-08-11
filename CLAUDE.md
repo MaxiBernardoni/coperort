@@ -259,6 +259,16 @@ Continuación incremental de la Fase 3b, con el mismo método y criterio que Sud
 - **2 tests adaptados** (`leagueEngine.test.ts`, `trophyEngine.test.ts`): ambos hardcodeaban que Manchester City era el único club de Inglaterra para probar el caso "liga/país de un solo club". Con Inglaterra ahora con 44 clubes reales, ese caso se prueba con un club sintético (`solo-fc`/`lonely-fc` en un país inventado "Solandia") en vez de depender de los datos reales. Esto **resuelve el riesgo de "Inglaterra tier 1 de un solo club"** que estaba anotado en Decisiones abiertas. **90/90 tests siguen pasando.**
 - Verificado con sanity check (script temporal, borrado): las ofertas de debut de 40 seeds ahora incluyen países europeos (España, Italia) además de todo CONMEBOL.
 
+### Fase 3b — 2ª división europea restante + Liga MX/MLS (2026-08-08)
+
+Alcance elegido con el usuario (opción intermedia entre "solo Europa" y "todas las confederaciones"): completar la 2ª división de los 4 países europeos que solo tenían 1ª, más Liga MX y MLS como única cobertura de CONCACAF por ahora. CAF/AFC/OFC siguen sin tocar.
+
+- **+122 clubes** (`clubs.json` pasó de 467 a 589): 2. Bundesliga (18), Ligue 2 (18), Liga Portugal 2 (18, incluye reservas B de Benfica/Porto/Sporting — así juega la liga real), Eerste Divisie (20, incluye equipos "Jong" sub-21), Liga MX (18), MLS (30).
+- **Fuente**: Wikipedia de temporada 2025–26/2025 vía WebFetch, mismo método que las pasadas anteriores.
+- **`scripts/build_more_clubs.py`** (nuevo, mismo patrón que `build_europe_clubs.py`): dedup por id, sufijo de país en colisión (`SUFFIX` con `mx`/`us` nuevos).
+- `reputation` sigue siendo heurística, no dato investigado — mismo criterio (baseline por tier + boost a clubes de peso, ej. América 86, Inter Miami 72 por el efecto Messi, Schalke 04 68 pese a estar en 2ª por ser un gigante caído).
+- `npm run test` (90/90), `npx tsc -b --noEmit` y `npm run lint` corren limpios — no se tocó ningún test existente, los 274+193+122 clubes conviven sin colisión de ids.
+
 ### Fase 4 — Minijuegos: registry + penaltyShootout + finales de copa (2026-08-06)
 
 Primera fase que agrega **gameplay real** en vez de simulación automática. Plan completo en `C:\Users\49432830\.claude\plans\linked-brewing-starlight.md`.
@@ -291,7 +301,7 @@ Primera fase que agrega **gameplay real** en vez de simulación automática. Pla
 
 ## Pendiente (TODO)
 
-- **Fase 3b — resto de confederaciones:** Sudamérica y Europa (7 países) ya están (ver Progreso). Falta opcionalmente CONCACAF/CAF/AFC/OFC, y las segundas divisiones de Alemania/Francia/Portugal/Países Bajos (hoy solo tienen 1ª) — mismo método (Wikipedia por temporada), incremental, no bloqueante.
+- **Fase 3b — resto de confederaciones:** Sudamérica, Europa (7 países, ambas divisiones donde aplica) y Liga MX/MLS ya están (589 clubes, ver Progreso). Falta opcionalmente CAF/AFC/OFC — mismo método, incremental, no bloqueante.
 - **Pasada visual (acordada con el usuario, va antes que Fase 6):** banderas reales en SVG para CONMEBOL + Europa grande (~25) con el `ColorRoundel` actual como fallback; escudos de club con formas y patrones derivados del hash; variantes de patrón en la camiseta; ilustraciones SVG por categoría de evento; y animación en los minijuegos (la pelota, el arquero). **No hacen falta assets subidos** — todo se genera por código. Los escudos reales de los clubes quedan explícitamente afuera por ser marcas registradas. Detalle completo en `C:\Users\49432830\.claude\plans\linked-brewing-starlight.md`.
 - **Fase 6 — Supabase real:** aplicar las migraciones del esquema (`careers`, `leaderboard_entries`, `rivals`, `legends` — diseño completo en el plan), `LeaderboardPage` real leyendo de Supabase, flujo de "ingresá tu alias" al retirarte.
 - **Fase 7 — Rival:** rival por arquetipo determinístico visible en el hub de carrera.

@@ -3267,5 +3267,859 @@
     "country": "Países Bajos",
     "tier": 1,
     "reputation": 42
+  },
+  {
+    "id": "fc-schalke-04",
+    "name": "FC Schalke 04",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 68
+  },
+  {
+    "id": "hertha-bsc",
+    "name": "Hertha BSC",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 62
+  },
+  {
+    "id": "hannover-96",
+    "name": "Hannover 96",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 54
+  },
+  {
+    "id": "1-fc-nurnberg",
+    "name": "1. FC Nurnberg",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 52
+  },
+  {
+    "id": "1-fc-kaiserslautern",
+    "name": "1. FC Kaiserslautern",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 52
+  },
+  {
+    "id": "vfl-bochum",
+    "name": "VfL Bochum",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 46
+  },
+  {
+    "id": "fortuna-dusseldorf",
+    "name": "Fortuna Dusseldorf",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 46
+  },
+  {
+    "id": "karlsruher-sc",
+    "name": "Karlsruher SC",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 42
+  },
+  {
+    "id": "1-fc-magdeburg",
+    "name": "1. FC Magdeburg",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "dynamo-dresden",
+    "name": "Dynamo Dresden",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 42
+  },
+  {
+    "id": "spvgg-greuther-furth",
+    "name": "SpVgg Greuther Furth",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 38
+  },
+  {
+    "id": "sv-darmstadt-98",
+    "name": "SV Darmstadt 98",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "holstein-kiel",
+    "name": "Holstein Kiel",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 44
+  },
+  {
+    "id": "sc-paderborn",
+    "name": "SC Paderborn",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "arminia-bielefeld",
+    "name": "Arminia Bielefeld",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 38
+  },
+  {
+    "id": "eintracht-braunschweig",
+    "name": "Eintracht Braunschweig",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 36
+  },
+  {
+    "id": "sv-elversberg",
+    "name": "SV Elversberg",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "sc-preussen-munster",
+    "name": "SC Preussen Munster",
+    "country": "Alemania",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "saint-etienne",
+    "name": "Saint-Etienne",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 62
+  },
+  {
+    "id": "montpellier",
+    "name": "Montpellier",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 56
+  },
+  {
+    "id": "reims",
+    "name": "Reims",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 44
+  },
+  {
+    "id": "troyes",
+    "name": "Troyes",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 42
+  },
+  {
+    "id": "bastia",
+    "name": "Bastia",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "guingamp",
+    "name": "Guingamp",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "clermont",
+    "name": "Clermont",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 38
+  },
+  {
+    "id": "nancy",
+    "name": "Nancy",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 38
+  },
+  {
+    "id": "red-star",
+    "name": "Red Star",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "grenoble",
+    "name": "Grenoble",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "amiens",
+    "name": "Amiens",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "pau",
+    "name": "Pau",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "laval",
+    "name": "Laval",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "rodez",
+    "name": "Rodez",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "annecy",
+    "name": "Annecy",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "dunkerque",
+    "name": "Dunkerque",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "le-mans",
+    "name": "Le Mans",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 28
+  },
+  {
+    "id": "boulogne",
+    "name": "Boulogne",
+    "country": "Francia",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "maritimo",
+    "name": "Maritimo",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 46
+  },
+  {
+    "id": "portimonense",
+    "name": "Portimonense",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 38
+  },
+  {
+    "id": "pacos-de-ferreira",
+    "name": "Pacos de Ferreira",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 40
+  },
+  {
+    "id": "chaves",
+    "name": "Chaves",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 36
+  },
+  {
+    "id": "vizela",
+    "name": "Vizela",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "farense",
+    "name": "Farense",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 36
+  },
+  {
+    "id": "feirense",
+    "name": "Feirense",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "academico-de-viseu",
+    "name": "Academico de Viseu",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "benfica-b",
+    "name": "Benfica B",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "porto-b",
+    "name": "Porto B",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "sporting-cp-b",
+    "name": "Sporting CP B",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "leixoes",
+    "name": "Leixoes",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "penafiel",
+    "name": "Penafiel",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "uniao-de-leiria",
+    "name": "Uniao de Leiria",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "torreense",
+    "name": "Torreense",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 28
+  },
+  {
+    "id": "oliveirense",
+    "name": "Oliveirense",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "felgueiras",
+    "name": "Felgueiras",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 24
+  },
+  {
+    "id": "lusitania-lourosa",
+    "name": "Lusitania Lourosa",
+    "country": "Portugal",
+    "tier": 2,
+    "reputation": 22
+  },
+  {
+    "id": "sbv-vitesse",
+    "name": "SBV Vitesse",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 42
+  },
+  {
+    "id": "sc-cambuur",
+    "name": "SC Cambuur",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 36
+  },
+  {
+    "id": "roda-jc-kerkrade",
+    "name": "Roda JC Kerkrade",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "fc-emmen",
+    "name": "FC Emmen",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "rkc-waalwijk",
+    "name": "RKC Waalwijk",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 36
+  },
+  {
+    "id": "willem-ii",
+    "name": "Willem II",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "de-graafschap",
+    "name": "De Graafschap",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "ado-den-haag",
+    "name": "ADO Den Haag",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 34
+  },
+  {
+    "id": "vvv-venlo",
+    "name": "VVV-Venlo",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 30
+  },
+  {
+    "id": "almere-city",
+    "name": "Almere City",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 32
+  },
+  {
+    "id": "fc-eindhoven",
+    "name": "FC Eindhoven",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 28
+  },
+  {
+    "id": "fc-den-bosch",
+    "name": "FC Den Bosch",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 28
+  },
+  {
+    "id": "mvv-maastricht",
+    "name": "MVV Maastricht",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "fc-dordrecht",
+    "name": "FC Dordrecht",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 26
+  },
+  {
+    "id": "helmond-sport",
+    "name": "Helmond Sport",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 24
+  },
+  {
+    "id": "top-oss",
+    "name": "TOP Oss",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 22
+  },
+  {
+    "id": "jong-ajax",
+    "name": "Jong Ajax",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "jong-az",
+    "name": "Jong AZ",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "jong-psv",
+    "name": "Jong PSV",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "jong-fc-utrecht",
+    "name": "Jong FC Utrecht",
+    "country": "Países Bajos",
+    "tier": 2,
+    "reputation": 20
+  },
+  {
+    "id": "america",
+    "name": "America",
+    "country": "México",
+    "tier": 1,
+    "reputation": 86
+  },
+  {
+    "id": "tigres-uanl",
+    "name": "Tigres UANL",
+    "country": "México",
+    "tier": 1,
+    "reputation": 78
+  },
+  {
+    "id": "guadalajara",
+    "name": "Guadalajara",
+    "country": "México",
+    "tier": 1,
+    "reputation": 78
+  },
+  {
+    "id": "cruz-azul",
+    "name": "Cruz Azul",
+    "country": "México",
+    "tier": 1,
+    "reputation": 76
+  },
+  {
+    "id": "monterrey",
+    "name": "Monterrey",
+    "country": "México",
+    "tier": 1,
+    "reputation": 76
+  },
+  {
+    "id": "pumas-unam",
+    "name": "Pumas UNAM",
+    "country": "México",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "toluca",
+    "name": "Toluca",
+    "country": "México",
+    "tier": 1,
+    "reputation": 64
+  },
+  {
+    "id": "leon",
+    "name": "Leon",
+    "country": "México",
+    "tier": 1,
+    "reputation": 62
+  },
+  {
+    "id": "pachuca",
+    "name": "Pachuca",
+    "country": "México",
+    "tier": 1,
+    "reputation": 60
+  },
+  {
+    "id": "santos-laguna",
+    "name": "Santos Laguna",
+    "country": "México",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "atlas",
+    "name": "Atlas",
+    "country": "México",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "tijuana",
+    "name": "Tijuana",
+    "country": "México",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "atletico-san-luis",
+    "name": "Atletico San Luis",
+    "country": "México",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "necaxa",
+    "name": "Necaxa",
+    "country": "México",
+    "tier": 1,
+    "reputation": 48
+  },
+  {
+    "id": "juarez",
+    "name": "Juarez",
+    "country": "México",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "puebla",
+    "name": "Puebla",
+    "country": "México",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "queretaro",
+    "name": "Queretaro",
+    "country": "México",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "mazatlan",
+    "name": "Mazatlan",
+    "country": "México",
+    "tier": 1,
+    "reputation": 40
+  },
+  {
+    "id": "inter-miami-cf",
+    "name": "Inter Miami CF",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 72
+  },
+  {
+    "id": "la-galaxy",
+    "name": "LA Galaxy",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 66
+  },
+  {
+    "id": "seattle-sounders-fc",
+    "name": "Seattle Sounders FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 64
+  },
+  {
+    "id": "los-angeles-fc",
+    "name": "Los Angeles FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 64
+  },
+  {
+    "id": "atlanta-united-fc",
+    "name": "Atlanta United FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 60
+  },
+  {
+    "id": "columbus-crew",
+    "name": "Columbus Crew",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 58
+  },
+  {
+    "id": "philadelphia-union",
+    "name": "Philadelphia Union",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 56
+  },
+  {
+    "id": "fc-cincinnati",
+    "name": "FC Cincinnati",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 56
+  },
+  {
+    "id": "new-york-city-fc",
+    "name": "New York City FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "new-york-red-bulls",
+    "name": "New York Red Bulls",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 54
+  },
+  {
+    "id": "sporting-kansas-city",
+    "name": "Sporting Kansas City",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "portland-timbers",
+    "name": "Portland Timbers",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 52
+  },
+  {
+    "id": "nashville-sc",
+    "name": "Nashville SC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "orlando-city-sc",
+    "name": "Orlando City SC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 50
+  },
+  {
+    "id": "real-salt-lake",
+    "name": "Real Salt Lake",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 48
+  },
+  {
+    "id": "minnesota-united-fc",
+    "name": "Minnesota United FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 48
+  },
+  {
+    "id": "san-diego-fc",
+    "name": "San Diego FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "charlotte-fc",
+    "name": "Charlotte FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "fc-dallas",
+    "name": "FC Dallas",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "houston-dynamo-fc",
+    "name": "Houston Dynamo FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "chicago-fire-fc",
+    "name": "Chicago Fire FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 46
+  },
+  {
+    "id": "toronto-fc",
+    "name": "Toronto FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "d-c-united",
+    "name": "D.C. United",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "colorado-rapids",
+    "name": "Colorado Rapids",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "vancouver-whitecaps-fc",
+    "name": "Vancouver Whitecaps FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 44
+  },
+  {
+    "id": "new-england-revolution",
+    "name": "New England Revolution",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "san-jose-earthquakes",
+    "name": "San Jose Earthquakes",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "austin-fc",
+    "name": "Austin FC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "st-louis-city-sc",
+    "name": "St. Louis City SC",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 42
+  },
+  {
+    "id": "cf-montreal",
+    "name": "CF Montreal",
+    "country": "Estados Unidos",
+    "tier": 1,
+    "reputation": 42
   }
 ]
