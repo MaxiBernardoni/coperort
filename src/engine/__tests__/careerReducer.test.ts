@@ -105,16 +105,20 @@ describe('careerReducer', () => {
     expect(state.eventLog).toHaveLength(state.retirementAge - 17)
   })
 
-  it('keeps the overall rating within the valid 1-99 range every season', () => {
+  it('keeps the overall rating within the valid 1-99 range every season, for the player and the rival', () => {
     let state = createCareerAndSelectClub(999)
     expect(state.player.overallRating).toBeGreaterThanOrEqual(1)
     expect(state.player.overallRating).toBeLessThanOrEqual(99)
+    expect(state.rival.overallRating).toBeGreaterThanOrEqual(1)
+    expect(state.rival.overallRating).toBeLessThanOrEqual(99)
 
     let iterations = 0
     while (state.phase !== 'RETIRED') {
       state = playOneSeason(state)
       expect(state.player.overallRating).toBeGreaterThanOrEqual(1)
       expect(state.player.overallRating).toBeLessThanOrEqual(99)
+      expect(state.rival.overallRating).toBeGreaterThanOrEqual(1)
+      expect(state.rival.overallRating).toBeLessThanOrEqual(99)
       iterations += 1
       if (iterations > MAX_SEASONS) throw new Error('La carrera no llegó a RETIRED')
     }
@@ -162,6 +166,19 @@ describe('careerReducer', () => {
     expect(created.clubOffers.length).toBeLessThanOrEqual(3)
     const ids = created.clubOffers.map((club) => club.id)
     expect(new Set(ids).size).toBe(ids.length)
+  })
+
+  it('CREATE_CAREER generates a fixed rival with a valid archetype, position and club', () => {
+    const created = careerReducer(null, { type: 'CREATE_CAREER', input: testInput, seed: 3 })
+
+    expect(created.rival.firstName).toBeTruthy()
+    expect(created.rival.surname).toBeTruthy()
+    expect(created.rival.nationality).toBe(testInput.nationality)
+    expect(['GK', 'DEF', 'MID', 'FWD']).toContain(created.rival.position)
+    expect(created.rival.overallRating).toBeGreaterThanOrEqual(1)
+    expect(created.rival.overallRating).toBeLessThanOrEqual(99)
+    expect(created.rival.titles).toBe(0)
+    expect(created.rival.stats).toEqual({ matches: 0, goals: 0, assists: 0 })
   })
 
   it('ADVANCE_SEASON is a no-op while a club offer is pending', () => {
@@ -267,6 +284,18 @@ describe('careerReducer', () => {
     expect(resolved.player.age).toBe(created.player.age + 1)
     expect(resolved.season).toBe(created.season + 1)
     expect(resolved.eventLog.at(-1)).toEqual({ season: created.season, eventId: event.id, choiceId: event.choices[0].id })
+  })
+
+  it('RESOLVE_EVENT advances the rival in parallel with the player each season', () => {
+    const created = createCareerAndSelectClub(7)
+    const pending = advanceToEvent(created)
+    const event = getEventById(pending.pendingEventId!)
+    const resolved = careerReducer(pending, { type: 'RESOLVE_EVENT', choiceId: event.choices[0].id })
+
+    // el rival mantiene identidad/arquetipo, pero acumula stats de la temporada que se jugó
+    expect(resolved.rival.firstName).toBe(created.rival.firstName)
+    expect(resolved.rival.archetypeId).toBe(created.rival.archetypeId)
+    expect(resolved.rival.stats.matches).toBeGreaterThan(created.rival.stats.matches)
   })
 
   it('RESOLVE_EVENT appends exactly one seasonHistory entry matching that season\'s stats', () => {
@@ -446,21 +475,31 @@ describe('careerReducer', () => {
   })
 
   it('winning the league adds a title to `titles` for the player\'s club', () => {
-    const active = createCareerAndSelectClub(33)
-    const solePremierLeagueClub = getClubById('manchester-city')
-    const stateAtThatClub: CareerState = { ...active, currentClub: solePremierLeagueClub }
+    // Real Madrid tiene la reputación más alta de España: gana la liga seguido. Se busca la
+    // primera temporada que la gane, sin forzar el motor (mismo patrón que la final de copa
+    // más abajo) — desde Fase 3b ya no queda ninguna liga de un solo club para forzar un
+    // ganador garantizado.
+    let state: CareerState = { ...createCareerAndSelectClub(33), currentClub: getClubById('real-madrid') }
+    let found = false
 
-    const resolved = careerReducer(withPendingEvent(stateAtThatClub, 'preseason-intensity'), {
-      type: 'RESOLVE_EVENT',
-      choiceId: 'high-intensity',
-    })
+    for (let i = 0; i < MAX_SEASONS && !found; i++) {
+      const titlesBefore = state.titles.length
+      const resolved = careerReducer(withPendingEvent(state, 'preseason-intensity'), {
+        type: 'RESOLVE_EVENT',
+        choiceId: 'high-intensity',
+      })
+      if (resolved.titles.length > titlesBefore) {
+        found = true
+        expect(resolved.titles.at(-1)).toMatchObject({
+          type: 'league',
+          clubId: resolved.currentClub!.id,
+          country: resolved.currentClub!.country,
+          tier: resolved.currentClub!.tier,
+        })
+      }
+      state = resolved.phase === 'MINIGAME_PENDING' ? { ...resolved, phase: 'ACTIVE', pendingMinigame: null } : resolved
+    }
 
-    expect(resolved.titles).toHaveLength(1)
-    expect(resolved.titles[0]).toMatchObject({
-      type: 'league',
-      clubId: solePremierLeagueClub.id,
-      country: solePremierLeagueClub.country,
-      tier: solePremierLeagueClub.tier,
-    })
+    expect(found).toBe(true)
   })
 })

@@ -2,6 +2,7 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { AttributeBar } from '@/components/ui/AttributeBar'
 import { ClubOfferPicker } from '@/components/ui/ClubOfferPicker'
 import { PlayerIdentityHeader } from '@/components/ui/PlayerIdentityHeader'
+import { RivalCard } from '@/components/ui/RivalCard'
 import { SeasonTimelineTable } from '@/components/ui/SeasonTimelineTable'
 import { StatTilesRow } from '@/components/ui/StatTilesRow'
 import { TrophyCase } from '@/components/ui/TrophyCase'
@@ -89,12 +90,16 @@ export function CareerHubPage() {
         )}
       </div>
 
-      <SeasonTimelineTable
-        seasonHistory={career.seasonHistory}
-        currentAge={player.age}
-        retirementAge={career.retirementAge}
-        getClubLabel={(clubId) => getClubById(clubId).name}
-      />
+      <div className="flex flex-col gap-[22px]">
+        <RivalCard rival={career.rival} playerRating={player.overallRating} />
+
+        <SeasonTimelineTable
+          seasonHistory={career.seasonHistory}
+          currentAge={player.age}
+          retirementAge={career.retirementAge}
+          getClubLabel={(clubId) => getClubById(clubId).name}
+        />
+      </div>
     </main>
   )
 }

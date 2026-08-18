@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
+import { RivalCard } from '@/components/ui/RivalCard'
 import { StatTile } from '@/components/ui/StatTile'
 import { TrophyCase } from '@/components/ui/TrophyCase'
 import { getClubById } from '@/content/clubs'
@@ -72,6 +73,10 @@ export function CareerSummaryPage() {
 
       <div className="w-full max-w-[520px] text-left">
         <TrophyCase titles={career.titles} getClubLabel={(clubId) => getClubById(clubId).name} recentCount={6} />
+      </div>
+
+      <div className="w-full max-w-[520px] text-left">
+        <RivalCard rival={career.rival} playerRating={stats.peakRating} />
       </div>
 
       <div className="flex w-full max-w-[360px] flex-col gap-2.5 rounded-card bg-surface p-4">

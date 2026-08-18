@@ -1,6 +1,7 @@
 import type { Club } from './club'
 import type { MinigameResult, PendingMinigame } from './minigame'
 import type { Foot, PlayerState, Position } from './player'
+import type { RivalState } from './rival'
 
 export interface CharacterCreationInput {
   firstName: string
@@ -42,7 +43,8 @@ export interface LoanState {
 /**
  * `'league'` lo resuelve automáticamente `engine/leagueEngine.ts` cada temporada; `'cup'`
  * lo otorga `engine/trophyEngine.ts` solo si el jugador gana la final jugando el minijuego
- * (Fase 4). `awards`/`rival` siguen sin existir, se agregan en Fase 7/8.
+ * (Fase 4). `awards` sigue sin existir, se agrega en Fase 8. El rival NPC en sí (Fase 7,
+ * ver `RivalState`) no genera `Title`s — es una comparación de stats, no un logro puntual.
  */
 export interface Title {
   type: 'league' | 'cup'
@@ -89,6 +91,8 @@ export interface CareerState {
   pendingMinigame: PendingMinigame | null
   /** club de origen y fecha de retorno mientras el jugador está a préstamo en otro club */
   loan: LoanState | null
+  /** rival fijo de la carrera, generado en `createCareer` y avanzado cada temporada junto al jugador (Fase 7) */
+  rival: RivalState
   stats: CareerStats
   titles: Title[]
   eventLog: { season: number; eventId: string; choiceId: string }[]

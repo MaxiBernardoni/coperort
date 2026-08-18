@@ -4,6 +4,7 @@ import { selectEvent } from './eventSelector'
 import { resolveLeagueWinner } from './leagueEngine'
 import { selectMotivationOffers } from './motivationSelector'
 import { createRng } from './rng'
+import { advanceRival } from './rivalEngine'
 import { simulateSeasonPerformance } from './seasonPerformance'
 import { ATTRIBUTE_KEYS, attributeGrowthDelta, clamp, deriveOverallRating, marketValueForRating } from './statMath'
 import { resolveCupFinal } from './trophyEngine'
@@ -177,11 +178,14 @@ function resolveEvent(state: CareerState, choiceId: string): CareerState {
 
   const phase: CareerPhase = pendingMinigame ? 'MINIGAME_PENDING' : newAge >= state.retirementAge ? 'RETIRED' : 'ACTIVE'
 
+  const rival = advanceRival(state.rival, newAge, SAMPLE_CLUBS, rng)
+
   return {
     ...state,
     ...clubTransition,
     rngState: rng.getState(),
     player: { ...state.player, attributes, age: newAge, overallRating, marketValue },
+    rival,
     season: state.season + 1,
     year: newYear,
     phase,

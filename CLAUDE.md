@@ -43,16 +43,19 @@ src/
     player.ts    # Position, Foot, PlayerIdentity, PlayerAttributes, PlayerState
     club.ts      # Club
     event.ts     # StatEffect, EventChoice (+ transfer/loan/injury opcionales), ClubMoveCriteria, LoanEffect, InjuryEffect, SeasonEvent
-    career.ts    # CharacterCreationInput, CareerState (currentClub nullable, clubOffers, pendingEventId, pendingMinigame, loan, titles, seasonHistory), SeasonHistoryEntry, LoanState, Title (league|cup), CareerAction (CREATE_CAREER | SELECT_CLUB | ADVANCE_SEASON | RESOLVE_EVENT | RESOLVE_MINIGAME)
+    career.ts    # CharacterCreationInput, CareerState (currentClub nullable, clubOffers, pendingEventId, pendingMinigame, loan, rival, titles, seasonHistory), SeasonHistoryEntry, LoanState, Title (league|cup), CareerAction (CREATE_CAREER | SELECT_CLUB | ADVANCE_SEASON | RESOLVE_EVENT | RESOLVE_MINIGAME)
     minigame.ts  # MinigameResult, PendingMinigame — tipos de dominio puros, acá y no en minigames/ para que engine/ los importe sin depender de la capa de UI (Fase 4)
     motivation.ts # Motivation — enfoque de pretemporada elegible (effects reusa StatEffect; minAge/maxAge/positions filtran la oferta) (Fase 5)
+    rival.ts      # RivalArchetype, RivalState — rival fijo de la carrera, vive en CareerState.rival sin tabla propia en Supabase (Fase 7)
   content/
     clubs.json   # 467 clubes: 10 países CONMEBOL (primera + segunda, Fase 3b Sudamérica) + 7 países europeos (Inglaterra/España/Italia con 1ª y 2ª; Alemania/Francia/Portugal/Países Bajos con 1ª — Fase 3b Europa, 2026-08-07). Generado por scripts/build_europe_clubs.py
     clubs.ts     # loader fino: valida clubs.json con parseClubs (contentSchema.ts) al importar, exporta SAMPLE_CLUBS + getClubById(id)
     countries.ts # COUNTRIES: ~195 países (ISO, nombres en español), sin colores — getCountryByName/getCountryById (integración de diseño)
     tacticalPositions.ts # TACTICAL_POSITIONS: 12 posiciones tácticas de la cancha interactiva de creación, mapeadas a Position (cosmético, integración de diseño)
     motivations.ts # MOTIVATIONS: 12 enfoques de pretemporada con tradeoffs reales + getMotivationById (Fase 5)
-    contentSchema.ts # validación Zod de SeasonEvent/EventChoice/StatEffect/ClubMoveCriteria/LoanEffect/InjuryEffect, Club y Motivation — seasonEventsSchema/clubsSchema/motivationsSchema (ids únicos, minAge<=maxAge) (Fase 3a, ampliado en 5)
+    rivalArchetypes.ts # RIVAL_ARCHETYPES: 5 perfiles de crecimiento del rival (multiplicadores por franja de edad sobre attributeGrowthDelta) + getRivalArchetypeById (Fase 7)
+    rivalNames.ts # RIVAL_FIRST_NAMES/RIVAL_SURNAMES — pool genérico para el nombre del rival, sin apellidos de jugadores reales (Fase 7)
+    contentSchema.ts # validación Zod de SeasonEvent/EventChoice/StatEffect/ClubMoveCriteria/LoanEffect/InjuryEffect, Club, Motivation y RivalArchetype — seasonEventsSchema/clubsSchema/motivationsSchema/rivalArchetypesSchema (ids únicos, minAge<=maxAge) (Fase 3a, ampliado en 5 y 7)
     events/      # SAMPLE_EVENTS armado desde 8 archivos por categoría + index.ts; getEventById(id). Las 8 categorías tienen contenido real (Fase 3a)
       index.ts, training.ts, diet.ts, injury.ts, transfer.ts, loan.ts, media.ts, personal.ts, scandal.ts
     __tests__/
@@ -60,22 +63,24 @@ src/
   engine/        # TS puro, sin imports de React/DOM/Supabase — confirmado, cero dependencias externas de UI
     rng.ts               # createRng(seed) — PRNG mulberry32, expone next/randInt/pick/pickWeighted/getState
     statMath.ts           # generateBaseAttributes, attributeGrowthDelta, deriveOverallRating, marketValueForRating, clamp, ATTRIBUTE_KEYS
-    createCareer.ts        # createCareer(input, seed?) -> CareerState inicial (edad 17, phase CLUB_PENDING, currentClub null, clubOffers, pendingEventId null, loan null, titles [], seasonHistory [])
+    createCareer.ts        # createCareer(input, seed?) -> CareerState inicial (edad 17, phase CLUB_PENDING, currentClub null, clubOffers, pendingEventId null, loan null, rival generado por createRival, titles [], seasonHistory [])
     eventSelector.ts        # selectEvent(state, rng) — filtra por minAge/maxAge y por loan-lock (sin transfer/loan mientras `state.loan` esté activo), pickWeighted por `weight`
     seasonPerformance.ts     # simulateSeasonPerformance(player, rng, options?) -> {matches, goals, assists}; `options.matchesMultiplier` reduce partidos por lesión
     clubTransition.ts        # selectClubForMove (con relajación en 3 pasos), selectDebutClubOffers (integración de diseño — hasta N clubes distintos ponderados, con la misma relajación), applyTransfer, applyLoanStart, applyLoanReturn (Fase 3a)
     leagueEngine.ts           # resolveLeagueWinner(clubs, {country,tier}, rng) — título de liga automático, ponderado por reputación (Fase 3a, nuevo)
     trophyEngine.ts            # resolveCupFinal(clubs, playerClub, rng) -> rival | null + cupFinalChance(club) — la copa NO se resuelve sola, se juega (Fase 4)
     motivationSelector.ts       # selectMotivationOffers(age, position, rng, count) — 3 enfoques distintos filtrados por edad/posición, con relajación al pool completo (Fase 5)
-    careerReducer.ts          # careerReducer(state, action) — único punto de entrada al motor; beginSeason() + resolveEvent() + resolveMinigame() + selectClub() internos; resolveEvent aplica transfer/loan/retorno de préstamo, lesión, título de liga, push a seasonHistory y deja MINIGAME_PENDING si hay final de copa
+    rivalEngine.ts               # createRival(nationality, allClubs, rng) — rival fijo, país del jugador, arquetipo/posición/nombre/club aleatorios; advanceRival(rival, age, allClubs, rng) — crecimiento por arquetipo sobre attributeGrowthDelta, stats simplificados (sin reusar seasonPerformance.ts a propósito), chance de título por rating, chance chica de cambiar de club (Fase 7)
+    careerReducer.ts          # careerReducer(state, action) — único punto de entrada al motor; beginSeason() + resolveEvent() + resolveMinigame() + selectClub() internos; resolveEvent aplica transfer/loan/retorno de préstamo, lesión, título de liga, avance del rival (advanceRival), push a seasonHistory y deja MINIGAME_PENDING si hay final de copa
     __tests__/
       rng.test.ts              # determinismo, resumibilidad desde un estado capturado, rango [0,1)
-      careerReducer.test.ts     # 25 tests: carrera completa hasta RETIRED, determinismo end-to-end, invariantes de stats, flujo CLUB_PENDING/SELECT_CLUB, flujo EVENT_PENDING/RESOLVE_EVENT, seasonHistory, transfer real, loan + retorno automático, injury reduce partidos, título de liga se agrega a titles (Fase 3a)
+      careerReducer.test.ts     # carrera completa hasta RETIRED, determinismo end-to-end, invariantes de stats (jugador y rival), flujo CLUB_PENDING/SELECT_CLUB, flujo EVENT_PENDING/RESOLVE_EVENT, seasonHistory, transfer real, loan + retorno automático, injury reduce partidos, título de liga se agrega a titles, rival se crea en CREATE_CAREER y avanza en RESOLVE_EVENT (Fase 3a, ampliado en 7)
       clubTransition.test.ts    # selectClubForMove (relajación en 3 pasos, nunca elige el club actual), selectDebutClubOffers, applyTransfer, applyLoanStart, applyLoanReturn (Fase 3a)
       leagueEngine.test.ts      # resolveLeagueWinner agrupa por country+tier, ponderado por reputación, determinístico (Fase 3a)
       eventSelector.test.ts     # filtro minAge/maxAge, loan-lock (sin transfer/loan mientras hay préstamo activo), relajación de pool (Fase 3a)
-      trophyEngine.test.ts      # cupFinalChance dentro de rango y escalando con reputación, rival siempre del mismo país y distinto del propio, determinismo, país de un solo club -> null (Fase 4)
+      trophyEngine.test.ts      # cupFinalChance dentro de rango y escalando con reputación, rival de copa (opponent club, no confundir con el RivalState de Fase 7) siempre del mismo país y distinto del propio, determinismo, país de un solo club -> null (Fase 4)
       motivationSelector.test.ts # 3 ofertas distintas, filtro por edad/posición, la oferta cambia entre un pibe y un veterano, determinismo, siempre 3 aunque el filtro deje pocas (Fase 5)
+      rivalEngine.test.ts        # createRival determinístico y con rating/club/arquetipo válidos, advanceRival mantiene el rating en rango y acumula stats/títulos, un arquetipo con youthMultiplier alto crece más rápido joven que uno tardío (Fase 7)
   minigames/        # capa de minijuegos (Fase 4). El motor NO importa nada de acá — ver "Decisiones de producto"
     types.ts          # MinigameDefinition (id, name, description, Component) + MinigameComponentProps (seed, difficulty, opponentName, attributes, onComplete)
     registry.ts       # MINIGAMES + getMinigameById(id) + pickMinigame(seed) — agregar un minijuego es sumarlo acá y nada más
@@ -88,7 +93,7 @@ src/
     careerStore.ts    # useCareerStore (Zustand) — { career, dispatch, hydrate } sobre careerReducer. dispatch además guarda en Supabase tras cada acción real (Fase 6, ver esa entrada de Progreso para el detalle de la cola de guardado)
   components/        # capa de UI compartida entre pantallas (integración de diseño, no existía antes)
     icons/            # SVGs inline sin librería: SearchIcon, CheckIcon, InfoCircleIcon, StatCircleIcon, TrophyIcon, UpChevronIcon, DownChevronIcon
-    ui/               # LabelValue, StatTile, AttributeBar, SegmentedControl, Button, RatingBadge, FlagChip (+ColorRoundel), PlayerIdentityHeader, StatTilesRow, EmptyState, ClubCrestBadge, ClubOfferPicker, SeasonTimelineTable, EventChoiceCard, CountryPicker, TrophyCase (Fase 4)
+    ui/               # LabelValue, StatTile, AttributeBar, SegmentedControl, Button, RatingBadge, FlagChip (+ColorRoundel), PlayerIdentityHeader, StatTilesRow, EmptyState, ClubCrestBadge, ClubOfferPicker, SeasonTimelineTable, EventChoiceCard, CountryPicker, TrophyCase, RivalCard (Fase 7)
   features/
     characterCreation/CharacterCreationPage.tsx   # real, con el diseño integrado: 3 columnas (camiseta+identidad, buscador de país, cancha táctica), ruta "/"
     characterCreation/components/                 # JerseyPreview, PositionPitch — de uso único en esta pantalla, no van en components/ui
@@ -96,9 +101,9 @@ src/
     careerHub/CareerHubPage.tsx                   # real, con el diseño integrado: rama por career.phase (CLUB_PENDING → ClubOfferPicker; ACTIVE → botón "Avanzar temporada"), timeline de temporadas real, ruta "/hub"
     seasonEvent/SeasonEventPage.tsx               # real, con el diseño integrado: EventChoiceCard por elección (efecto cualitativo Sube/Baja/Sin cambios, no porcentajes), ruta "/event"
     minigamePlayer/MinigamePlayerPage.tsx         # real (Fase 4): resuelve el minijuego vía pickMinigame(seed) y despacha RESOLVE_MINIGAME, ruta "/minigame"
-    careerSummary/CareerSummaryPage.tsx           # con el diseño integrado + vitrina de títulos + alias y submit al ranking (Fase 6), ruta "/summary"
+    careerSummary/CareerSummaryPage.tsx           # con el diseño integrado + vitrina de títulos + alias y submit al ranking + comparación final contra el rival (Fase 6/7), ruta "/summary"
     leaderboard/LeaderboardPage.tsx               # real (Fase 6): tabla del ranking global leída de Supabase, ruta "/leaderboard"
-    rival/                                        # vacío — no es una ruta propia, se embebe en careerHub más adelante
+    rival/                                        # sigue vacío a propósito: el rival terminó siendo un componente compartido (components/ui/RivalCard.tsx) embebido en careerHub y careerSummary, no una ruta propia — no hizo falta esta carpeta (Fase 7)
   lib/
     supabaseClient.ts   # cliente de Supabase real, usa VITE_SUPABASE_URL + VITE_SUPABASE_PUBLISHABLE_KEY
     labels.ts            # POSITION_LABELS, POSITION_SHORT_LABELS, FOOT_LABELS, ATTRIBUTE_LABELS, EVENT_CATEGORY_LABELS, formatCurrency — strings en español compartidos entre pantallas
@@ -106,7 +111,7 @@ src/
     clubVisuals.ts         # clubInitials(name) — iniciales para el escudo placeholder
     eventEffects.ts         # summarizeChoiceEffect(choice) -> efecto neto SIN números (eventos: ocultarlos es parte de la tensión) + describeStatEffects(effects) -> CON números (pretemporada: es una decisión de build, sin el número no podés elegir)
     careerSession.ts        # getStoredCareerId/setStoredCareerId/clearStoredCareerId — id opaco de la carrera activa en localStorage (Fase 6)
-    api/                # saveCareer/loadCareer/deleteCareer (careers.ts) + submitScore/fetchTopEntries (leaderboard.ts) — Fase 6. rivals.ts va acá en Fase 7
+    api/                # saveCareer/loadCareer/deleteCareer (careers.ts) + submitScore/fetchTopEntries (leaderboard.ts) — Fase 6. Sin rivals.ts: el rival quedó embebido en careers.state (jsonb), no necesitó tabla propia (Fase 7)
   hooks/
     useCareerEngine.ts    # wrapper del store: { career, createCareer, selectClub, advanceSeason, resolveEvent }
     useRestoreCareer.ts     # al montar la app, si hay careerId en localStorage intenta loadCareer y lo hidrata en el store antes de renderizar rutas (Fase 6)
@@ -114,7 +119,7 @@ src/
 App.tsx             # router con las 6 rutas de arriba (4 con el diseño integrado, 2 placeholder con tema dark)
 ```
 
-Las carpetas que todavía no tienen contenido real (`minigames/*`, `features/rival/`, `lib/api/`) tienen un `.gitkeep` para que git las trackee hasta la fase que las llene.
+`features/rival/` quedó con `.gitkeep` de forma permanente, no transitoria — el rival terminó resuelto como componente compartido (ver arriba), así que esta carpeta no se va a llenar en una fase futura.
 
 ## Supabase
 
@@ -313,11 +318,22 @@ Alcance recortado a propósito, mismo criterio que el resto del proyecto ("no de
 - Verificado en navegador de punta a punta: creación de carrera → refresh real de página (`navigate` con `force`, no navegación de React Router) → la carrera se restaura en vez de perderse → carrera completa hasta `RETIRED` → alias + "Subir al ranking" → `/leaderboard` muestra la entrada recién subida con los datos reales. `get_advisors` (seguridad y performance) sin alertas.
 - `npm run test` (90/90 — no se tocó ningún test, es aditivo), `npx tsc -b --noEmit` y `npm run lint` (oxlint, un warning preexistente en `CountryFlag.tsx` sin relación) corren limpios.
 
+### Fase 7 — Rival: arquetipo determinístico visible en el hub (2026-08-18)
+
+- **Decisión de arquitectura, igual que con los minijuegos:** el rival vive enteramente dentro de `CareerState.rival` (jsonb en `careers`, ver Fase 6) — **no se creó una tabla `rivals`** en Supabase, pese a que el plan original la mencionaba. No hay ningún caso de uso que necesite consultarlo fuera de la propia carrera (no es un ranking cross-jugador, es un personaje de una sola carrera), así que una tabla propia hubiera sido especular sobre un esquema sin código real que lo usara — mismo criterio que ya evitó crear `rivals`/`legends` en Fase 6.
+- **Generación determinística**: `types/rival.ts` (`RivalArchetype`, `RivalState`) + `content/rivalArchetypes.ts` (5 arquetipos: Precoz, Tardío, Todoterreno, Estrella Mediática, Currante — cada uno con multiplicadores de crecimiento por franja de edad sobre el mismo `attributeGrowthDelta` que usa el jugador, no una curva propia) + `content/rivalNames.ts` (pool de nombres genéricos, sin apellidos de jugadores reales). `engine/rivalEngine.ts#createRival` arma el rival en `createCareer` con el mismo `rng` de la carrera (mismo país que el jugador — "el pibe con el que creciste"; posición y arquetipo al azar; reusa `generateBaseAttributes`/`selectDebutClubOffers` del jugador para no duplicar generación).
+- **Evoluciona en paralelo, no en su propio ciclo**: `advanceRival` se llama una vez por temporada dentro de `resolveEvent` (después de resolver liga/copa del jugador, con el mismo `rng` roscado), así que el mismo seed sigue produciendo la carrera completa byte a byte — el rival es determinista igual que todo lo demás.
+- **Simulación deliberadamente más liviana que la del jugador**: `advanceRival` no reusa `seasonPerformance.ts` (hubiera obligado a fabricar un `PlayerState` completo con campos que no le hacen falta al rival) — tiene su propia fórmula de partidos/goles/asistencias más simple, y una chance de título por temporada proporcional al rating en vez de jugar una liga/copa completa por él. Es un personaje de fondo con stats creíbles, no una segunda carrera simulada con total fidelidad.
+- **`components/ui/RivalCard.tsx`**: identidad (bandera, nombre, club, posición), rating y valor de mercado comparados, más un indicador cualitativo ("Le llevás ventaja" / "Te está pasando" / "Están empatados") — mismo criterio ya usado en eventos de no mostrar números fabricados de más. Embebido en `CareerHubPage` (columna derecha, arriba del timeline) y en `CareerSummaryPage` (comparación final al retirarte) — sin ruta propia, `features/rival/` queda vacía a propósito (ver arriba).
+- **Un test existente se rompió por una razón esperada, no un bug**: `careerReducer.test.ts` tenía un test que forzaba a Manchester City a ganar la liga inglesa confiando en que, para el seed 33, el sorteo ponderado por reputación diera esa combinación exacta — un "seed con suerte", no una garantía real. Agregar la generación del rival en `createCareer` consume tiradas de rng adicionales y corrió toda la secuencia, así que esa combinación dejó de darse. Se arregló con el mismo patrón robusto que ya usan los tests de final de copa: probar temporadas en un club de reputación altísima (Real Madrid) hasta que la gane naturalmente, en vez de depender de una coincidencia de seed — más robusto a futuros cambios en la secuencia de rng, no solo un parche puntual.
+- **13 tests nuevos** (103 en total): `rivalEngine.test.ts` (7: determinismo de `createRival`, rating/club/arquetipo válidos, `advanceRival` mantiene el rating en rango, acumula stats y nunca resta títulos, un arquetipo con `youthMultiplier` alto crece más rápido joven que uno tardío, ids únicos, error en arquetipo desconocido), 3 en `contentSchema.test.ts` (RIVAL_ARCHETYPES válido, ids duplicados, multiplicador negativo rechazado), 3 en `careerReducer.test.ts` (rival se crea en `CREATE_CAREER` con forma válida, avanza junto al jugador en `RESOLVE_EVENT`, se mantiene en `[1,99]` durante una carrera completa) — más el test de liga reescrito de arriba.
+- Verificado en navegador: carrera nueva → `RivalCard` visible en el hub apenas se crea (con datos ya coherentes) → avanzar una temporada real → el rival cambia de rating y valor de mercado en paralelo, sin errores de consola.
+- `npm run test` (103/103), `npx tsc -b --noEmit` y `npm run lint` (oxlint, mismo warning preexistente de `CountryFlag.tsx`) corren limpios.
+
 ## Pendiente (TODO)
 
 - **Fase 3b — resto de confederaciones:** Sudamérica, Europa (7 países, ambas divisiones donde aplica) y Liga MX/MLS ya están (589 clubes, ver Progreso). Falta opcionalmente CAF/AFC/OFC — mismo método, incremental, no bloqueante.
 - ~~**Pasada visual**~~ — **completa (2026-08-08).** Banderas reales en SVG (`components/ui/CountryFlag.tsx`, ~26 países CONMEBOL+Europa grande, `ColorRoundel` como fallback para el resto), escudos de club con forma/patrón por hash (`ClubCrestBadge.tsx`), patrones de camiseta (`JerseyPreview.tsx`), 8 ilustraciones SVG por categoría de evento (`EventIllustration.tsx`, reemplaza la caja rayada con texto en `EventChoiceCard`), y animación en `penaltyShootout` (la pelota viaja desde los pies hasta la zona pateada, el arquero se tira al lugar real donde terminó definiendo — antes se quedaba parado en el amague inicial aunque hubiera mentido). Todo generado por código, sin assets subidos. Verificado en navegador: carrera completa con evento ilustrado + los 3 minijuegos, sin errores de consola. `npm run test` (90/90), `tsc` y lint limpios.
-- **Fase 7 — Rival:** rival por arquetipo determinístico visible en el hub de carrera.
 - **Fase 8 — Pulido de portfolio:** UI de recreación de carrera por seed (feature "recreá a una leyenda", documentada — no easter egg oculto), tarjeta compartible (export a canvas/imagen), logros, personalización de apariencia más profunda, pase mobile.
 
 ## Decisiones abiertas / riesgos conocidos

@@ -3,6 +3,7 @@ import type { Club } from '@/types/club'
 import type { ClubMoveCriteria, EventChoice, InjuryEffect, LoanEffect, SeasonEvent, StatEffect } from '@/types/event'
 import type { Motivation } from '@/types/motivation'
 import type { PlayerAttributes, Position } from '@/types/player'
+import type { RivalArchetype } from '@/types/rival'
 
 const attributeKeySchema: z.ZodType<keyof PlayerAttributes> = z.enum([
   'pace',
@@ -84,6 +85,17 @@ const motivationSchema: z.ZodType<Motivation> = z
     { message: 'minAge no puede ser mayor que maxAge', path: ['minAge'] },
   )
 
+const rivalArchetypeSchema: z.ZodType<RivalArchetype> = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  description: z.string().min(1),
+  baseBoost: z.number(),
+  youthMultiplier: z.number().min(0),
+  primeMultiplier: z.number().min(0),
+  lateMultiplier: z.number().min(0),
+  marketValueMultiplier: z.number().min(0),
+})
+
 const clubSchema: z.ZodType<Club> = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
@@ -105,6 +117,7 @@ function uniqueIdsRefinement<T extends { id: string }>(items: T[], ctx: z.Refine
 export const seasonEventsSchema = z.array(seasonEventSchema).superRefine(uniqueIdsRefinement)
 export const clubsSchema = z.array(clubSchema).superRefine(uniqueIdsRefinement)
 export const motivationsSchema = z.array(motivationSchema).superRefine(uniqueIdsRefinement)
+export const rivalArchetypesSchema = z.array(rivalArchetypeSchema).superRefine(uniqueIdsRefinement)
 
 export function parseSeasonEvents(events: unknown): SeasonEvent[] {
   return seasonEventsSchema.parse(events)
@@ -116,4 +129,8 @@ export function parseClubs(clubs: unknown): Club[] {
 
 export function parseMotivations(motivations: unknown): Motivation[] {
   return motivationsSchema.parse(motivations)
+}
+
+export function parseRivalArchetypes(archetypes: unknown): RivalArchetype[] {
+  return rivalArchetypesSchema.parse(archetypes)
 }

@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { clubsSchema, motivationsSchema, seasonEventsSchema } from '../contentSchema'
+import { clubsSchema, motivationsSchema, rivalArchetypesSchema, seasonEventsSchema } from '../contentSchema'
 import { SAMPLE_CLUBS } from '../clubs'
 import { SAMPLE_EVENTS } from '../events'
 import { MOTIVATIONS } from '../motivations'
+import { RIVAL_ARCHETYPES } from '../rivalArchetypes'
 
 describe('contentSchema', () => {
   it('SAMPLE_EVENTS es válido contra seasonEventsSchema', () => {
@@ -71,5 +72,19 @@ describe('contentSchema', () => {
   it('rechaza una motivación sin efectos o con una posición inválida', () => {
     expect(() => motivationsSchema.parse([{ ...MOTIVATIONS[0], effects: [] }])).toThrow()
     expect(() => motivationsSchema.parse([{ ...MOTIVATIONS[0], positions: ['SW'] }])).toThrow()
+  })
+
+  it('RIVAL_ARCHETYPES es válido contra rivalArchetypesSchema', () => {
+    expect(() => rivalArchetypesSchema.parse(RIVAL_ARCHETYPES)).not.toThrow()
+  })
+
+  it('rechaza arquetipos de rival con ids duplicados', () => {
+    const [first] = RIVAL_ARCHETYPES
+    expect(() => rivalArchetypesSchema.parse([first, first])).toThrow()
+  })
+
+  it('rechaza un arquetipo de rival con un multiplicador negativo', () => {
+    const invalid = { ...RIVAL_ARCHETYPES[0], primeMultiplier: -1 }
+    expect(() => rivalArchetypesSchema.parse([invalid])).toThrow()
   })
 })

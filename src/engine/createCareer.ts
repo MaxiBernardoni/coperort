@@ -1,5 +1,6 @@
 import { selectDebutClubOffers } from './clubTransition'
 import { createRng } from './rng'
+import { createRival } from './rivalEngine'
 import { deriveOverallRating, generateBaseAttributes, marketValueForRating } from './statMath'
 import { SAMPLE_CLUBS } from '@/content/clubs'
 import type { CareerState, CharacterCreationInput } from '@/types/career'
@@ -16,6 +17,7 @@ export function createCareer(input: CharacterCreationInput, seed?: number): Care
   const retirementAge = rng.randInt(34, 38)
 
   const clubOffers = selectDebutClubOffers(SAMPLE_CLUBS, rng, 3)
+  const rival = createRival(input.nationality, SAMPLE_CLUBS, rng)
 
   const year = new Date().getFullYear()
 
@@ -49,6 +51,7 @@ export function createCareer(input: CharacterCreationInput, seed?: number): Care
     pendingEventId: null,
     pendingMinigame: null,
     loan: null,
+    rival,
     stats: { matches: 0, goals: 0, assists: 0, peakRating: overallRating, peakMarketValue: marketValue },
     titles: [],
     eventLog: [],
