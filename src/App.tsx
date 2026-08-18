@@ -6,8 +6,12 @@ import { SeasonEventPage } from '@/features/seasonEvent/SeasonEventPage'
 import { MinigamePlayerPage } from '@/features/minigamePlayer/MinigamePlayerPage'
 import { CareerSummaryPage } from '@/features/careerSummary/CareerSummaryPage'
 import { LeaderboardPage } from '@/features/leaderboard/LeaderboardPage'
+import { useRestoreCareer } from '@/hooks/useRestoreCareer'
 
 function App() {
+  const restoring = useRestoreCareer()
+  if (restoring) return <main className="flex min-h-screen items-center justify-center bg-bg" />
+
   return (
     <BrowserRouter>
       <Routes>

@@ -85,7 +85,7 @@ src/
     shared/           # vacía: con 3 minijuegos todavía no apareció nada genuinamente compartido
     __tests__/registry.test.ts   # ids únicos, contrato completo, getMinigameById, pickMinigame determinístico
   store/
-    careerStore.ts    # useCareerStore (Zustand) — { career, dispatch } fino sobre careerReducer, sin lógica propia
+    careerStore.ts    # useCareerStore (Zustand) — { career, dispatch, hydrate } sobre careerReducer. dispatch además guarda en Supabase tras cada acción real (Fase 6, ver esa entrada de Progreso para el detalle de la cola de guardado)
   components/        # capa de UI compartida entre pantallas (integración de diseño, no existía antes)
     icons/            # SVGs inline sin librería: SearchIcon, CheckIcon, InfoCircleIcon, StatCircleIcon, TrophyIcon, UpChevronIcon, DownChevronIcon
     ui/               # LabelValue, StatTile, AttributeBar, SegmentedControl, Button, RatingBadge, FlagChip (+ColorRoundel), PlayerIdentityHeader, StatTilesRow, EmptyState, ClubCrestBadge, ClubOfferPicker, SeasonTimelineTable, EventChoiceCard, CountryPicker, TrophyCase (Fase 4)
@@ -96,8 +96,8 @@ src/
     careerHub/CareerHubPage.tsx                   # real, con el diseño integrado: rama por career.phase (CLUB_PENDING → ClubOfferPicker; ACTIVE → botón "Avanzar temporada"), timeline de temporadas real, ruta "/hub"
     seasonEvent/SeasonEventPage.tsx               # real, con el diseño integrado: EventChoiceCard por elección (efecto cualitativo Sube/Baja/Sin cambios, no porcentajes), ruta "/event"
     minigamePlayer/MinigamePlayerPage.tsx         # real (Fase 4): resuelve el minijuego vía pickMinigame(seed) y despacha RESOLVE_MINIGAME, ruta "/minigame"
-    careerSummary/CareerSummaryPage.tsx           # con el diseño integrado + vitrina de títulos, ruta "/summary" (build completo con ranking es Fase 6)
-    leaderboard/LeaderboardPage.tsx               # placeholder con tema dark aplicado (paso liviano), ruta "/leaderboard"
+    careerSummary/CareerSummaryPage.tsx           # con el diseño integrado + vitrina de títulos + alias y submit al ranking (Fase 6), ruta "/summary"
+    leaderboard/LeaderboardPage.tsx               # real (Fase 6): tabla del ranking global leída de Supabase, ruta "/leaderboard"
     rival/                                        # vacío — no es una ruta propia, se embebe en careerHub más adelante
   lib/
     supabaseClient.ts   # cliente de Supabase real, usa VITE_SUPABASE_URL + VITE_SUPABASE_PUBLISHABLE_KEY
@@ -105,9 +105,11 @@ src/
     colorHash.ts          # hashColorPair(seed) — par de colores HSL determinístico (escudos de club, banderas, camisetas — sin curar color a mano por item)
     clubVisuals.ts         # clubInitials(name) — iniciales para el escudo placeholder
     eventEffects.ts         # summarizeChoiceEffect(choice) -> efecto neto SIN números (eventos: ocultarlos es parte de la tensión) + describeStatEffects(effects) -> CON números (pretemporada: es una decisión de build, sin el número no podés elegir)
-    api/                # vacío — leaderboard.ts, rivals.ts van acá en Fase 6
+    careerSession.ts        # getStoredCareerId/setStoredCareerId/clearStoredCareerId — id opaco de la carrera activa en localStorage (Fase 6)
+    api/                # saveCareer/loadCareer/deleteCareer (careers.ts) + submitScore/fetchTopEntries (leaderboard.ts) — Fase 6. rivals.ts va acá en Fase 7
   hooks/
     useCareerEngine.ts    # wrapper del store: { career, createCareer, selectClub, advanceSeason, resolveEvent }
+    useRestoreCareer.ts     # al montar la app, si hay careerId en localStorage intenta loadCareer y lo hidrata en el store antes de renderizar rutas (Fase 6)
   test/setup.ts     # setup de Testing Library (jest-dom) para Vitest
 App.tsx             # router con las 6 rutas de arriba (4 con el diseño integrado, 2 placeholder con tema dark)
 ```
@@ -116,10 +118,10 @@ Las carpetas que todavía no tienen contenido real (`minigames/*`, `features/riv
 
 ## Supabase
 
-- Proyecto creado vía MCP: `coperort` (id `gucidoqqqkckgiahuiyd`), región `sa-east-1` (San Pablo — menor latencia para el público objetivo en Argentina/Sudamérica), tier gratuito ($0/mes).
-- URL y publishable key están en `.env.local` (gitignored) y el esqueleto sin valores en `.env.example` (sí versionado).
+- Proyecto creado vía MCP: `coperort` (id `gucidoqqqkckgiahuiyd`), región `sa-east-1` (San Pablo — menor latencia para el público objetivo en Argentina/Sudamérica), tier gratuito ($0/mes). El plan gratuito pausa el proyecto por inactividad — si `get_project` devuelve `INACTIVE`, `restore_project` lo reactiva en unos segundos.
+- URL y publishable key están en `.env.local` (gitignored, hay que recrearlo a mano en cada máquina nueva — no sincroniza solo — con `get_project_url`/`get_publishable_keys` vía MCP) y el esqueleto sin valores en `.env.example` (sí versionado).
 - `src/lib/supabaseClient.ts` ya crea el cliente real apuntando a este proyecto.
-- **Todavía no se aplicó ninguna migración / no hay tablas creadas.** El esquema completo (`careers`, `leaderboard_entries`, `rivals`, `legends`) está diseñado en el plan pero se aplica recién en la Fase 6, siguiendo el orden de construcción — no tiene sentido tener tablas antes de que el motor exista.
+- **Migraciones aplicadas (Fase 6, 2026-08-18): `careers` y `leaderboard_entries`.** `rivals` y `legends` quedan para Fase 7/8, cuando exista código real que las use. Sin carpeta `supabase/` local — se aplica directo al proyecto remoto vía `apply_migration` del MCP, no hay CLI de Supabase en este repo.
 
 ## Fuente de datos de clubes
 
@@ -299,11 +301,22 @@ Primera fase que agrega **gameplay real** en vez de simulación automática. Pla
 - Verificado en navegador: pretemporada con los 3 enfoques y sus tradeoffs, el elegido aplicándose y quedando visible en el hub, y **los tres minijuegos jugados de punta a punta** (se recorrieron varias carreras hasta que salieran los tres). Sin errores de consola.
 - `npm run test` (90/90), `npx tsc -b --noEmit` y `npm run lint` (oxlint) corren limpios.
 
+### Fase 6 — Supabase real: persistencia de carrera + ranking global (2026-08-18)
+
+Alcance recortado a propósito, mismo criterio que el resto del proyecto ("no declarar una variante sin código que la llene", ver Desviaciones): de las 4 tablas que el plan de arquitectura original preveía, esta pasada construye **`careers`** y **`leaderboard_entries`** — `rivals` es Fase 7 y `legends` es Fase 8, ninguna pantalla las usa todavía.
+
+- **Esquema aplicado vía `apply_migration`** (sin carpeta `supabase/` local, el proyecto no usa CLI — ver Stack): `careers` (`id uuid pk`, `state jsonb`, `updated_at`) con policy abierta de lectura/escritura (`using (true) with check (true)` — el `id` opaco en `localStorage` es el único "auth", mismo criterio de "sin anti-cheat" ya documentado, no es un secreto de seguridad). `leaderboard_entries` con columnas planas (alias, identidad del jugador, stats finales, títulos) + `check` de rango en cada campo numérico (mismo nivel de guardrail que el resto del proyecto), policy de `select` abierta y de `insert` abierta pero **sin policy de `update`/`delete`** — un puntaje subido es inmutable a propósito, ni el autor puede editarlo o borrarlo después.
+- **Persistencia de la carrera en curso**: `lib/api/careers.ts` (`saveCareer`/`loadCareer`/`deleteCareer`), `lib/careerSession.ts` (`coperort:careerId` en `localStorage`, wrapped en try/catch por si el navegador está en modo privado o sin cuota), `hooks/useRestoreCareer.ts` (al montar `App`, si hay un id guardado intenta `loadCareer` y lo hidrata en el store antes de renderizar rutas — con un estado de carga breve). `careerStore.ts#dispatch` guarda en Supabase después de cada acción real (no en los no-ops, que devuelven la misma referencia).
+- **Ranking**: `lib/api/leaderboard.ts` (`submitScore`/`fetchTopEntries`, ordenado por `peak_rating desc`), `CareerSummaryPage` gana un input de alias + botón "Subir al ranking" (un solo submit por carrera, sin forma de editarlo después — por diseño), `LeaderboardPage` reescrita como tabla real (alias, club, rating pico, PJ/GLS/AST, copas).
+- **Bug real encontrado y arreglado en el navegador, no solo en el sanity check habitual**: `dispatch` guardaba con `saveCareer(next)` fire-and-forget sin encolar. Verificado con un script que corría una carrera completa (17→34 años, ~50 dispatches) disparando un `saveCareer` por acción sin esperar al anterior: al refrescar la página, el estado restaurado quedó en `ACTIVE` a los 33 años en vez de `RETIRED` a los 34 — una respuesta de red de un guardado más viejo llegó *después* que la del guardado final y "ganó" la carrera de escritura, pisando el estado más reciente en la DB sin ningún error visible. Se arregló encolando los guardados (`saveQueue = saveQueue.then(() => saveCareer(next))...` en `careerStore.ts`) para que cada `saveCareer` espere a que termine el anterior antes de salir — garantiza que las escrituras lleguen a Supabase en el mismo orden en que se dispacharon. Con acciones dispachadas una por vez desde la UI real (el patrón normal de uso) la ventana de carrera es minúscula, pero encolar no tiene downside y cierra el caso por completo.
+- **Gotcha de infraestructura, no de código, documentado para no volver a perder tiempo con esto**: después de `apply_migration` reportar éxito y `list_tables` confirmar el esquema, la app seguía recibiendo `PGRST205 Could not find the table in the schema cache` en cada save/load — el schema cache de PostgREST (la capa REST que usa el cliente JS) había quedado desactualizado. `NOTIFY pgrst, 'reload schema';` (la solución estándar de la doc de Supabase) no alcanzó por sí sola; hizo falta además `select pg_notification_queue_usage();` (limpia la cola de notificaciones de Postgres que a veces bloquea que PostgREST reciba la señal — ver "PostgREST not recognizing new columns, tables, views or functions" en la doc de troubleshooting de Supabase) y esperar un rato a que el servicio recogiera el reload. `execute_sql` (consulta directa a Postgres, bypassea PostgREST) fue la herramienta clave para diagnosticar esto — confirmó que la tabla sí existía en la DB mientras la API seguía devolviendo 404, aislando el problema a la capa de caché y no al esquema en sí.
+- Verificado en navegador de punta a punta: creación de carrera → refresh real de página (`navigate` con `force`, no navegación de React Router) → la carrera se restaura en vez de perderse → carrera completa hasta `RETIRED` → alias + "Subir al ranking" → `/leaderboard` muestra la entrada recién subida con los datos reales. `get_advisors` (seguridad y performance) sin alertas.
+- `npm run test` (90/90 — no se tocó ningún test, es aditivo), `npx tsc -b --noEmit` y `npm run lint` (oxlint, un warning preexistente en `CountryFlag.tsx` sin relación) corren limpios.
+
 ## Pendiente (TODO)
 
 - **Fase 3b — resto de confederaciones:** Sudamérica, Europa (7 países, ambas divisiones donde aplica) y Liga MX/MLS ya están (589 clubes, ver Progreso). Falta opcionalmente CAF/AFC/OFC — mismo método, incremental, no bloqueante.
 - ~~**Pasada visual**~~ — **completa (2026-08-08).** Banderas reales en SVG (`components/ui/CountryFlag.tsx`, ~26 países CONMEBOL+Europa grande, `ColorRoundel` como fallback para el resto), escudos de club con forma/patrón por hash (`ClubCrestBadge.tsx`), patrones de camiseta (`JerseyPreview.tsx`), 8 ilustraciones SVG por categoría de evento (`EventIllustration.tsx`, reemplaza la caja rayada con texto en `EventChoiceCard`), y animación en `penaltyShootout` (la pelota viaja desde los pies hasta la zona pateada, el arquero se tira al lugar real donde terminó definiendo — antes se quedaba parado en el amague inicial aunque hubiera mentido). Todo generado por código, sin assets subidos. Verificado en navegador: carrera completa con evento ilustrado + los 3 minijuegos, sin errores de consola. `npm run test` (90/90), `tsc` y lint limpios.
-- **Fase 6 — Supabase real:** aplicar las migraciones del esquema (`careers`, `leaderboard_entries`, `rivals`, `legends` — diseño completo en el plan), `LeaderboardPage` real leyendo de Supabase, flujo de "ingresá tu alias" al retirarte.
 - **Fase 7 — Rival:** rival por arquetipo determinístico visible en el hub de carrera.
 - **Fase 8 — Pulido de portfolio:** UI de recreación de carrera por seed (feature "recreá a una leyenda", documentada — no easter egg oculto), tarjeta compartible (export a canvas/imagen), logros, personalización de apariencia más profunda, pase mobile.
 
@@ -315,4 +328,4 @@ Primera fase que agrega **gameplay real** en vez de simulación automática. Pla
 - ~~`createCareer.ts` elige el club de debut filtrando `SAMPLE_CLUBS` por `reputation < 40`...~~ — **resuelto en la integración de diseño (2026-08-05).** `createCareer.ts` ahora usa `selectDebutClubOffers` (`engine/clubTransition.ts`), que relaja al pool completo de clubes si el filtro por reputación da menos candidatos de los pedidos, y nunca llama `pickWeighted` sobre un array vacío. `engine/leagueEngine.ts#resolveLeagueWinner` sigue filtrando por `country`+`tier` y llamando `pickWeighted` directo sin fallback — con los 274 clubes de la Fase 3b esto no es un problema práctico hoy (todos los grupos CONMEBOL tienen varios clubes), pero si se agrega un país/confederación nuevo con un solo club en algún tier, revisar si conviene el mismo tipo de relajación que ya tiene `selectClubForMove`.
 - ~~**Ligas de un solo club con las 13 clubes hardcodeadas** (Argentina tier 2, Inglaterra tier 1)~~ — **Argentina resuelto en la Fase 3b Sudamérica** (38 clubes reales en tier 2). **Inglaterra resuelto en la Fase 3b Europa** (44 clubes reales entre 1ª y 2ª). Ya no queda ningún país con una liga de un solo club en los datos actuales.
 - **Inflación de rating: casi toda carrera termina con un jugador de 90+.** Observado en el sanity check de la Fase 5: una carrera típica va de OVR 64 a los 17 hasta **96 a los 25**, y ahí se queda. La causa principal es previa a la Fase 5 (`attributeGrowthDelta` da +2 a +5 por atributo por temporada hasta los 21 y +1 a +3 hasta los 25, sobre un debut ya generoso); los enfoques de pretemporada suman ~+1 neto por temporada encima. **No se tocó en la Fase 5 a propósito** — rebalancear la curva de crecimiento es una decisión de diseño que invalida la nota deliberada de "Desviaciones" sobre el rating de debut, y merece medirse aparte. Importa para la Fase 8 ("recreá a una leyenda"): si todos terminan en 95, el rating deja de distinguir carreras y la comparación con leyendas pierde sentido. El lugar para tocarlo es `statMath.ts`.
-- **Sin persistencia de la carrera en curso.** `store/careerStore.ts` vive solo en memoria; un refresh de página o una navegación de URL completa (no vía React Router) pierde la carrera y las guardas de ruta redirigen a `/`. Es el comportamiento esperado para la Fase 2 — no hay `localStorage` ni sync con Supabase todavía (eso es Fase 6).
+- ~~**Sin persistencia de la carrera en curso.**~~ — **resuelto en la Fase 6 (2026-08-18).** `careerStore.ts` guarda en Supabase tras cada dispatch real, con el id de carrera en `localStorage`; un refresh de página restaura la carrera en vez de perderla. Ver esa entrada de Progreso para el detalle de la cola de guardado (bug de orden de escritura encontrado y arreglado) y el gotcha de schema cache de PostgREST.
